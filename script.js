@@ -17,6 +17,29 @@ let player = {
 
 
 // ======================================================
+// INVENTAIRE DES RESSOURCES
+// ======================================================
+
+let inventory = {
+
+    meat: 0,
+    fish: 0,
+    apple: 0,
+    berry: 0,
+
+    herb: 0,
+    mushroom: 0,
+    vegetable: 0,
+    insect: 0
+
+};
+
+
+const INVENTORY_STORAGE_KEY =
+    "draconiaInventory";
+
+
+// ======================================================
 // LISTE DES DRAGONS
 // ======================================================
 
@@ -563,7 +586,214 @@ function loadPlayer() {
 
 
 // ======================================================
-// AFFICHAGE DES RESSOURCES
+// SAUVEGARDE DE L'INVENTAIRE
+// ======================================================
+
+function saveInventory() {
+
+    localStorage.setItem(
+        INVENTORY_STORAGE_KEY,
+        JSON.stringify(inventory)
+    );
+
+}
+
+
+// ======================================================
+// CHARGEMENT DE L'INVENTAIRE
+// ======================================================
+
+function loadInventory() {
+
+    const savedInventory =
+        localStorage.getItem(
+            INVENTORY_STORAGE_KEY
+        );
+
+
+    if (!savedInventory) {
+
+        saveInventory();
+
+        return;
+
+    }
+
+
+    try {
+
+        const parsed =
+            JSON.parse(savedInventory);
+
+
+        inventory = {
+
+            ...inventory,
+
+            ...parsed
+
+        };
+
+    } catch (error) {
+
+        console.log(
+            "Impossible de charger l'inventaire."
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// AJOUTER UNE RESSOURCE
+// ======================================================
+
+function addResource(
+    resource,
+    amount = 1
+) {
+
+    if (
+        inventory[resource] === undefined
+    ) {
+
+        console.log(
+            `Ressource inconnue : ${resource}`
+        );
+
+        return;
+
+    }
+
+
+    inventory[resource] += amount;
+
+
+    saveInventory();
+
+    updateInventoryDisplay();
+
+}
+
+
+// ======================================================
+// RETIRER UNE RESSOURCE
+// ======================================================
+
+function removeResource(
+    resource,
+    amount = 1
+) {
+
+    if (
+        inventory[resource] === undefined
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        inventory[resource] < amount
+    ) {
+
+        return false;
+
+    }
+
+
+    inventory[resource] -= amount;
+
+
+    saveInventory();
+
+    updateInventoryDisplay();
+
+
+    return true;
+
+}
+
+
+// ======================================================
+// COMPTER TOUS LES OBJETS DU SAC
+// ======================================================
+
+function getInventoryTotal() {
+
+    return Object.values(
+        inventory
+    ).reduce(
+        (total, amount) =>
+            total + amount,
+        0
+    );
+
+}
+
+
+// ======================================================
+// AFFICHAGE DU SAC
+// ======================================================
+
+function updateInventoryDisplay() {
+
+    const resources = {
+
+        meat: "resource-meat",
+        fish: "resource-fish",
+        apple: "resource-apple",
+        berry: "resource-berry",
+
+        herb: "resource-herb",
+        mushroom: "resource-mushroom",
+        vegetable: "resource-vegetable",
+        insect: "resource-insect"
+
+    };
+
+
+    Object.entries(resources)
+        .forEach(
+            ([resource, elementId]) => {
+
+                const element =
+                    document.getElementById(
+                        elementId
+                    );
+
+
+                if (element) {
+
+                    element.textContent =
+                        inventory[resource];
+
+                }
+
+            }
+        );
+
+
+    const totalElement =
+        document.getElementById(
+            "inventory-total"
+        );
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            getInventoryTotal();
+
+    }
+
+}
+
+
+// ======================================================
+// AFFICHAGE DES RESSOURCES DU JOUEUR
 // ======================================================
 
 function updatePlayerDisplay() {
@@ -1295,7 +1525,7 @@ function renderOwnedDragons() {
 
             <div class="dragon-care-stats">
 
-                <div>
+                <div class="dragon-care-stat">
 
                     <span>
                         🍖
@@ -1312,7 +1542,7 @@ function renderOwnedDragons() {
                 </div>
 
 
-                <div>
+                <div class="dragon-care-stat">
 
                     <span>
                         😊
@@ -1329,7 +1559,7 @@ function renderOwnedDragons() {
                 </div>
 
 
-                <div>
+                <div class="dragon-care-stat">
 
                     <span>
                         🧼
@@ -1558,6 +1788,13 @@ function showPage(page) {
 
     }
 
+
+    if (page === "inventory") {
+
+        updateInventoryDisplay();
+
+    }
+
 }
 
 
@@ -1587,7 +1824,7 @@ function feedDragon(dragonId) {
     if (player.food <= 0) {
 
         alert(
-            "🥕 Tu n'as plus de nourriture !"
+            "🍖 Tu n'as plus de nourriture !"
         );
 
         return;
@@ -1728,11 +1965,15 @@ function initGame() {
 
     loadPlayer();
 
+    loadInventory();
+
     generateDailyWeather();
 
     updateWeatherDisplay();
 
     updatePlayerDisplay();
+
+    updateInventoryDisplay();
 
     updateDragonDex();
 
