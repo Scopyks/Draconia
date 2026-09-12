@@ -1,5 +1,6 @@
 // ==========================================
-// 🐉 DRACONIA - SYSTÈME DES DRAGONS
+// 🐉 DRACONIA
+// SYSTÈME DES DRAGONS + COLLECTION
 // ==========================================
 
 let xp = 0;
@@ -12,7 +13,7 @@ let cleanliness = 90;
 
 
 // ==========================================
-// 🐲 LISTE DES DRAGONS
+// 🐲 LES 10 DRAGONS
 // ==========================================
 
 const dragons = [
@@ -80,10 +81,11 @@ const dragons = [
 
 
 // ==========================================
-// 📖 DRAGONS DÉCOUVERTS
+// 💾 COLLECTION SAUVEGARDÉE
 // ==========================================
 
-let discoveredDragons = [];
+let discoveredDragons =
+    JSON.parse(localStorage.getItem("draconiaDragons")) || [];
 
 
 // ==========================================
@@ -115,29 +117,29 @@ function chooseRarity() {
 
 
 // ==========================================
-// 🐲 FAIRE APPARAÎTRE UN DRAGON
+// 🐲 TROUVER UN DRAGON
 // ==========================================
 
 function discoverDragon() {
 
     const rarity = chooseRarity();
 
-    const possibleDragons = dragons.filter(
-        dragon => dragon.rarity === rarity
-    );
+    const possibleDragons =
+        dragons.filter(
+            dragon => dragon.rarity === rarity
+        );
 
     const dragon =
         possibleDragons[
-            Math.floor(Math.random() * possibleDragons.length)
+            Math.floor(
+                Math.random() * possibleDragons.length
+            )
         ];
 
     const alreadyOwned =
         discoveredDragons.includes(dragon.name);
 
     if (alreadyOwned) {
-
-        // Doublon = XP
-        addXP(25);
 
         return {
             dragon: dragon,
@@ -147,6 +149,12 @@ function discoverDragon() {
 
     discoveredDragons.push(dragon.name);
 
+    // 💾 Sauvegarde
+    localStorage.setItem(
+        "draconiaDragons",
+        JSON.stringify(discoveredDragons)
+    );
+
     return {
         dragon: dragon,
         duplicate: false
@@ -155,7 +163,7 @@ function discoverDragon() {
 
 
 // ==========================================
-// 🔎 EXPLORATION
+// 🔎 EXPLORER
 // ==========================================
 
 function findEgg() {
@@ -169,7 +177,7 @@ function findEgg() {
     button.disabled = true;
 
     message.textContent =
-        "🔎 Tu explores les terres de Draconia...";
+        "🔎 Tu explores Draconia...";
 
     setTimeout(() => {
 
@@ -179,7 +187,7 @@ function findEgg() {
         if (!foundEgg) {
 
             message.textContent =
-                "🌲 Rien cette fois... continue ton exploration !";
+                "🌲 Rien trouvé cette fois...";
 
             addXP(3);
 
@@ -188,11 +196,8 @@ function findEgg() {
             return;
         }
 
-
-        // 🥚 ŒUF TROUVÉ
-
         message.textContent =
-            "🥚 Un œuf mystérieux vient d'être découvert !";
+            "🥚 Œuf mystérieux trouvé !";
 
         setTimeout(() => {
 
@@ -202,17 +207,11 @@ function findEgg() {
             const dragon =
                 result.dragon;
 
-
-            if (result.duplicate) {
-
-                message.innerHTML =
-                    `🐉 Doublon : <b>${dragon.name}</b> !<br>
-                    ⭐ +25 XP`;
-
-            } else {
+            // 🐲 NOUVEAU DRAGON
+            if (!result.duplicate) {
 
                 message.innerHTML =
-                    `🎉 NOUVEAU DRAGON !<br>
+                    `🎉 NOUVEAU DRAGON !<br><br>
                     ${dragon.emoji}<br>
                     <b>${dragon.name}</b><br>
                     ${dragon.element} • ${dragon.rarity}`;
@@ -220,6 +219,19 @@ function findEgg() {
                 showDragon(dragon);
 
                 addXP(20);
+
+            }
+
+            // 🔁 DOUBLON
+            else {
+
+                message.innerHTML =
+                    `🔁 Doublon !<br><br>
+                    ${dragon.emoji}<br>
+                    <b>${dragon.name}</b><br>
+                    ⭐ +25 XP`;
+
+                addXP(25);
             }
 
             button.disabled = false;
@@ -239,23 +251,25 @@ function showDragon(dragon) {
     const dragonName =
         document.getElementById("dragon-name");
 
-    dragonName.textContent =
-        dragon.name;
-
     const dragonImage =
         document.querySelector(".dragon-image");
-
-    dragonImage.textContent =
-        dragon.emoji;
 
     const rarity =
         document.querySelector(".rarity");
 
+    const element =
+        document.querySelector(
+            ".dragon-info > p:not(.rarity)"
+        );
+
+    dragonName.textContent =
+        dragon.name;
+
+    dragonImage.textContent =
+        dragon.emoji;
+
     rarity.textContent =
         dragon.rarity.toUpperCase();
-
-    const element =
-        document.querySelector(".dragon-info > p:not(.rarity)");
 
     element.textContent =
         "🐉 Dragon de " + dragon.element;
@@ -277,7 +291,7 @@ function addXP(amount) {
         coins += 25;
 
         alert(
-            "🎉 Ton dragon gagne un niveau !\n\n💰 +25 pièces"
+            "🎉 Niveau supérieur !\n\n💰 +25 pièces"
         );
     }
 
@@ -302,21 +316,17 @@ function feedDragon() {
 
     food--;
 
-    hunger += 10;
+    hunger = Math.min(
+        100,
+        hunger + 10
+    );
 
-    if (hunger > 100) {
-        hunger = 100;
-    }
-
-    happiness += 3;
-
-    if (happiness > 100) {
-        happiness = 100;
-    }
+    happiness = Math.min(
+        100,
+        happiness + 3
+    );
 
     addXP(5);
-
-    updateScreen();
 }
 
 
@@ -326,21 +336,17 @@ function feedDragon() {
 
 function washDragon() {
 
-    cleanliness += 15;
+    cleanliness = Math.min(
+        100,
+        cleanliness + 15
+    );
 
-    if (cleanliness > 100) {
-        cleanliness = 100;
-    }
-
-    happiness += 2;
-
-    if (happiness > 100) {
-        happiness = 100;
-    }
+    happiness = Math.min(
+        100,
+        happiness + 2
+    );
 
     addXP(5);
-
-    updateScreen();
 }
 
 
@@ -350,20 +356,17 @@ function washDragon() {
 
 function playDragon() {
 
-    happiness += 12;
-
-    if (happiness > 100) {
-        happiness = 100;
-    }
+    happiness = Math.min(
+        100,
+        happiness + 12
+    );
 
     addXP(10);
-
-    updateScreen();
 }
 
 
 // ==========================================
-// 🔄 METTRE À JOUR L'ÉCRAN
+// 🔄 ACTUALISER L'ÉCRAN
 // ==========================================
 
 function updateScreen() {
@@ -398,5 +401,5 @@ function updateScreen() {
 updateScreen();
 
 console.log(
-    "🐉 Draconia est lancé !"
+    "🐉 Draconia est prêt !"
 );
