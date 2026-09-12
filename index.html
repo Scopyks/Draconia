@@ -130,7 +130,7 @@
 
 
 
-        <!-- EXPLORATION -->
+        <!-- EXPLORATION DES DRAGONS -->
 
         <section class="egg-card">
 
@@ -164,6 +164,151 @@
 
 
             <p id="egg-message"></p>
+
+        </section>
+
+
+
+        <!-- ================================================== -->
+        <!-- RÉCOLTE DES RESSOURCES -->
+        <!-- ================================================== -->
+
+        <section class="gathering-section">
+
+            <div class="gathering-header">
+
+                <div>
+
+                    <p class="small-title">
+                        RESSOURCES
+                    </p>
+
+
+                    <h2>
+                        🌿 Explorer la nature
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p class="gathering-description">
+                Pars à la recherche de ressources pour
+                remplir ton sac et préparer la nourriture
+                de tes dragons.
+            </p>
+
+
+
+            <!-- FORÊT -->
+
+            <div class="gathering-location">
+
+                <div class="gathering-location-icon">
+                    🌲
+                </div>
+
+
+                <div class="gathering-location-info">
+
+                    <h3>
+                        Forêt de Draconia
+                    </h3>
+
+
+                    <p>
+                        Pommes, baies, herbes,
+                        champignons et insectes.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="gather-button"
+                    onclick="gatherResources('forest')"
+                >
+                    🌿 Récolter
+                </button>
+
+            </div>
+
+
+
+            <!-- PLAINE -->
+
+            <div class="gathering-location">
+
+                <div class="gathering-location-icon">
+                    🌾
+                </div>
+
+
+                <div class="gathering-location-info">
+
+                    <h3>
+                        Grandes plaines
+                    </h3>
+
+
+                    <p>
+                        Légumes, herbes et autres
+                        ressources sauvages.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="gather-button"
+                    onclick="gatherResources('plains')"
+                >
+                    🥕 Récolter
+                </button>
+
+            </div>
+
+
+
+            <!-- PÊCHE -->
+
+            <div class="gathering-location fishing-location">
+
+                <div class="gathering-location-icon">
+                    🎣
+                </div>
+
+
+                <div class="gathering-location-info">
+
+                    <h3>
+                        Lac de Draconia
+                    </h3>
+
+
+                    <p>
+                        Pars pêcher pour essayer
+                        d'obtenir du poisson.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="gather-button"
+                    onclick="goFishing()"
+                >
+                    🎣 Pêcher
+                </button>
+
+            </div>
+
+
+            <p
+                id="gathering-message"
+                class="gathering-message"
+            ></p>
 
         </section>
 
@@ -847,7 +992,7 @@
     la nouvelle version de script.js.
 -->
 
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 
 </body>
 
