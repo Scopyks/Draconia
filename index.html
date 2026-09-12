@@ -48,7 +48,7 @@
             </span>
 
             <span>
-                🥕 <b id="food">10</b>
+                🍖 <b id="food">10</b>
             </span>
 
         </div>
@@ -282,7 +282,6 @@
 
             <div class="dragondex-header">
 
-
                 <div>
 
                     <p class="small-title">
@@ -327,7 +326,7 @@
 
 
     <!-- ================================================== -->
-    <!-- ÉCRAN : SAC -->
+    <!-- ÉCRAN : SAC / RESSOURCES -->
     <!-- ================================================== -->
 
     <main
@@ -336,25 +335,382 @@
         style="display: none;"
     >
 
-        <section class="weather-card">
-
-            <div>
-
-                <p class="small-title">
-                    INVENTAIRE
-                </p>
+        <section class="inventory-section">
 
 
-                <h2>
-                    🎒 Ton sac
-                </h2>
+            <!-- EN-TÊTE DU SAC -->
+
+            <div class="inventory-header">
+
+                <div>
+
+                    <p class="small-title">
+                        RESSOURCES
+                    </p>
 
 
-                <p>
-                    Ton inventaire sera bientôt disponible.
-                </p>
+                    <h2>
+                        🎒 Mon sac
+                    </h2>
+
+                </div>
+
+
+                <div class="inventory-counter">
+
+                    <b id="inventory-total">
+                        0
+                    </b>
+
+                    objet(s)
+
+                </div>
 
             </div>
+
+
+            <p class="inventory-description">
+                Récupère des ressources dans Draconia
+                pour nourrir tes dragons et préparer
+                de délicieuses recettes.
+            </p>
+
+
+
+            <!-- ================================================== -->
+            <!-- NOURRITURE -->
+            <!-- ================================================== -->
+
+            <section class="inventory-category">
+
+                <div class="inventory-category-header">
+
+                    <h3>
+                        🍖 Nourriture
+                    </h3>
+
+                    <span>
+                        Aliments pour tes dragons
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="food-inventory"
+                    class="inventory-grid"
+                >
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🍖
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Viande
+                            </h4>
+
+                            <p>
+                                Aliment de base
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-meat"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🐟
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Poisson
+                            </h4>
+
+                            <p>
+                                Peut être pêché
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-fish"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🍎
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Pomme
+                            </h4>
+
+                            <p>
+                                Fruit à récolter
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-apple"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🍓
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Baie
+                            </h4>
+
+                            <p>
+                                Fruit sauvage
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-berry"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================== -->
+            <!-- RESSOURCES DE RÉCOLTE -->
+            <!-- ================================================== -->
+
+            <section class="inventory-category">
+
+                <div class="inventory-category-header">
+
+                    <h3>
+                        🌿 Récolte
+                    </h3>
+
+                    <span>
+                        Ressources trouvées dans la nature
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="gathering-inventory"
+                    class="inventory-grid"
+                >
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🌿
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Herbe
+                            </h4>
+
+                            <p>
+                                Plante sauvage
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-herb"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🍄
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Champignon
+                            </h4>
+
+                            <p>
+                                Ressource forestière
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-mushroom"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🥕
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Légume
+                            </h4>
+
+                            <p>
+                                Peut être récolté
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-vegetable"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🐛
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Insecte
+                            </h4>
+
+                            <p>
+                                Ressource sauvage
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="resource-insect"
+                            class="inventory-item-count"
+                        >
+                            0
+                        </b>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================== -->
+            <!-- CUISINE -->
+            <!-- ================================================== -->
+
+            <section class="cooking-preview">
+
+                <div class="cooking-preview-icon">
+                    🍲
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Marmite
+                    </h3>
+
+
+                    <p>
+                        Bientôt, tu pourras utiliser
+                        tes ressources pour créer
+                        des recettes pour tes dragons.
+                    </p>
+
+                </div>
+
+            </section>
+
 
         </section>
 
