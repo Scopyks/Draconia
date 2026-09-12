@@ -115,6 +115,7 @@ const dragons = [
 const WEATHER_STORAGE_KEY =
     "draconiaDailyWeatherV2";
 
+
 const weatherTypes = [
 
     {
@@ -212,7 +213,6 @@ function getFranceDateParts() {
 
 
     return result;
-
 }
 
 
@@ -235,7 +235,6 @@ function getFranceHour() {
 
 
     return Number(hourPart.value);
-
 }
 
 
@@ -246,7 +245,6 @@ function getTodayDate() {
 
 
     return `${parts.year}-${parts.month}-${parts.day}`;
-
 }
 
 
@@ -261,7 +259,6 @@ function isNight() {
 
 
     return hour >= 21 || hour < 6;
-
 }
 
 
@@ -282,7 +279,6 @@ function generateTemperature(weather) {
         Math.random() *
         (max - min + 1)
     ) + min;
-
 }
 
 
@@ -431,10 +427,6 @@ function updateWeatherDisplay() {
     }
 
 
-    // ==================================================
-    // TEMPÉRATURE
-    // ==================================================
-
     if (
         temperatureElement &&
         dailyWeather.temperature !== undefined
@@ -445,10 +437,6 @@ function updateWeatherDisplay() {
 
     }
 
-
-    // ==================================================
-    // NUIT
-    // ==================================================
 
     if (isNight()) {
 
@@ -472,10 +460,6 @@ function updateWeatherDisplay() {
 
     }
 
-
-    // ==================================================
-    // JOUR
-    // ==================================================
 
     weatherElement.textContent =
         `${dailyWeather.icon} ${dailyWeather.name}`;
@@ -705,32 +689,40 @@ function saveDiscoveredDragons(list) {
 
 
 // ======================================================
-// CHOIX DE RARETÉ
+// CHANCE DE RARETÉ
 // ======================================================
 
 function chooseRarity() {
 
     const random =
-        Math.random();
+        Math.random() * 100;
 
 
-    if (random < 0.55) {
+    if (random < 55) {
+
         return "Commun";
+
     }
 
 
-    if (random < 0.80) {
+    if (random < 80) {
+
         return "Peu commun";
+
     }
 
 
-    if (random < 0.94) {
+    if (random < 93) {
+
         return "Rare";
+
     }
 
 
-    if (random < 0.99) {
+    if (random < 99) {
+
         return "Épique";
+
     }
 
 
@@ -748,6 +740,31 @@ function findEgg() {
     const discovered =
         getDiscoveredDragons();
 
+
+    // ==================================================
+    // CHANCE DE TROUVER UN ŒUF
+    // ==================================================
+
+    const eggChance =
+        Math.random();
+
+
+    // 40 % de chance de ne rien trouver.
+    if (eggChance >= 0.60) {
+
+        showEggMessage(
+            "🌿 Tu explores les environs... mais tu ne trouves rien cette fois."
+        );
+
+
+        return;
+
+    }
+
+
+    // ==================================================
+    // CHOIX DE LA RARETÉ
+    // ==================================================
 
     const rarity =
         chooseRarity();
@@ -771,6 +788,10 @@ function findEgg() {
 
     }
 
+
+    // ==================================================
+    // INFLUENCE DE LA MÉTÉO
+    // ==================================================
 
     const bonus =
         getWeatherBonus();
@@ -824,6 +845,10 @@ function findEgg() {
     }
 
 
+    // ==================================================
+    // CHOIX DU DRAGON
+    // ==================================================
+
     const dragon =
         boostedDragons[
             Math.floor(
@@ -833,8 +858,16 @@ function findEgg() {
         ];
 
 
+    // ==================================================
+    // XP
+    // ==================================================
+
     let xpGain = 10;
 
+
+    // ==================================================
+    // DRAGON DÉJÀ DÉCOUVERT
+    // ==================================================
 
     if (
         discovered.includes(
@@ -844,11 +877,19 @@ function findEgg() {
 
         xpGain = 5;
 
+
         showEggMessage(
-            `🔁 Tu as retrouvé ${dragon.name} ! +5 XP`
+            `🔁 Tu trouves un œuf... c'est ${dragon.name} ! Doublon, +5 XP.`
         );
 
-    } else {
+    }
+
+
+    // ==================================================
+    // NOUVEAU DRAGON
+    // ==================================================
+
+    else {
 
         discovered.push(
             dragon.id
@@ -861,11 +902,15 @@ function findEgg() {
 
 
         showEggMessage(
-            `🎉 Nouveau dragon : ${dragon.name} ! +10 XP`
+            `🎉 Un œuf ! Tu découvres ${dragon.name} ! +10 XP`
         );
 
     }
 
+
+    // ==================================================
+    // XP ET NIVEAU
+    // ==================================================
 
     player.xp += xpGain;
 
@@ -876,12 +921,17 @@ function findEgg() {
 
         player.xp -= 100;
 
+
         showEggMessage(
             `🎉 Niveau supérieur ! Tu es maintenant niveau ${player.level}.`
         );
 
     }
 
+
+    // ==================================================
+    // AFFICHAGE
+    // ==================================================
 
     displayDragon(dragon);
 
@@ -1332,7 +1382,7 @@ function initGame() {
 
 
 // ======================================================
-// MISE À JOUR AUTOMATIQUE
+// MISE À JOUR DE LA MÉTÉO
 // ======================================================
 
 setInterval(
