@@ -229,6 +229,119 @@ button {
 
 
 /* ==========================================
+   RÉCOLTE DES RESSOURCES
+   ========================================== */
+
+.gathering-section {
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
+}
+
+.gathering-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.gathering-header h2 {
+    font-size: 21px;
+}
+
+.gathering-description {
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+
+/* ==========================================
+   LIEUX DE RÉCOLTE
+   ========================================== */
+
+.gathering-location {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    background: #22243c;
+    border: 1px solid #292b48;
+    border-radius: 15px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.gathering-location:last-of-type {
+    margin-bottom: 0;
+}
+
+.gathering-location-icon {
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #292b48;
+    border-radius: 13px;
+    font-size: 26px;
+}
+
+.gathering-location-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.gathering-location-info h3 {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.gathering-location-info p {
+    color: #8589ad;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.gather-button {
+    border: none;
+    background: #795cff;
+    color: #ffffff;
+    border-radius: 11px;
+    padding: 10px 9px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.gather-button:active {
+    transform: scale(0.95);
+}
+
+.gather-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.fishing-location {
+    margin-top: 2px;
+}
+
+.gathering-message {
+    min-height: 20px;
+    margin-top: 14px;
+    color: #c5c8e5;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+
+/* ==========================================
    PAGE DRAGONS
    ========================================== */
 
@@ -469,6 +582,16 @@ button {
     line-height: 1.5;
 }
 
+.no-dragons button {
+    margin-top: 16px;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 16px;
+    background: #795cff;
+    color: #ffffff;
+    font-weight: bold;
+}
+
 
 /* ==========================================
    DRAGON
@@ -676,6 +799,171 @@ button {
 
 
 /* ==========================================
+   INVENTAIRE
+   ========================================== */
+
+.inventory-section {
+    width: 100%;
+}
+
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.inventory-header h2 {
+    font-size: 22px;
+}
+
+.inventory-counter {
+    flex-shrink: 0;
+    background: #292b48;
+    color: #aaaed0;
+    padding: 8px 11px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.inventory-counter b {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.inventory-description {
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+
+/* ==========================================
+   CATÉGORIES DE L'INVENTAIRE
+   ========================================== */
+
+.inventory-category {
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.inventory-category-header {
+    margin-bottom: 13px;
+}
+
+.inventory-category-header h3 {
+    font-size: 17px;
+    margin-bottom: 4px;
+}
+
+.inventory-category-header span {
+    color: #8589ad;
+    font-size: 11px;
+}
+
+
+/* ==========================================
+   GRILLE DES RESSOURCES
+   ========================================== */
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.inventory-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    padding: 10px;
+    background: #22243c;
+    border-radius: 14px;
+}
+
+.inventory-item-icon {
+    width: 39px;
+    min-width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #292b48;
+    border-radius: 10px;
+    font-size: 21px;
+}
+
+.inventory-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.inventory-item-info h4 {
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.inventory-item-info p {
+    color: #8589ad;
+    font-size: 9px;
+    line-height: 1.3;
+}
+
+.inventory-item-count {
+    flex-shrink: 0;
+    min-width: 24px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+
+/* ==========================================
+   APERÇU DE LA MARMITE
+   ========================================== */
+
+.cooking-preview {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 17px;
+    margin-bottom: 14px;
+}
+
+.cooking-preview-icon {
+    width: 52px;
+    min-width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #242641;
+    border-radius: 14px;
+    font-size: 27px;
+}
+
+.cooking-preview h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.cooking-preview p {
+    color: #8589ad;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+
+/* ==========================================
    NAVIGATION DU BAS
    ========================================== */
 
@@ -783,4 +1071,42 @@ button {
     .dragon-stats {
         gap: 5px;
     }
+
+    .gathering-section {
+        padding: 14px;
+    }
+
+    .gathering-location {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .gathering-location-icon {
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        font-size: 23px;
+    }
+
+    .gather-button {
+        padding: 9px 7px;
+        font-size: 10px;
+    }
+
+    .inventory-section {
+        width: 100%;
+    }
+
+    .inventory-category {
+        padding: 13px;
+    }
+
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inventory-item {
+        padding: 10px;
+    }
+
 }
