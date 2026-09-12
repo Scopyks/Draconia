@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Draconia</title>
 
     <link rel="stylesheet" href="style.css">
@@ -10,10 +12,148 @@
 
 <body>
 
-    <h1>🐉 Draconia</h1>
+    <main class="game">
 
-    <p>Bienvenue dans ton refuge.</p>
+        <!-- Barre supérieure -->
+        <header class="top-bar">
+
+            <div class="logo">
+                <span class="logo-icon">🐉</span>
+
+                <div>
+                    <h1>Draconia</h1>
+                    <span>Le monde des dragons</span>
+                </div>
+            </div>
+
+            <div class="resources">
+
+                <div class="resource">
+                    🪙 <span id="coins">250</span>
+                </div>
+
+                <div class="resource">
+                    💎 <span id="gems">15</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Informations météo -->
+        <section class="weather-card">
+
+            <div class="weather-icon">
+                ☀️
+            </div>
+
+            <div>
+                <strong>22°C</strong>
+                <span>Paris · Ensoleillé</span>
+            </div>
+
+            <div class="weather-status">
+                Conditions favorables
+            </div>
+
+        </section>
+
+
+        <!-- Zone principale -->
+        <section class="dragon-area">
+
+            <div class="dragon-glow"></div>
+
+            <div class="dragon-placeholder">
+                🐲
+            </div>
+
+            <div class="dragon-info">
+
+                <span class="dragon-rarity">
+                    ★ Commun
+                </span>
+
+                <h2>Ton dragon</h2>
+
+                <div class="level">
+                    Niveau 1
+                </div>
+
+                <div class="xp-container">
+
+                    <div class="xp-bar">
+                        <div class="xp-progress"></div>
+                    </div>
+
+                    <span>72 / 100 XP</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Actions -->
+        <section class="actions">
+
+            <button class="action-card">
+                <span>🍖</span>
+                <strong>Nourrir</strong>
+                <small>Prendre soin</small>
+            </button>
+
+            <button class="action-card">
+                <span>🧼</span>
+                <strong>Laver</strong>
+                <small>Nettoyer</small>
+            </button>
+
+            <button class="action-card">
+                <span>🎮</span>
+                <strong>Jouer</strong>
+                <small>Mini-jeu</small>
+            </button>
+
+        </section>
+
+
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+
+            <button class="nav-item active">
+                <span>🏡</span>
+                <small>Refuge</small>
+            </button>
+
+            <button class="nav-item">
+                <span>🥚</span>
+                <small>Œufs</small>
+            </button>
+
+            <button class="nav-item">
+                <span>🐉</span>
+                <small>DragonDex</small>
+            </button>
+
+            <button class="nav-item">
+                <span>🎒</span>
+                <small>Sac</small>
+            </button>
+
+            <button class="nav-item">
+                <span>👤</span>
+                <small>Profil</small>
+            </button>
+
+        </nav>
+
+    </main>
 
     <script src="script.js"></script>
+
 </body>
+
 </html>
