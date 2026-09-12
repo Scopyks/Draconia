@@ -12,10 +12,7 @@ let player = {
     coins: 100,
     food: 10,
     xp: 0,
-    level: 1,
-    hunger: 80,
-    happiness: 70,
-    cleanliness: 90
+    level: 1
 };
 
 
@@ -619,7 +616,7 @@ function updatePlayerDisplay() {
 
 
 // ======================================================
-// BARRE D'XP
+// BARRE D'XP DU JOUEUR
 // ======================================================
 
 function updateXPBar() {
@@ -689,6 +686,130 @@ function saveDiscoveredDragons(list) {
 
 
 // ======================================================
+// DRAGONS POSSÉDÉS
+// ======================================================
+
+function getOwnedDragons() {
+
+    const saved =
+        localStorage.getItem(
+            "draconiaOwnedDragons"
+        );
+
+
+    if (!saved) {
+        return [];
+    }
+
+
+    try {
+
+        return JSON.parse(saved);
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+function saveOwnedDragons(list) {
+
+    localStorage.setItem(
+        "draconiaOwnedDragons",
+        JSON.stringify(list)
+    );
+
+}
+
+
+// ======================================================
+// CRÉATION D'UN DRAGON POSSÉDÉ
+// ======================================================
+
+function createOwnedDragon(dragon) {
+
+    return {
+
+        id: dragon.id,
+
+        name: dragon.name,
+
+        element: dragon.element,
+
+        rarity: dragon.rarity,
+
+        icon: dragon.icon,
+
+        level: 1,
+
+        xp: 0,
+
+        hunger: 80,
+
+        happiness: 70,
+
+        cleanliness: 90
+
+    };
+
+}
+
+
+// ======================================================
+// RÉCUPÉRER UN DRAGON
+// ======================================================
+
+function getOwnedDragon(dragonId) {
+
+    const ownedDragons =
+        getOwnedDragons();
+
+
+    return ownedDragons.find(
+        dragon =>
+            dragon.id === dragonId
+    );
+
+}
+
+
+// ======================================================
+// XP D'UN DRAGON
+// ======================================================
+
+function addDragonXP(
+    dragon,
+    amount
+) {
+
+    dragon.xp += amount;
+
+
+    let levelUp = false;
+
+
+    while (
+        dragon.xp >= 100
+    ) {
+
+        dragon.xp -= 100;
+
+        dragon.level += 1;
+
+        levelUp = true;
+
+    }
+
+
+    return levelUp;
+
+}
+
+
+// ======================================================
 // CHANCE DE RARETÉ
 // ======================================================
 
@@ -741,6 +862,10 @@ function findEgg() {
         getDiscoveredDragons();
 
 
+    const owned =
+        getOwnedDragons();
+
+
     // ==================================================
     // CHANCE DE TROUVER UN ŒUF
     // ==================================================
@@ -749,7 +874,6 @@ function findEgg() {
         Math.random();
 
 
-    // 40 % de chance de ne rien trouver.
     if (eggChance >= 0.60) {
 
         showEggMessage(
@@ -859,37 +983,14 @@ function findEgg() {
 
 
     // ==================================================
-    // XP
-    // ==================================================
-
-    let xpGain = 10;
-
-
-    // ==================================================
-    // DRAGON DÉJÀ DÉCOUVERT
-    // ==================================================
-
-    if (
-        discovered.includes(
-            dragon.id
-        )
-    ) {
-
-        xpGain = 5;
-
-
-        showEggMessage(
-            `🔁 Tu trouves un œuf... c'est ${dragon.name} ! Doublon, +5 XP.`
-        );
-
-    }
-
-
-    // ==================================================
     // NOUVEAU DRAGON
     // ==================================================
 
-    else {
+    if (
+        !discovered.includes(
+            dragon.id
+        )
+    ) {
 
         discovered.push(
             dragon.id
@@ -901,43 +1002,102 @@ function findEgg() {
         );
 
 
-        showEggMessage(
-            `🎉 Un œuf ! Tu découvres ${dragon.name} ! +10 XP`
+        const newDragon =
+            createOwnedDragon(
+                dragon
+            );
+
+
+        owned.push(
+            newDragon
         );
+
+
+        saveOwnedDragons(
+            owned
+        );
+
+
+        player.xp += 10;
+
+
+        if (player.xp >= 100) {
+
+            player.level += 1;
+
+            player.xp -= 100;
+
+
+            showEggMessage(
+                `🎉 ${dragon.name} rejoint ton refuge ! Tu passes niveau ${player.level} !`
+            );
+
+        } else {
+
+            showEggMessage(
+                `🎉 Un œuf ! Tu découvres ${dragon.name} ! +10 XP`
+            );
+
+        }
 
     }
 
 
     // ==================================================
-    // XP ET NIVEAU
+    // DRAGON DÉJÀ DÉCOUVERT
     // ==================================================
 
-    player.xp += xpGain;
+    else {
+
+        const ownedDragon =
+            owned.find(
+                currentDragon =>
+                    currentDragon.id ===
+                    dragon.id
+            );
 
 
-    if (player.xp >= 100) {
+        if (ownedDragon) {
 
-        player.level += 1;
+            const levelUp =
+                addDragonXP(
+                    ownedDragon,
+                    5
+                );
 
-        player.xp -= 100;
+
+            saveOwnedDragons(
+                owned
+            );
 
 
-        showEggMessage(
-            `🎉 Niveau supérieur ! Tu es maintenant niveau ${player.level}.`
-        );
+            player.xp += 5;
+
+
+            if (levelUp) {
+
+                showEggMessage(
+                    `🔁 Doublon ! ${dragon.name} gagne 5 XP et passe niveau ${ownedDragon.level} !`
+                );
+
+            } else {
+
+                showEggMessage(
+                    `🔁 Tu trouves un œuf... c'est ${dragon.name} ! +5 XP pour ton dragon.`
+                );
+
+            }
+
+        }
 
     }
 
-
-    // ==================================================
-    // AFFICHAGE
-    // ==================================================
-
-    displayDragon(dragon);
-
-    updateDragonDex();
 
     updatePlayerDisplay();
+
+    renderOwnedDragons();
+
+    updateDragonDex();
 
     savePlayer();
 
@@ -978,65 +1138,246 @@ function showEggMessage(message) {
 
 
 // ======================================================
-// AFFICHAGE DU DRAGON
+// AFFICHAGE DES DRAGONS POSSÉDÉS
 // ======================================================
 
-function displayDragon(dragon) {
+function renderOwnedDragons() {
 
-    const image =
+    const list =
         document.getElementById(
-            "dragon-image"
+            "owned-dragons-list"
         );
 
 
-    const name =
+    const emptyMessage =
         document.getElementById(
-            "dragon-name"
+            "no-dragons"
         );
 
 
-    const rarity =
+    const counter =
         document.getElementById(
-            "dragon-rarity"
+            "owned-dragons-count"
         );
 
 
-    const element =
-        document.getElementById(
-            "dragon-element"
-        );
+    if (!list) {
+        return;
+    }
 
 
-    if (image) {
+    const owned =
+        getOwnedDragons();
 
-        image.textContent =
-            dragon.icon;
+
+    if (counter) {
+
+        counter.textContent =
+            owned.length;
 
     }
 
 
-    if (name) {
+    list.innerHTML = "";
 
-        name.textContent =
-            dragon.name;
+
+    if (owned.length === 0) {
+
+        if (emptyMessage) {
+
+            emptyMessage.style.display =
+                "block";
+
+        }
+
+
+        return;
+
+    }
+
+
+    if (emptyMessage) {
+
+        emptyMessage.style.display =
+            "none";
 
     }
 
 
-    if (rarity) {
+    owned.forEach(dragon => {
 
-        rarity.textContent =
-            dragon.rarity.toUpperCase();
+        const card =
+            document.createElement(
+                "article"
+            );
 
-    }
+
+        card.className =
+            "owned-dragon-card";
 
 
-    if (element) {
+        const xpPercentage =
+            Math.min(
+                dragon.xp,
+                100
+            );
 
-        element.textContent =
-            `${dragon.element} • Dragon découvert !`;
 
-    }
+        card.innerHTML = `
+
+            <div class="owned-dragon-top">
+
+                <div class="owned-dragon-icon">
+                    ${dragon.icon}
+                </div>
+
+
+                <div class="owned-dragon-info">
+
+                    <p class="rarity">
+                        ${dragon.rarity.toUpperCase()}
+                    </p>
+
+
+                    <h3>
+                        ${dragon.name}
+                    </h3>
+
+
+                    <p>
+                        ${dragon.element}
+                    </p>
+
+                </div>
+
+
+                <div class="dragon-level">
+
+                    <span>
+                        Niveau
+                    </span>
+
+                    <strong>
+                        ${dragon.level}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="dragon-xp-section">
+
+                <div class="dragon-xp-info">
+
+                    <span>
+                        ⭐ XP
+                    </span>
+
+                    <span>
+                        ${dragon.xp} / 100
+                    </span>
+
+                </div>
+
+
+                <div class="dragon-xp-bar">
+
+                    <div
+                        class="dragon-xp-fill"
+                        style="width: ${xpPercentage}%"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dragon-care-stats">
+
+                <div>
+
+                    <span>
+                        🍖
+                    </span>
+
+                    <small>
+                        Faim
+                    </small>
+
+                    <strong>
+                        ${dragon.hunger}%
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        😊
+                    </span>
+
+                    <small>
+                        Bonheur
+                    </small>
+
+                    <strong>
+                        ${dragon.happiness}%
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        🧼
+                    </span>
+
+                    <small>
+                        Propreté
+                    </small>
+
+                    <strong>
+                        ${dragon.cleanliness}%
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="dragon-care-actions">
+
+                <button
+                    onclick="feedDragon('${dragon.id}')"
+                >
+                    🍖 Nourrir
+                </button>
+
+
+                <button
+                    onclick="washDragon('${dragon.id}')"
+                >
+                    🧼 Laver
+                </button>
+
+
+                <button
+                    onclick="playDragon('${dragon.id}')"
+                >
+                    🎮 Jouer
+                </button>
+
+            </div>
+
+        `;
+
+
+        list.appendChild(card);
+
+    });
 
 }
 
@@ -1160,7 +1501,7 @@ function showPage(page) {
     const pages = [
 
         "home",
-        "eggs",
+        "dragons",
         "dex",
         "inventory",
         "profile"
@@ -1210,14 +1551,38 @@ function showPage(page) {
 
     }
 
+
+    if (page === "dragons") {
+
+        renderOwnedDragons();
+
+    }
+
 }
 
 
 // ======================================================
-// NOURRIR LE DRAGON
+// NOURRIR UN DRAGON
 // ======================================================
 
-function feedDragon() {
+function feedDragon(dragonId) {
+
+    const owned =
+        getOwnedDragons();
+
+
+    const dragon =
+        owned.find(
+            currentDragon =>
+                currentDragon.id ===
+                dragonId
+        );
+
+
+    if (!dragon) {
+        return;
+    }
+
 
     if (player.food <= 0) {
 
@@ -1233,21 +1598,26 @@ function feedDragon() {
     player.food -= 1;
 
 
-    player.hunger =
+    dragon.hunger =
         Math.min(
             100,
-            player.hunger + 15
+            dragon.hunger + 15
         );
 
 
-    player.happiness =
+    dragon.happiness =
         Math.min(
             100,
-            player.happiness + 3
+            dragon.happiness + 3
         );
 
 
-    updateCareDisplay();
+    saveOwnedDragons(
+        owned
+    );
+
+
+    renderOwnedDragons();
 
     updatePlayerDisplay();
 
@@ -1257,105 +1627,95 @@ function feedDragon() {
 
 
 // ======================================================
-// LAVER LE DRAGON
+// LAVER UN DRAGON
 // ======================================================
 
-function washDragon() {
+function washDragon(dragonId) {
 
-    player.cleanliness =
-        Math.min(
-            100,
-            player.cleanliness + 20
+    const owned =
+        getOwnedDragons();
+
+
+    const dragon =
+        owned.find(
+            currentDragon =>
+                currentDragon.id ===
+                dragonId
         );
 
 
-    player.happiness =
+    if (!dragon) {
+        return;
+    }
+
+
+    dragon.cleanliness =
         Math.min(
             100,
-            player.happiness + 5
+            dragon.cleanliness + 20
         );
 
 
-    updateCareDisplay();
+    dragon.happiness =
+        Math.min(
+            100,
+            dragon.happiness + 5
+        );
 
-    savePlayer();
+
+    saveOwnedDragons(
+        owned
+    );
+
+
+    renderOwnedDragons();
 
 }
 
 
 // ======================================================
-// JOUER AVEC LE DRAGON
+// JOUER AVEC UN DRAGON
 // ======================================================
 
-function playDragon() {
+function playDragon(dragonId) {
 
-    player.happiness =
-        Math.min(
-            100,
-            player.happiness + 15
+    const owned =
+        getOwnedDragons();
+
+
+    const dragon =
+        owned.find(
+            currentDragon =>
+                currentDragon.id ===
+                dragonId
         );
 
 
-    player.hunger =
+    if (!dragon) {
+        return;
+    }
+
+
+    dragon.happiness =
+        Math.min(
+            100,
+            dragon.happiness + 15
+        );
+
+
+    dragon.hunger =
         Math.max(
             0,
-            player.hunger - 5
+            dragon.hunger - 5
         );
 
 
-    updateCareDisplay();
-
-    savePlayer();
-
-}
+    saveOwnedDragons(
+        owned
+    );
 
 
-// ======================================================
-// AFFICHAGE DES SOINS
-// ======================================================
-
-function updateCareDisplay() {
-
-    const hunger =
-        document.getElementById(
-            "hunger"
-        );
-
-
-    const happiness =
-        document.getElementById(
-            "happiness"
-        );
-
-
-    const cleanliness =
-        document.getElementById(
-            "cleanliness"
-        );
-
-
-    if (hunger) {
-
-        hunger.textContent =
-            `${player.hunger}%`;
-
-    }
-
-
-    if (happiness) {
-
-        happiness.textContent =
-            `${player.happiness}%`;
-
-    }
-
-
-    if (cleanliness) {
-
-        cleanliness.textContent =
-            `${player.cleanliness}%`;
-
-    }
+    renderOwnedDragons();
 
 }
 
@@ -1374,9 +1734,9 @@ function initGame() {
 
     updatePlayerDisplay();
 
-    updateCareDisplay();
-
     updateDragonDex();
+
+    renderOwnedDragons();
 
 }
 
