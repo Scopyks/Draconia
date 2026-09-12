@@ -229,6 +229,248 @@ button {
 
 
 /* ==========================================
+   PAGE DRAGONS
+   ========================================== */
+
+.dragons-section {
+    width: 100%;
+}
+
+.dragons-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.dragons-header h2 {
+    font-size: 22px;
+}
+
+.dragons-counter {
+    flex-shrink: 0;
+    background: #292b48;
+    color: #aaaed0;
+    padding: 8px 11px;
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+.dragons-counter b {
+    color: #ffffff;
+}
+
+.dragons-description {
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+
+/* ==========================================
+   LISTE DES DRAGONS POSSÉDÉS
+   ========================================== */
+
+.owned-dragons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.owned-dragon-card {
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 16px;
+}
+
+.owned-dragon-top {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.owned-dragon-icon {
+    width: 70px;
+    min-width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #242641;
+    border-radius: 17px;
+    font-size: 38px;
+}
+
+.owned-dragon-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.owned-dragon-info h3 {
+    font-size: 19px;
+    margin-bottom: 4px;
+}
+
+.owned-dragon-info p {
+    color: #9da0bd;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.owned-dragon-info .rarity {
+    margin-bottom: 3px;
+}
+
+.dragon-level {
+    display: inline-block;
+    margin-top: 7px;
+    padding: 5px 8px;
+    background: #292b48;
+    border-radius: 8px;
+    color: #c5c8e5;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+
+/* ==========================================
+   XP DES DRAGONS
+   ========================================== */
+
+.dragon-xp-section {
+    margin-top: 15px;
+}
+
+.dragon-xp-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    color: #8589ad;
+    font-size: 11px;
+}
+
+.dragon-xp-info b {
+    color: #c5c8e5;
+}
+
+.dragon-xp-bar {
+    width: 100%;
+    height: 7px;
+    background: #292b48;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.dragon-xp-fill {
+    height: 100%;
+    width: 0%;
+    background: #8b6cff;
+    border-radius: 20px;
+    transition: width 0.3s ease;
+}
+
+
+/* ==========================================
+   STATS / SOINS DU DRAGON
+   ========================================== */
+
+.dragon-care-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.dragon-care-stat {
+    background: #22243c;
+    border-radius: 11px;
+    padding: 9px 5px;
+    text-align: center;
+}
+
+.dragon-care-stat span {
+    display: block;
+    font-size: 17px;
+    margin-bottom: 3px;
+}
+
+.dragon-care-stat small {
+    display: block;
+    color: #8589ad;
+    font-size: 9px;
+}
+
+.dragon-care-stat b {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+}
+
+
+/* ==========================================
+   ACTIONS DU DRAGON
+   ========================================== */
+
+.dragon-care-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.dragon-care-actions button {
+    border: 1px solid #292b48;
+    background: #22243c;
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 11px 5px;
+    font-size: 12px;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.dragon-care-actions button:active {
+    transform: scale(0.96);
+}
+
+.dragon-care-actions button:hover {
+    background: #292b48;
+}
+
+
+/* ==========================================
+   AUCUN DRAGON
+   ========================================== */
+
+.no-dragons {
+    text-align: center;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 35px 20px;
+}
+
+.no-dragons-icon {
+    font-size: 55px;
+    margin-bottom: 12px;
+}
+
+.no-dragons h3 {
+    font-size: 18px;
+    margin-bottom: 7px;
+}
+
+.no-dragons p {
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* ==========================================
    DRAGON
    ========================================== */
 
@@ -479,6 +721,57 @@ button {
 
 @media (max-width: 380px) {
 
+    .top-bar {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .top-bar h1 {
+        font-size: 19px;
+    }
+
+    .resources {
+        gap: 5px;
+    }
+
+    .resources span {
+        padding: 7px 8px;
+        font-size: 11px;
+    }
+
+    .page {
+        padding: 13px;
+    }
+
+    .dragons-header h2 {
+        font-size: 20px;
+    }
+
+    .dragons-counter {
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+
+    .owned-dragon-card {
+        padding: 13px;
+    }
+
+    .owned-dragon-icon {
+        width: 62px;
+        min-width: 62px;
+        height: 62px;
+        font-size: 33px;
+    }
+
+    .owned-dragon-info h3 {
+        font-size: 17px;
+    }
+
+    .dragon-care-actions button {
+        font-size: 11px;
+        padding: 10px 3px;
+    }
+
     .dragon-card {
         flex-direction: column;
     }
@@ -490,9 +783,4 @@ button {
     .dragon-stats {
         gap: 5px;
     }
-
-    .top-bar h1 {
-        font-size: 19px;
-    }
-
 }
