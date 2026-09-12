@@ -1,94 +1,113 @@
+/* ==========================================
+   DRACONIA - STYLE
+   ========================================== */
+
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 body {
     font-family: Arial, sans-serif;
-    background:
-        radial-gradient(circle at top, #26345c 0%, #101426 45%, #080b14 100%);
-    color: white;
+    background: #0f1020;
+    color: #ffffff;
     min-height: 100vh;
 }
 
 button {
     font-family: inherit;
-    border: none;
     cursor: pointer;
 }
 
 .game {
     width: 100%;
-    max-width: 520px;
-    margin: auto;
-    padding: 16px;
-    padding-bottom: 100px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 90px;
 }
 
-/* =========================
+
+/* ==========================================
    BARRE DU HAUT
-========================= */
+   ========================================== */
 
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    padding: 18px 16px;
+    background: #17182c;
+    border-bottom: 1px solid #292b48;
 }
 
 .top-bar h1 {
-    font-size: 25px;
+    font-size: 22px;
 }
 
 .top-bar p {
-    color: #9da7c7;
-    font-size: 13px;
     margin-top: 4px;
+    color: #999dbd;
+    font-size: 13px;
 }
 
 .resources {
     display: flex;
-    gap: 8px;
+    gap: 10px;
 }
 
 .resources span {
-    background: rgba(255,255,255,0.08);
+    background: #22243c;
     padding: 8px 10px;
     border-radius: 12px;
     font-size: 13px;
 }
 
-/* =========================
+
+/* ==========================================
+   PAGES
+   ========================================== */
+
+.page {
+    padding: 16px;
+}
+
+.page.active-page {
+    display: block;
+}
+
+
+/* ==========================================
    CARTES
-========================= */
+   ========================================== */
 
 .weather-card,
 .level-card,
 .egg-card,
 .dragon-card {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 22px;
-    padding: 18px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
     margin-bottom: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-/* =========================
+
+/* ==========================================
    MÉTÉO
-========================= */
+   ========================================== */
 
 .weather-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 18px;
 }
 
 .small-title {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    color: #8f9abb;
+    color: #8589ad;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
     margin-bottom: 7px;
 }
 
@@ -97,124 +116,138 @@ button {
 }
 
 .weather-card p:not(.small-title) {
-    color: #9da7c7;
-    font-size: 12px;
-    margin-top: 6px;
-    max-width: 240px;
+    color: #9da0bd;
+    font-size: 13px;
+    margin-top: 7px;
     line-height: 1.4;
 }
 
 .temperature {
-    font-size: 25px;
-    color: #ffd76a;
+    font-size: 24px;
 }
 
-/* =========================
+
+/* ==========================================
    XP
-========================= */
+   ========================================== */
+
+.level-card {
+    padding: 16px;
+}
 
 .level-info {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 9px;
     font-size: 13px;
-    margin-bottom: 8px;
-}
-
-.level-info span:last-child {
-    color: #9da7c7;
 }
 
 .xp-bar {
-    height: 9px;
-    background: #171c2c;
+    width: 100%;
+    height: 10px;
+    background: #292b48;
     border-radius: 20px;
     overflow: hidden;
 }
 
 #xp-fill {
-    width: 0%;
     height: 100%;
-    background: linear-gradient(90deg, #8b5cf6, #c084fc);
+    width: 0%;
+    background: #8b6cff;
     border-radius: 20px;
-    transition: width 0.3s;
+    transition: width 0.3s ease;
 }
 
-/* =========================
+
+/* ==========================================
    ŒUF
-========================= */
+   ========================================== */
 
 .egg-card {
     text-align: center;
-    padding: 22px;
+    padding: 24px 18px;
 }
 
 .egg {
-    font-size: 85px;
-    margin: 10px 0;
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
-    animation: floating 2.5s ease-in-out infinite;
+    font-size: 75px;
+    margin: 15px 0;
+    animation: floating 2s infinite ease-in-out;
 }
 
 @keyframes floating {
-    0%, 100% {
+
+    0% {
         transform: translateY(0);
     }
 
     50% {
         transform: translateY(-8px);
     }
+
+    100% {
+        transform: translateY(0);
+    }
+
 }
 
 .egg-card h2 {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
-.egg-card > p:not(.small-title):not(#egg-message) {
-    color: #9da7c7;
-    font-size: 13px;
+.egg-card p {
+    color: #9da0bd;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-#egg-button {
-    margin-top: 15px;
-    padding: 12px 22px;
+.egg-card button {
+    margin-top: 18px;
+    width: 100%;
+    border: none;
     border-radius: 14px;
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    padding: 14px;
+    background: #795cff;
     color: white;
+    font-size: 16px;
     font-weight: bold;
-    box-shadow: 0 7px 20px rgba(124,58,237,0.3);
 }
 
-#egg-button:active {
-    transform: scale(0.96);
+.egg-card button:active {
+    transform: scale(0.98);
 }
 
-#egg-message {
-    margin-top: 12px;
-    font-size: 13px;
-    color: #ffd76a;
+.egg-card button:disabled {
+    opacity: 0.6;
 }
 
-/* =========================
+#egg-message,
+#egg-message-page {
+    margin-top: 15px;
+    min-height: 20px;
+    color: #c5c8e5;
+}
+
+
+/* ==========================================
    DRAGON
-========================= */
+   ========================================== */
 
 .dragon-card {
     display: flex;
     gap: 15px;
-    align-items: center;
+    padding: 18px;
 }
 
 .dragon-image {
     width: 105px;
+    min-width: 105px;
     height: 105px;
-    border-radius: 25px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 62px;
-    background:
-        radial-gradient(circle, #4b2678, #17142c);
-    flex-shrink: 0;
+    background: #242641;
+    border-radius: 18px;
+    font-size: 48px;
 }
 
 .dragon-info {
@@ -222,7 +255,7 @@ button {
 }
 
 .rarity {
-    color: #c084fc;
+    color: #a991ff;
     font-size: 10px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -230,94 +263,179 @@ button {
 }
 
 .dragon-info h2 {
-    font-size: 20px;
+    font-size: 21px;
     margin-bottom: 5px;
 }
 
-.dragon-info > p:not(.rarity) {
-    color: #aeb6d0;
-    font-size: 12px;
+.dragon-info > p {
+    color: #9da0bd;
+    font-size: 13px;
 }
+
+
+/* ==========================================
+   STATS DU DRAGON
+   ========================================== */
 
 .dragon-stats {
     display: flex;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 15px;
 }
 
 .dragon-stats div {
-    background: rgba(255,255,255,0.06);
-    padding: 6px;
+    flex: 1;
+    background: #22243c;
     border-radius: 10px;
+    padding: 7px;
     text-align: center;
-    min-width: 50px;
 }
 
 .dragon-stats span {
     display: block;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .dragon-stats small {
     display: block;
-    color: #8993b0;
-    font-size: 8px;
-    margin-top: 2px;
+    color: #8589ad;
+    font-size: 9px;
+    margin-top: 3px;
 }
 
 .dragon-stats b {
-    font-size: 9px;
+    display: block;
+    font-size: 11px;
+    margin-top: 3px;
 }
 
-/* =========================
+
+/* ==========================================
    ACTIONS
-========================= */
+   ========================================== */
 
 .actions {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     gap: 10px;
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 }
 
 .actions button {
-    background: rgba(255,255,255,0.07);
+    flex: 1;
+    border: 1px solid #292b48;
+    background: #191a30;
     color: white;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 17px;
+    border-radius: 15px;
     padding: 13px 5px;
-    transition: 0.2s;
 }
 
-.actions button:hover {
-    background: rgba(255,255,255,0.12);
-}
-
-.actions button:active {
-    transform: scale(0.95);
-}
-
-.actions button:first-child {
-    color: #ffb86b;
-}
-
-.actions button:nth-child(2) {
-    color: #70d6ff;
-}
-
-.actions button:nth-child(3) {
-    color: #c084fc;
-}
-
-.actions span {
+.actions button span {
     display: block;
+    color: #9da0bd;
     font-size: 11px;
     margin-top: 5px;
 }
 
-/* =========================
-   NAVIGATION
-========================= */
+
+/* ==========================================
+   DRAGONDEX
+   ========================================== */
+
+.dragondex {
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 18px;
+}
+
+.dragondex-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dragondex-header h2 {
+    font-size: 21px;
+}
+
+.dex-counter {
+    background: #292b48;
+    padding: 8px 12px;
+    border-radius: 12px;
+    color: #aaaed0;
+}
+
+.dex-counter b {
+    color: white;
+}
+
+.dragondex-description {
+    color: #8589ad;
+    font-size: 13px;
+    margin: 8px 0 16px;
+}
+
+
+/* ==========================================
+   LISTE DES DRAGONS
+   ========================================== */
+
+.dragon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dex-dragon {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #22243c;
+    border-radius: 15px;
+}
+
+.dex-dragon-image {
+    width: 55px;
+    min-width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #292b48;
+    border-radius: 12px;
+    font-size: 27px;
+}
+
+.dex-dragon-info {
+    flex: 1;
+}
+
+.dex-dragon-info h3 {
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+
+.dex-dragon-info p {
+    color: #8f93b2;
+    font-size: 11px;
+}
+
+.dex-dragon-info span {
+    display: inline-block;
+    margin-top: 5px;
+    color: #a991ff;
+    font-size: 10px;
+}
+
+.dex-check {
+    font-size: 18px;
+}
+
+
+/* ==========================================
+   NAVIGATION DU BAS
+   ========================================== */
 
 .bottom-nav {
     position: fixed;
@@ -325,53 +443,56 @@ button {
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    max-width: 520px;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    padding: 10px 8px;
-    background: rgba(10,13,24,0.94);
-    backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(255,255,255,0.08);
+    max-width: 600px;
+    height: 72px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #17182c;
+    border-top: 1px solid #292b48;
+    z-index: 100;
 }
 
 .bottom-nav button {
+    flex: 1;
+    height: 100%;
+    border: none;
     background: transparent;
-    color: #737d9d;
-    font-size: 18px;
-    padding: 5px;
+    color: #707492;
+    font-size: 20px;
 }
 
 .bottom-nav button span {
     display: block;
+    margin-top: 3px;
     font-size: 9px;
-    margin-top: 4px;
 }
 
 .bottom-nav button.active {
-    color: #c084fc;
+    color: #a991ff;
 }
 
-/* =========================
-   PETIT ÉCRAN
-========================= */
 
-@media (max-width: 360px) {
+/* ==========================================
+   PETITS ÉCRANS
+   ========================================== */
 
-    .game {
-        padding: 12px;
+@media (max-width: 380px) {
+
+    .dragon-card {
+        flex-direction: column;
     }
 
     .dragon-image {
-        width: 85px;
-        height: 85px;
-        font-size: 50px;
+        width: 100%;
     }
 
     .dragon-stats {
-        gap: 4px;
+        gap: 5px;
     }
 
-    .dragon-stats div {
-        min-width: 43px;
+    .top-bar h1 {
+        font-size: 19px;
     }
+
 }
