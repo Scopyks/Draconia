@@ -12,10 +12,7 @@
 
     <title>Draconia 🐉</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -47,18 +44,11 @@
         <div class="resources">
 
             <span>
-                💰
-                <b id="coins">
-                    100
-                </b>
+                💰 <b id="coins">100</b>
             </span>
 
-
             <span>
-                🥕
-                <b id="food">
-                    10
-                </b>
+                🥕 <b id="food">10</b>
             </span>
 
         </div>
@@ -77,9 +67,7 @@
     >
 
 
-        <!-- ============================== -->
         <!-- MÉTÉO -->
-        <!-- ============================== -->
 
         <section class="weather-card">
 
@@ -89,6 +77,12 @@
                     MÉTÉO ACTUELLE
                 </p>
 
+
+                <!--
+                    IMPORTANT :
+                    Cette valeur n'est plus "Ensoleillé".
+                    Le JavaScript va remplir cette zone.
+                -->
 
                 <h2 id="weather">
                     🌦️ Chargement...
@@ -115,9 +109,7 @@
 
 
 
-        <!-- ============================== -->
         <!-- NIVEAU -->
-        <!-- ============================== -->
 
         <section class="level-card">
 
@@ -127,15 +119,8 @@
                     Niveau 1
                 </span>
 
-
                 <span>
-
-                    <b id="xp">
-                        0
-                    </b>
-
-                    / 100 XP
-
+                    <b id="xp">0</b> / 100 XP
                 </span>
 
             </div>
@@ -151,9 +136,7 @@
 
 
 
-        <!-- ============================== -->
-        <!-- EXPLORATION -->
-        <!-- ============================== -->
+        <!-- ŒUF -->
 
         <section class="egg-card">
 
@@ -192,9 +175,7 @@
 
 
 
-        <!-- ============================== -->
         <!-- DRAGON ACTUEL -->
-        <!-- ============================== -->
 
         <section class="dragon-card">
 
@@ -208,7 +189,6 @@
 
 
             <div class="dragon-info">
-
 
                 <p
                     class="rarity"
@@ -229,10 +209,6 @@
 
 
 
-                <!-- ============================== -->
-                <!-- STATS -->
-                <!-- ============================== -->
-
                 <div class="dragon-stats">
 
 
@@ -242,11 +218,9 @@
                             🍖
                         </span>
 
-
                         <small>
                             Faim
                         </small>
-
 
                         <b id="hunger">
                             80%
@@ -262,11 +236,9 @@
                             😊
                         </span>
 
-
                         <small>
                             Bonheur
                         </small>
-
 
                         <b id="happiness">
                             70%
@@ -282,18 +254,15 @@
                             🧼
                         </span>
 
-
                         <small>
                             Propreté
                         </small>
-
 
                         <b id="cleanliness">
                             90%
                         </b>
 
                     </div>
-
 
                 </div>
 
@@ -303,16 +272,12 @@
 
 
 
-        <!-- ============================== -->
         <!-- ACTIONS -->
-        <!-- ============================== -->
 
         <section class="actions">
 
 
-            <button
-                onclick="feedDragon()"
-            >
+            <button onclick="feedDragon()">
 
                 🍖
 
@@ -323,10 +288,7 @@
             </button>
 
 
-
-            <button
-                onclick="washDragon()"
-            >
+            <button onclick="washDragon()">
 
                 🧼
 
@@ -337,10 +299,7 @@
             </button>
 
 
-
-            <button
-                onclick="playDragon()"
-            >
+            <button onclick="playDragon()">
 
                 🎮
 
@@ -350,9 +309,7 @@
 
             </button>
 
-
         </section>
-
 
     </main>
 
@@ -368,9 +325,7 @@
         style="display: none;"
     >
 
-
         <section class="egg-card">
-
 
             <p class="small-title">
                 EXPLORATION DE DRACONIA
@@ -393,18 +348,14 @@
             </p>
 
 
-            <button
-                onclick="findEgg()"
-            >
+            <button onclick="findEgg()">
                 🔍 Explorer
             </button>
 
 
             <p id="egg-message-page"></p>
 
-
         </section>
-
 
     </main>
 
@@ -419,7 +370,6 @@
         class="page"
         style="display: none;"
     >
-
 
         <section class="dragondex">
 
@@ -441,7 +391,6 @@
                 </div>
 
 
-
                 <div class="dex-counter">
 
                     <b id="dex-count">
@@ -452,9 +401,7 @@
 
                 </div>
 
-
             </div>
-
 
 
             <p class="dragondex-description">
@@ -462,16 +409,12 @@
             </p>
 
 
-
             <div
                 class="dragon-list"
                 id="dragon-list"
-            >
-            </div>
-
+            ></div>
 
         </section>
-
 
     </main>
 
@@ -487,12 +430,9 @@
         style="display: none;"
     >
 
-
         <section class="weather-card">
 
-
             <div>
-
 
                 <p class="small-title">
                     INVENTAIRE
@@ -508,12 +448,9 @@
                     Ton inventaire sera bientôt disponible.
                 </p>
 
-
             </div>
 
-
         </section>
-
 
     </main>
 
@@ -529,12 +466,9 @@
         style="display: none;"
     >
 
-
         <section class="weather-card">
 
-
             <div>
-
 
                 <p class="small-title">
                     JOUEUR
@@ -551,12 +485,9 @@
                     arriveront bientôt.
                 </p>
 
-
             </div>
 
-
         </section>
-
 
     </main>
 
@@ -643,19 +574,18 @@
 
         </button>
 
-
     </nav>
-
 
 </div>
 
 
-<!-- ============================== -->
-<!-- SCRIPT -->
-<!-- ============================== -->
+<!--
+    IMPORTANT :
+    ?v=3 force le navigateur à charger
+    la nouvelle version de script.js.
+-->
 
-<script src="script.js"></script>
-
+<script src="script.js?v=3"></script>
 
 </body>
 
