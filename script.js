@@ -4,7 +4,7 @@
 
 
 // ==========================================
-// DONNÉES DU JEU
+// DONNÉES DU JOUEUR
 // ==========================================
 
 let xp = 0;
@@ -17,7 +17,7 @@ let cleanliness = 90;
 
 
 // ==========================================
-// LISTE DES DRAGONS
+// DRAGONS
 // ==========================================
 
 const dragons = [
@@ -106,7 +106,7 @@ const dragons = [
 
 
 // ==========================================
-// DRAGONS DÉJÀ DÉCOUVERTS
+// DRAGONS DÉCOUVERTS
 // ==========================================
 
 let discoveredDragons =
@@ -116,20 +116,290 @@ let discoveredDragons =
 
 
 // ==========================================
-// NAVIGATION ENTRE LES PAGES
+// MÉTÉO DE DRACONIA
+// ==========================================
+
+const weatherTypes = [
+
+    {
+        id: "sunny",
+        name: "Ensoleillé",
+        icon: "☀️",
+        description: "Un grand soleil illumine Draconia.",
+        element: "Lumière"
+    },
+
+    {
+        id: "cloudy",
+        name: "Nuageux",
+        icon: "🌤️",
+        description: "Le ciel est couvert de nuages.",
+        element: null
+    },
+
+    {
+        id: "rain",
+        name: "Pluie",
+        icon: "🌧️",
+        description: "Une pluie douce tombe sur Draconia.",
+        element: "Eau"
+    },
+
+    {
+        id: "storm",
+        name: "Orage",
+        icon: "⛈️",
+        description: "Un puissant orage traverse Draconia.",
+        element: "Foudre"
+    },
+
+    {
+        id: "snow",
+        name: "Neige",
+        icon: "❄️",
+        description: "Des flocons recouvrent Draconia.",
+        element: "Glace"
+    },
+
+    {
+        id: "fog",
+        name: "Brouillard",
+        icon: "🌫️",
+        description: "Un épais brouillard recouvre les terres.",
+        element: "Ombre"
+    },
+
+    {
+        id: "wind",
+        name: "Vent fort",
+        icon: "🌪️",
+        description: "De puissantes rafales traversent Draconia.",
+        element: "Air"
+    }
+
+];
+
+
+// ==========================================
+// MÉTÉO DU JOUR
+// ==========================================
+
+let dailyWeather = null;
+let dailyWeatherDate = null;
+
+
+// ==========================================
+// OBTENIR LA DATE DU JOUR
+// ==========================================
+
+function getTodayDate() {
+
+    const now = new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(now.getMonth() + 1)
+        .padStart(2, "0");
+
+    const day =
+        String(now.getDate())
+        .padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+// ==========================================
+// CHOISIR LA MÉTÉO DU JOUR
+// ==========================================
+
+function generateDailyWeather() {
+
+    const today =
+        getTodayDate();
+
+
+    // Si la météo existe déjà pour aujourd'hui,
+    // on la garde.
+
+    if (
+        dailyWeather &&
+        dailyWeatherDate === today
+    ) {
+        return;
+    }
+
+
+    // Vérifier la sauvegarde
+
+    const savedWeather =
+        localStorage.getItem(
+            "draconiaDailyWeather"
+        );
+
+
+    if (savedWeather) {
+
+        const data =
+            JSON.parse(savedWeather);
+
+
+        if (data.date === today) {
+
+            dailyWeatherDate =
+                data.date;
+
+            dailyWeather =
+                data.weather;
+
+            updateWeatherDisplay();
+
+            return;
+        }
+
+    }
+
+
+    // Nouvelle météo
+
+    const randomIndex =
+        Math.floor(
+            Math.random() *
+            weatherTypes.length
+        );
+
+
+    dailyWeather =
+        weatherTypes[randomIndex];
+
+    dailyWeatherDate =
+        today;
+
+
+    // Sauvegarder la météo
+
+    localStorage.setItem(
+        "draconiaDailyWeather",
+        JSON.stringify({
+
+            date: today,
+
+            weather: dailyWeather
+
+        })
+    );
+
+
+    updateWeatherDisplay();
+
+}
+
+
+// ==========================================
+// SAVOIR SI C'EST LA NUIT
+// ==========================================
+
+function isNight() {
+
+    const hour =
+        new Date().getHours();
+
+
+    return hour >= 21 || hour < 6;
+
+}
+
+
+// ==========================================
+// AFFICHER LA MÉTÉO
+// ==========================================
+
+function updateWeatherDisplay() {
+
+    if (!dailyWeather) {
+        return;
+    }
+
+
+    const weatherElement =
+        document.getElementById("weather");
+
+    const descriptionElement =
+        document.querySelector(
+            ".weather-card p:not(.small-title)"
+        );
+
+
+    if (!weatherElement) {
+        return;
+    }
+
+
+    if (isNight()) {
+
+        weatherElement.textContent =
+            "🌙 " +
+            dailyWeather.icon +
+            " Nuit • " +
+            dailyWeather.name;
+
+        if (descriptionElement) {
+
+            descriptionElement.textContent =
+                "La nuit est tombée sur Draconia. " +
+                dailyWeather.description;
+
+        }
+
+    } else {
+
+        weatherElement.textContent =
+            dailyWeather.icon +
+            " " +
+            dailyWeather.name;
+
+        if (descriptionElement) {
+
+            descriptionElement.textContent =
+                dailyWeather.description;
+
+        }
+
+    }
+
+}
+
+
+// ==========================================
+// CHANGER AUTOMATIQUEMENT L'AFFICHAGE
+// LORS DU PASSAGE JOUR / NUIT
+// ==========================================
+
+setInterval(
+    updateWeatherDisplay,
+    30000
+);
+
+
+// ==========================================
+// NAVIGATION
 // ==========================================
 
 function showPage(page) {
 
     const pages = [
+
         "home-page",
         "egg-page",
         "dex-page",
         "inventory-page",
         "profile-page"
+
     ];
 
-    // Cacher toutes les pages
 
     pages.forEach(function(pageId) {
 
@@ -137,95 +407,137 @@ function showPage(page) {
             document.getElementById(pageId);
 
         if (element) {
-            element.style.display = "none";
+
+            element.style.display =
+                "none";
+
         }
 
     });
 
 
-    // Afficher la page demandée
-
     let selectedPage = null;
 
+
     if (page === "home") {
+
         selectedPage =
-            document.getElementById("home-page");
+            document.getElementById(
+                "home-page"
+            );
+
     }
+
 
     if (page === "eggs") {
+
         selectedPage =
-            document.getElementById("egg-page");
+            document.getElementById(
+                "egg-page"
+            );
+
     }
+
 
     if (page === "dex") {
+
         selectedPage =
-            document.getElementById("dex-page");
+            document.getElementById(
+                "dex-page"
+            );
+
     }
+
 
     if (page === "inventory") {
+
         selectedPage =
-            document.getElementById("inventory-page");
+            document.getElementById(
+                "inventory-page"
+            );
+
     }
 
+
     if (page === "profile") {
+
         selectedPage =
-            document.getElementById("profile-page");
+            document.getElementById(
+                "profile-page"
+            );
+
     }
 
 
     if (selectedPage) {
-        selectedPage.style.display = "block";
+
+        selectedPage.style.display =
+            "block";
+
     }
 
 
-    // Réinitialiser les boutons
+    // Navigation active
 
-    const navButtons = document.querySelectorAll(
-        ".bottom-nav button"
-    );
+    const navButtons =
+        document.querySelectorAll(
+            ".bottom-nav button"
+        );
+
 
     navButtons.forEach(function(button) {
-        button.classList.remove("active");
+
+        button.classList.remove(
+            "active"
+        );
+
     });
 
 
-    // Activer le bon bouton
-
     if (page === "home") {
+
         document
             .getElementById("nav-home")
             .classList.add("active");
+
     }
 
+
     if (page === "eggs") {
+
         document
             .getElementById("nav-eggs")
             .classList.add("active");
+
     }
 
+
     if (page === "dex") {
+
         document
             .getElementById("nav-dex")
             .classList.add("active");
+
+        updateDragonDex();
+
     }
 
+
     if (page === "inventory") {
+
         document
             .getElementById("nav-inventory")
             .classList.add("active");
+
     }
 
+
     if (page === "profile") {
+
         document
             .getElementById("nav-profile")
             .classList.add("active");
-    }
 
-
-    // Mettre à jour le DragonDex
-
-    if (page === "dex") {
-        updateDragonDex();
     }
 
 }
@@ -237,25 +549,175 @@ function showPage(page) {
 
 function chooseRarity() {
 
-    const random = Math.random();
+    const random =
+        Math.random();
+
 
     if (random < 0.02) {
+
         return "Légendaire";
+
     }
+
 
     if (random < 0.07) {
+
         return "Épique";
+
     }
+
 
     if (random < 0.20) {
+
         return "Rare";
+
     }
+
 
     if (random < 0.45) {
+
         return "Peu commun";
+
     }
 
+
     return "Commun";
+
+}
+
+
+// ==========================================
+// BONUS DE MÉTÉO
+// ==========================================
+
+function getWeatherBonus(dragon) {
+
+    if (!dailyWeather) {
+        return 1;
+    }
+
+
+    const weather =
+        dailyWeather.id;
+
+
+    // Soleil
+
+    if (
+        weather === "sunny" &&
+        dragon.element === "Lumière"
+    ) {
+
+        return 3;
+
+    }
+
+
+    // Pluie
+
+    if (
+        weather === "rain" &&
+        dragon.element === "Eau"
+    ) {
+
+        return 3;
+
+    }
+
+
+    if (
+        weather === "rain" &&
+        dragon.element === "Nature"
+    ) {
+
+        return 1.5;
+
+    }
+
+
+    // Orage
+
+    if (
+        weather === "storm" &&
+        dragon.element === "Foudre"
+    ) {
+
+        return 4;
+
+    }
+
+
+    // Neige
+
+    if (
+        weather === "snow" &&
+        dragon.element === "Glace"
+    ) {
+
+        return 4;
+
+    }
+
+
+    // Brouillard
+
+    if (
+        weather === "fog" &&
+        dragon.element === "Ombre"
+    ) {
+
+        return 4;
+
+    }
+
+
+    // Vent
+
+    if (
+        weather === "wind" &&
+        dragon.element === "Air"
+    ) {
+
+        return 3;
+
+    }
+
+
+    // Nuit
+
+    if (isNight()) {
+
+        if (
+            dragon.element === "Ombre"
+        ) {
+
+            return 2.5;
+
+        }
+
+
+        if (
+            dragon.element === "Cosmique"
+        ) {
+
+            return 2;
+
+        }
+
+
+        if (
+            dragon.element === "Lumière"
+        ) {
+
+            return 0.5;
+
+        }
+
+    }
+
+
+    return 1;
+
 }
 
 
@@ -265,10 +727,9 @@ function chooseRarity() {
 
 function discoverDragon() {
 
-    const rarity = chooseRarity();
+    const rarity =
+        chooseRarity();
 
-
-    // Dragons correspondant à la rareté
 
     const possibleDragons =
         dragons.filter(function(dragon) {
@@ -278,23 +739,59 @@ function discoverDragon() {
         });
 
 
-    if (possibleDragons.length === 0) {
+    if (
+        possibleDragons.length === 0
+    ) {
+
         return null;
+
     }
 
 
-    // Choisir un dragon au hasard
+    // Donner plus de chances aux dragons
+    // correspondant à la météo.
 
-    const dragon =
-        possibleDragons[
-            Math.floor(
-                Math.random() *
-                possibleDragons.length
-            )
-        ];
+    const weightedList = [];
 
 
-    return dragon;
+    possibleDragons.forEach(
+        function(dragon) {
+
+            const bonus =
+                getWeatherBonus(dragon);
+
+
+            const copies =
+                Math.max(
+                    1,
+                    Math.round(bonus)
+                );
+
+
+            for (
+                let i = 0;
+                i < copies;
+                i++
+            ) {
+
+                weightedList.push(
+                    dragon
+                );
+
+            }
+
+        }
+    );
+
+
+    const randomIndex =
+        Math.floor(
+            Math.random() *
+            weightedList.length
+        );
+
+
+    return weightedList[randomIndex];
 
 }
 
@@ -306,30 +803,46 @@ function discoverDragon() {
 function findEgg() {
 
     const button =
-        document.getElementById("egg-button");
+        document.getElementById(
+            "egg-button"
+        );
+
 
     const messages = [
-        document.getElementById("egg-message"),
-        document.getElementById("egg-message-page")
+
+        document.getElementById(
+            "egg-message"
+        ),
+
+        document.getElementById(
+            "egg-message-page"
+        )
+
     ];
 
 
-    // Désactiver le bouton pendant la recherche
-
     if (button) {
+
         button.disabled = true;
-        button.textContent = "🔎 Recherche...";
+
+        button.textContent =
+            "🔎 Recherche...";
+
     }
 
 
-    messages.forEach(function(message) {
+    messages.forEach(
+        function(message) {
 
-        if (message) {
-            message.textContent =
-                "🌲 Tu explores Draconia...";
+            if (message) {
+
+                message.textContent =
+                    "🌲 Tu explores Draconia...";
+
+            }
+
         }
-
-    });
+    );
 
 
     setTimeout(function() {
@@ -342,14 +855,18 @@ function findEgg() {
 
         if (!foundEgg) {
 
-            messages.forEach(function(message) {
+            messages.forEach(
+                function(message) {
 
-                if (message) {
-                    message.textContent =
-                        "😔 Aucun œuf trouvé cette fois...";
+                    if (message) {
+
+                        message.textContent =
+                            "😔 Aucun œuf trouvé cette fois...";
+
+                    }
+
                 }
-
-            });
+            );
 
 
             addXP(3);
@@ -357,10 +874,9 @@ function findEgg() {
             resetExploreButton();
 
             return;
+
         }
 
-
-        // Trouver un dragon
 
         const dragon =
             discoverDragon();
@@ -371,59 +887,69 @@ function findEgg() {
             resetExploreButton();
 
             return;
+
         }
 
 
-        // Vérifier si le dragon est déjà découvert
-
         const alreadyDiscovered =
-            discoveredDragons.includes(dragon.id);
+            discoveredDragons.includes(
+                dragon.id
+            );
 
 
         if (alreadyDiscovered) {
 
-            messages.forEach(function(message) {
+            messages.forEach(
+                function(message) {
 
-                if (message) {
-                    message.textContent =
-                        "🥚 Tu as trouvé " +
-                        dragon.emoji +
-                        " " +
-                        dragon.name +
-                        " !\n" +
-                        "✨ Mais tu possèdes déjà ce dragon.";
+                    if (message) {
+
+                        message.textContent =
+                            "🥚 Tu as trouvé " +
+                            dragon.emoji +
+                            " " +
+                            dragon.name +
+                            " ! " +
+                            "✨ Mais tu possèdes déjà ce dragon.";
+
+                    }
+
                 }
+            );
 
-            });
-
-
-            // Doublon = XP
 
             addXP(25);
 
         } else {
 
-            // Nouveau dragon
-
-            discoveredDragons.push(dragon.id);
-
-            localStorage.setItem(
-                "draconiaDragons",
-                JSON.stringify(discoveredDragons)
+            discoveredDragons.push(
+                dragon.id
             );
 
 
-            messages.forEach(function(message) {
+            localStorage.setItem(
+                "draconiaDragons",
+                JSON.stringify(
+                    discoveredDragons
+                )
+            );
 
-                if (message) {
-                    message.textContent =
-                        "🎉 NOUVEAU DRAGON ! " +
-                        dragon.emoji +
-                        " " +
-                        dragon.name;
+
+            messages.forEach(
+                function(message) {
+
+                    if (message) {
+
+                        message.textContent =
+                            "🎉 NOUVEAU DRAGON ! " +
+                            dragon.emoji +
+                            " " +
+                            dragon.name;
+
+                    }
+
                 }
-
-            });
+            );
 
 
             showDragon(dragon);
@@ -437,19 +963,24 @@ function findEgg() {
 
         resetExploreButton();
 
+        saveGame();
+
     }, 1200);
 
 }
 
 
 // ==========================================
-// RÉACTIVER LE BOUTON EXPLORER
+// RÉACTIVER LE BOUTON
 // ==========================================
 
 function resetExploreButton() {
 
     const button =
-        document.getElementById("egg-button");
+        document.getElementById(
+            "egg-button"
+        );
+
 
     if (button) {
 
@@ -470,34 +1001,56 @@ function resetExploreButton() {
 function showDragon(dragon) {
 
     const name =
-        document.getElementById("dragon-name");
+        document.getElementById(
+            "dragon-name"
+        );
 
     const image =
-        document.getElementById("dragon-image");
+        document.getElementById(
+            "dragon-image"
+        );
 
     const rarity =
-        document.getElementById("dragon-rarity");
+        document.getElementById(
+            "dragon-rarity"
+        );
 
     const element =
-        document.getElementById("dragon-element");
+        document.getElementById(
+            "dragon-element"
+        );
 
 
     if (name) {
-        name.textContent = dragon.name;
+
+        name.textContent =
+            dragon.name;
+
     }
+
 
     if (image) {
-        image.textContent = dragon.emoji;
+
+        image.textContent =
+            dragon.emoji;
+
     }
+
 
     if (rarity) {
+
         rarity.textContent =
             dragon.rarity.toUpperCase();
+
     }
 
+
     if (element) {
+
         element.textContent =
-            "Élément : " + dragon.element;
+            "Élément : " +
+            dragon.element;
+
     }
 
 }
@@ -510,10 +1063,15 @@ function showDragon(dragon) {
 function updateDragonDex() {
 
     const list =
-        document.getElementById("dragon-list");
+        document.getElementById(
+            "dragon-list"
+        );
+
 
     const counter =
-        document.getElementById("dex-count");
+        document.getElementById(
+            "dex-count"
+        );
 
 
     if (!list) {
@@ -524,82 +1082,88 @@ function updateDragonDex() {
     list.innerHTML = "";
 
 
-    dragons.forEach(function(dragon) {
+    dragons.forEach(
+        function(dragon) {
 
-        const discovered =
-            discoveredDragons.includes(dragon.id);
-
-
-        const card =
-            document.createElement("div");
-
-
-        card.className =
-            "dex-dragon";
+            const discovered =
+                discoveredDragons.includes(
+                    dragon.id
+                );
 
 
-        if (discovered) {
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-            card.innerHTML = `
 
-                <div class="dex-dragon-image">
-                    ${dragon.emoji}
-                </div>
+            card.className =
+                "dex-dragon";
 
-                <div class="dex-dragon-info">
 
-                    <h3>
-                        ${dragon.name}
-                    </h3>
+            if (discovered) {
 
-                    <p>
-                        ${dragon.element}
-                    </p>
+                card.innerHTML = `
 
-                    <span>
-                        ${dragon.rarity}
-                    </span>
+                    <div class="dex-dragon-image">
+                        ${dragon.emoji}
+                    </div>
 
-                </div>
+                    <div class="dex-dragon-info">
 
-                <div class="dex-check">
-                    ✅
-                </div>
+                        <h3>
+                            ${dragon.name}
+                        </h3>
 
-            `;
+                        <p>
+                            ${dragon.element}
+                        </p>
 
-        } else {
+                        <span>
+                            ${dragon.rarity}
+                        </span>
 
-            card.innerHTML = `
+                    </div>
 
-                <div class="dex-dragon-image">
-                    ❓
-                </div>
+                    <div class="dex-check">
+                        ✅
+                    </div>
 
-                <div class="dex-dragon-info">
+                `;
 
-                    <h3>
-                        ???
-                    </h3>
+            } else {
 
-                    <p>
-                        Dragon inconnu
-                    </p>
+                card.innerHTML = `
 
-                    <span>
-                        🔒 À découvrir
-                    </span>
+                    <div class="dex-dragon-image">
+                        ❓
+                    </div>
 
-                </div>
+                    <div class="dex-dragon-info">
 
-            `;
+                        <h3>
+                            ???
+                        </h3>
+
+                        <p>
+                            Dragon inconnu
+                        </p>
+
+                        <span>
+                            🔒 À découvrir
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            list.appendChild(card);
 
         }
-
-
-        list.appendChild(card);
-
-    });
+    );
 
 
     if (counter) {
@@ -613,7 +1177,7 @@ function updateDragonDex() {
 
 
 // ==========================================
-// AJOUTER DE L'XP
+// XP
 // ==========================================
 
 function addXP(amount) {
@@ -625,6 +1189,7 @@ function addXP(amount) {
 
         xp -= 100;
 
+
         alert(
             "🎉 Bravo ! Tu viens de passer un niveau !"
         );
@@ -634,11 +1199,13 @@ function addXP(amount) {
 
     updateScreen();
 
+    saveGame();
+
 }
 
 
 // ==========================================
-// NOURRIR LE DRAGON
+// NOURRIR
 // ==========================================
 
 function feedDragon() {
@@ -650,6 +1217,7 @@ function feedDragon() {
         );
 
         return;
+
     }
 
 
@@ -659,7 +1227,9 @@ function feedDragon() {
 
 
     if (hunger > 100) {
+
         hunger = 100;
+
     }
 
 
@@ -667,7 +1237,9 @@ function feedDragon() {
 
 
     if (happiness > 100) {
+
         happiness = 100;
+
     }
 
 
@@ -679,7 +1251,7 @@ function feedDragon() {
 
 
 // ==========================================
-// LAVER LE DRAGON
+// LAVER
 // ==========================================
 
 function washDragon() {
@@ -688,7 +1260,9 @@ function washDragon() {
 
 
     if (cleanliness > 100) {
+
         cleanliness = 100;
+
     }
 
 
@@ -696,7 +1270,9 @@ function washDragon() {
 
 
     if (happiness > 100) {
+
         happiness = 100;
+
     }
 
 
@@ -708,7 +1284,7 @@ function washDragon() {
 
 
 // ==========================================
-// JOUER AVEC LE DRAGON
+// JOUER
 // ==========================================
 
 function playDragon() {
@@ -717,7 +1293,9 @@ function playDragon() {
 
 
     if (happiness > 100) {
+
         happiness = 100;
+
     }
 
 
@@ -725,7 +1303,9 @@ function playDragon() {
 
 
     if (hunger < 0) {
+
         hunger = 0;
+
     }
 
 
@@ -765,42 +1345,65 @@ function updateScreen() {
 
 
     if (xpElement) {
-        xpElement.textContent = xp;
+
+        xpElement.textContent =
+            xp;
+
     }
+
 
     if (coinsElement) {
-        coinsElement.textContent = coins;
+
+        coinsElement.textContent =
+            coins;
+
     }
+
 
     if (foodElement) {
-        foodElement.textContent = food;
+
+        foodElement.textContent =
+            food;
+
     }
+
 
     if (hungerElement) {
+
         hungerElement.textContent =
             hunger + "%";
+
     }
+
 
     if (happinessElement) {
+
         happinessElement.textContent =
             happiness + "%";
+
     }
+
 
     if (cleanlinessElement) {
+
         cleanlinessElement.textContent =
             cleanliness + "%";
+
     }
 
+
     if (xpFill) {
+
         xpFill.style.width =
             xp + "%";
+
     }
 
 }
 
 
 // ==========================================
-// SAUVEGARDE AUTOMATIQUE
+// SAUVEGARDE
 // ==========================================
 
 function saveGame() {
@@ -886,7 +1489,7 @@ function loadGame() {
 
 
 // ==========================================
-// SAUVEGARDE RÉGULIÈRE
+// SAUVEGARDE AUTOMATIQUE
 // ==========================================
 
 setInterval(
@@ -896,10 +1499,12 @@ setInterval(
 
 
 // ==========================================
-// DÉMARRAGE DU JEU
+// DÉMARRAGE
 // ==========================================
 
 loadGame();
+
+generateDailyWeather();
 
 updateScreen();
 
