@@ -1,93 +1,115 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Draconia</title>
-
+    <title>Draconia 🐉</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <main class="game">
+    <div class="game">
 
-        <!-- Barre supérieure -->
+        <!-- BARRE DU HAUT -->
         <header class="top-bar">
-
-            <div class="logo">
-                <span class="logo-icon">🐉</span>
-
-                <div>
-                    <h1>Draconia</h1>
-                    <span>Le monde des dragons</span>
-                </div>
+            <div>
+                <h1>🐉 Draconia</h1>
+                <p>Refuge des dragons</p>
             </div>
 
             <div class="resources">
-
-                <div class="resource">
-                    🪙 <span id="coins">250</span>
-                </div>
-
-                <div class="resource">
-                    💎 <span id="gems">15</span>
-                </div>
-
+                <span>💰 <b id="coins">100</b></span>
+                <span>🥕 <b id="food">10</b></span>
             </div>
-
         </header>
 
 
-        <!-- Informations météo -->
+        <!-- MÉTÉO -->
         <section class="weather-card">
-
-            <div class="weather-icon">
-                ☀️
-            </div>
-
             <div>
-                <strong>22°C</strong>
-                <span>Paris · Ensoleillé</span>
+                <p class="small-title">MÉTÉO ACTUELLE</p>
+                <h2 id="weather">☀️ Ensoleillé</h2>
+                <p>La météo influence les dragons qui peuvent apparaître.</p>
             </div>
 
-            <div class="weather-status">
-                Conditions favorables
+            <div class="temperature">
+                <strong id="temperature">22°</strong>
             </div>
+        </section>
+
+
+        <!-- NIVEAU DU JOUEUR -->
+        <section class="level-card">
+            <div class="level-info">
+                <span>Niveau 1</span>
+                <span><b id="xp">0</b> / 100 XP</span>
+            </div>
+
+            <div class="xp-bar">
+                <div id="xp-fill"></div>
+            </div>
+        </section>
+
+
+        <!-- ŒUF -->
+        <section class="egg-card">
+
+            <p class="small-title">UNE NOUVELLE DÉCOUVERTE...</p>
+
+            <div class="egg">
+                🥚
+            </div>
+
+            <h2>Œuf mystérieux</h2>
+
+            <p>
+                Quel dragon se cache à l'intérieur ?
+            </p>
+
+            <button id="egg-button" onclick="findEgg()">
+                🔍 Explorer
+            </button>
+
+            <p id="egg-message"></p>
 
         </section>
 
 
-        <!-- Zone principale -->
-        <section class="dragon-area">
+        <!-- DRAGON -->
+        <section class="dragon-card">
 
-            <div class="dragon-glow"></div>
-
-            <div class="dragon-placeholder">
+            <div class="dragon-image">
                 🐲
             </div>
 
             <div class="dragon-info">
 
-                <span class="dragon-rarity">
-                    ★ Commun
-                </span>
+                <p class="rarity">COMMUN</p>
 
-                <h2>Ton dragon</h2>
+                <h2 id="dragon-name">Draco</h2>
 
-                <div class="level">
-                    Niveau 1
-                </div>
+                <p>🔥 Dragon de feu</p>
 
-                <div class="xp-container">
+                <div class="dragon-stats">
 
-                    <div class="xp-bar">
-                        <div class="xp-progress"></div>
+                    <div>
+                        <span>🍖</span>
+                        <small>Faim</small>
+                        <b id="hunger">80%</b>
                     </div>
 
-                    <span>72 / 100 XP</span>
+                    <div>
+                        <span>😊</span>
+                        <small>Bonheur</small>
+                        <b id="happiness">70%</b>
+                    </div>
+
+                    <div>
+                        <span>🧼</span>
+                        <small>Propreté</small>
+                        <b id="cleanliness">90%</b>
+                    </div>
 
                 </div>
 
@@ -96,64 +118,60 @@
         </section>
 
 
-        <!-- Actions -->
+        <!-- ACTIONS -->
         <section class="actions">
 
-            <button class="action-card">
-                <span>🍖</span>
-                <strong>Nourrir</strong>
-                <small>Prendre soin</small>
+            <button onclick="feedDragon()">
+                🍖
+                <span>Nourrir</span>
             </button>
 
-            <button class="action-card">
-                <span>🧼</span>
-                <strong>Laver</strong>
-                <small>Nettoyer</small>
+            <button onclick="washDragon()">
+                🧼
+                <span>Laver</span>
             </button>
 
-            <button class="action-card">
-                <span>🎮</span>
-                <strong>Jouer</strong>
-                <small>Mini-jeu</small>
+            <button onclick="playDragon()">
+                🎮
+                <span>Jouer</span>
             </button>
 
         </section>
 
 
-        <!-- Navigation -->
+        <!-- NAVIGATION -->
         <nav class="bottom-nav">
 
-            <button class="nav-item active">
-                <span>🏡</span>
-                <small>Refuge</small>
+            <button class="active">
+                🏠
+                <span>Refuge</span>
             </button>
 
-            <button class="nav-item">
-                <span>🥚</span>
-                <small>Œufs</small>
+            <button>
+                🥚
+                <span>Œufs</span>
             </button>
 
-            <button class="nav-item">
-                <span>🐉</span>
-                <small>DragonDex</small>
+            <button>
+                📖
+                <span>DragonDex</span>
             </button>
 
-            <button class="nav-item">
-                <span>🎒</span>
-                <small>Sac</small>
+            <button>
+                🎒
+                <span>Sac</span>
             </button>
 
-            <button class="nav-item">
-                <span>👤</span>
-                <small>Profil</small>
+            <button>
+                👤
+                <span>Profil</span>
             </button>
 
         </nav>
 
-    </main>
+    </div>
 
     <script src="script.js"></script>
 
 </body>
-
 </html>
