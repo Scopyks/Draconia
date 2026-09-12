@@ -846,6 +846,254 @@ function updatePlayerDisplay() {
 
 
 // ======================================================
+// AJOUTER DE L'XP AU JOUEUR
+// ======================================================
+
+function addPlayerXP(amount) {
+
+    player.xp += amount;
+
+
+    let levelUp = false;
+
+
+    while (
+        player.xp >= 100
+    ) {
+
+        player.xp -= 100;
+
+        player.level += 1;
+
+        levelUp = true;
+
+    }
+
+
+    savePlayer();
+
+    updatePlayerDisplay();
+
+
+    return levelUp;
+
+}
+
+
+// ======================================================
+// MESSAGE DE RÉCOLTE
+// ======================================================
+
+function showGatheringMessage(message) {
+
+    const element =
+        document.getElementById(
+            "gathering-message"
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+}
+
+
+// ======================================================
+// RÉCOLTE DES RESSOURCES
+// ======================================================
+
+function gatherResources(location) {
+
+    const resourcePools = {
+
+        forest: [
+
+            "apple",
+            "berry",
+            "herb",
+            "mushroom",
+            "insect"
+
+        ],
+
+        plains: [
+
+            "vegetable",
+            "herb",
+            "berry",
+            "apple"
+
+        ]
+
+    };
+
+
+    const pool =
+        resourcePools[location];
+
+
+    if (!pool) {
+
+        console.log(
+            `Zone inconnue : ${location}`
+        );
+
+        return;
+
+    }
+
+
+    const resource =
+        pool[
+            Math.floor(
+                Math.random() *
+                pool.length
+            )
+        ];
+
+
+    const amount =
+        Math.floor(
+            Math.random() * 2
+        ) + 1;
+
+
+    addResource(
+        resource,
+        amount
+    );
+
+
+    const xpAmount = 2;
+
+    const levelUp =
+        addPlayerXP(
+            xpAmount
+        );
+
+
+    const resourceNames = {
+
+        apple: "🍎 Pomme",
+        berry: "🍓 Baie",
+        herb: "🌿 Herbe",
+        mushroom: "🍄 Champignon",
+        insect: "🐛 Insecte",
+        vegetable: "🥕 Légume"
+
+    };
+
+
+    const resourceName =
+        resourceNames[resource] ||
+        resource;
+
+
+    if (levelUp) {
+
+        showGatheringMessage(
+            `✨ Tu trouves ${amount} × ${resourceName} ! +${xpAmount} XP • Niveau ${player.level} !`
+        );
+
+    } else {
+
+        showGatheringMessage(
+            `🌿 Tu trouves ${amount} × ${resourceName} ! +${xpAmount} XP`
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// PÊCHE 🎣
+// ======================================================
+
+function goFishing() {
+
+    const successChance =
+        0.75;
+
+
+    const success =
+        Math.random() <
+        successChance;
+
+
+    if (!success) {
+
+        const xpAmount = 1;
+
+        const levelUp =
+            addPlayerXP(
+                xpAmount
+            );
+
+
+        if (levelUp) {
+
+            showGatheringMessage(
+                `🎣 Le poisson s'échappe... mais tu gagnes ${xpAmount} XP ! Niveau ${player.level} !`
+            );
+
+        } else {
+
+            showGatheringMessage(
+                "🎣 Le poisson s'échappe... Essaie encore ! +1 XP"
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    const amount =
+        Math.floor(
+            Math.random() * 3
+        ) + 1;
+
+
+    addResource(
+        "fish",
+        amount
+    );
+
+
+    const xpAmount = 3;
+
+    const levelUp =
+        addPlayerXP(
+            xpAmount
+        );
+
+
+    if (levelUp) {
+
+        showGatheringMessage(
+            `🎣 Belle pêche ! ${amount} × 🐟 Poisson ! +${xpAmount} XP • Niveau ${player.level} !`
+        );
+
+    } else {
+
+        showGatheringMessage(
+            `🎣 Belle pêche ! ${amount} × 🐟 Poisson ! +${xpAmount} XP`
+        );
+
+    }
+
+}
+
+
+// ======================================================
 // BARRE D'XP DU JOUEUR
 // ======================================================
 
