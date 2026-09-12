@@ -13,7 +13,6 @@ let player = {
     food: 10,
     xp: 0,
     level: 1,
-
     hunger: 80,
     happiness: 70,
     cleanliness: 90
@@ -113,55 +112,65 @@ const dragons = [
 // MÉTÉO
 // ======================================================
 
-// Nouvelle clé volontairement différente.
-// Cela évite qu'une ancienne météo enregistrée bloque
-// la nouvelle version du jeu.
-
-const WEATHER_STORAGE_KEY = "draconiaDailyWeatherV2";
-
+const WEATHER_STORAGE_KEY =
+    "draconiaDailyWeatherV2";
 
 const weatherTypes = [
 
     {
         id: "sunny",
         name: "Ensoleillé",
-        icon: "☀️"
+        icon: "☀️",
+        minTemp: 18,
+        maxTemp: 28
     },
 
     {
         id: "cloudy",
         name: "Nuageux",
-        icon: "☁️"
+        icon: "☁️",
+        minTemp: 12,
+        maxTemp: 21
     },
 
     {
         id: "rain",
         name: "Pluvieux",
-        icon: "🌧️"
+        icon: "🌧️",
+        minTemp: 8,
+        maxTemp: 17
     },
 
     {
         id: "storm",
         name: "Orageux",
-        icon: "⛈️"
+        icon: "⛈️",
+        minTemp: 14,
+        maxTemp: 22
     },
 
     {
         id: "snow",
         name: "Neigeux",
-        icon: "🌨️"
+        icon: "🌨️",
+        minTemp: -3,
+        maxTemp: 5
     },
 
     {
         id: "fog",
         name: "Brouillard",
-        icon: "🌫️"
+        icon: "🌫️",
+        minTemp: 5,
+        maxTemp: 14
     },
 
     {
         id: "wind",
         name: "Venteux",
-        icon: "🌪️"
+        icon: "🌪️",
+        minTemp: 10,
+        maxTemp: 20
     }
 
 ];
@@ -189,16 +198,21 @@ function getFranceDateParts() {
 
     const result = {};
 
+
     parts.forEach(part => {
 
         if (part.type !== "literal") {
-            result[part.type] = part.value;
+
+            result[part.type] =
+                part.value;
+
         }
 
     });
 
 
     return result;
+
 }
 
 
@@ -214,20 +228,25 @@ function getFranceHour() {
     ).formatToParts(new Date());
 
 
-    const hourPart = parts.find(
-        part => part.type === "hour"
-    );
+    const hourPart =
+        parts.find(
+            part => part.type === "hour"
+        );
 
 
     return Number(hourPart.value);
+
 }
 
 
 function getTodayDate() {
 
-    const parts = getFranceDateParts();
+    const parts =
+        getFranceDateParts();
+
 
     return `${parts.year}-${parts.month}-${parts.day}`;
+
 }
 
 
@@ -237,9 +256,33 @@ function getTodayDate() {
 
 function isNight() {
 
-    const hour = getFranceHour();
+    const hour =
+        getFranceHour();
+
 
     return hour >= 21 || hour < 6;
+
+}
+
+
+// ======================================================
+// TEMPÉRATURE
+// ======================================================
+
+function generateTemperature(weather) {
+
+    const min =
+        weather.minTemp;
+
+    const max =
+        weather.maxTemp;
+
+
+    return Math.floor(
+        Math.random() *
+        (max - min + 1)
+    ) + min;
+
 }
 
 
@@ -249,18 +292,23 @@ function isNight() {
 
 function generateDailyWeather() {
 
-    const today = getTodayDate();
+    const today =
+        getTodayDate();
+
 
     const savedWeather =
-        localStorage.getItem(WEATHER_STORAGE_KEY);
+        localStorage.getItem(
+            WEATHER_STORAGE_KEY
+        );
 
 
-    // On essaie de récupérer la météo du jour.
     if (savedWeather) {
 
         try {
 
-            const parsed = JSON.parse(savedWeather);
+            const parsed =
+                JSON.parse(savedWeather);
+
 
             if (
                 parsed &&
@@ -271,13 +319,22 @@ function generateDailyWeather() {
                 const existingWeather =
                     weatherTypes.find(
                         weather =>
-                            weather.id === parsed.weather
+                            weather.id ===
+                            parsed.weather
                     );
 
 
                 if (existingWeather) {
 
-                    dailyWeather = existingWeather;
+                    dailyWeather = {
+
+                        ...existingWeather,
+
+                        temperature:
+                            parsed.temperature
+
+                    };
+
 
                     return;
 
@@ -296,23 +353,49 @@ function generateDailyWeather() {
     }
 
 
-    // Nouvelle météo aléatoire.
     const randomIndex =
         Math.floor(
-            Math.random() * weatherTypes.length
+            Math.random() *
+            weatherTypes.length
         );
 
 
-    dailyWeather =
+    const selectedWeather =
         weatherTypes[randomIndex];
 
 
+    const temperature =
+        generateTemperature(
+            selectedWeather
+        );
+
+
+    dailyWeather = {
+
+        ...selectedWeather,
+
+        temperature:
+            temperature
+
+    };
+
+
     localStorage.setItem(
+
         WEATHER_STORAGE_KEY,
+
         JSON.stringify({
+
             date: today,
-            weather: dailyWeather.id
+
+            weather:
+                dailyWeather.id,
+
+            temperature:
+                dailyWeather.temperature
+
         })
+
     );
 
 }
@@ -325,7 +408,15 @@ function generateDailyWeather() {
 function updateWeatherDisplay() {
 
     const weatherElement =
-        document.getElementById("weather");
+        document.getElementById(
+            "weather"
+        );
+
+
+    const temperatureElement =
+        document.getElementById(
+            "temperature"
+        );
 
 
     if (!weatherElement) {
@@ -334,21 +425,37 @@ function updateWeatherDisplay() {
 
 
     if (!dailyWeather) {
+
         generateDailyWeather();
+
     }
 
 
-    // ==============================================
+    // ==================================================
+    // TEMPÉRATURE
+    // ==================================================
+
+    if (
+        temperatureElement &&
+        dailyWeather.temperature !== undefined
+    ) {
+
+        temperatureElement.textContent =
+            `${dailyWeather.temperature}°`;
+
+    }
+
+
+    // ==================================================
     // NUIT
-    // ==============================================
+    // ==================================================
 
     if (isNight()) {
 
-        // IMPORTANT :
-        // Si la météo du jour est ensoleillée,
-        // on ne montre PAS le soleil pendant la nuit.
-
-        if (dailyWeather.id === "sunny") {
+        if (
+            dailyWeather.id ===
+            "sunny"
+        ) {
 
             weatherElement.textContent =
                 "🌙 Nuit claire";
@@ -360,13 +467,15 @@ function updateWeatherDisplay() {
 
         }
 
+
         return;
+
     }
 
 
-    // ==============================================
+    // ==================================================
     // JOUR
-    // ==============================================
+    // ==================================================
 
     weatherElement.textContent =
         `${dailyWeather.icon} ${dailyWeather.name}`;
@@ -410,6 +519,7 @@ function getWeatherBonus() {
 
         default:
             return null;
+
     }
 
 }
@@ -436,7 +546,9 @@ function savePlayer() {
 function loadPlayer() {
 
     const savedPlayer =
-        localStorage.getItem("draconiaPlayer");
+        localStorage.getItem(
+            "draconiaPlayer"
+        );
 
 
     if (!savedPlayer) {
@@ -451,8 +563,11 @@ function loadPlayer() {
 
 
         player = {
+
             ...player,
+
             ...parsed
+
         };
 
     } catch (error) {
@@ -473,13 +588,21 @@ function loadPlayer() {
 function updatePlayerDisplay() {
 
     const coinsElement =
-        document.getElementById("coins");
+        document.getElementById(
+            "coins"
+        );
+
 
     const foodElement =
-        document.getElementById("food");
+        document.getElementById(
+            "food"
+        );
+
 
     const xpElement =
-        document.getElementById("xp");
+        document.getElementById(
+            "xp"
+        );
 
 
     if (coinsElement) {
@@ -518,7 +641,9 @@ function updatePlayerDisplay() {
 function updateXPBar() {
 
     const xpFill =
-        document.getElementById("xp-fill");
+        document.getElementById(
+            "xp-fill"
+        );
 
 
     if (!xpFill) {
@@ -540,7 +665,7 @@ function updateXPBar() {
 
 
 // ======================================================
-// DRAGON DÉCOUVERT
+// DRAGONS DÉCOUVERTS
 // ======================================================
 
 function getDiscoveredDragons() {
@@ -590,30 +715,22 @@ function chooseRarity() {
 
 
     if (random < 0.55) {
-
         return "Commun";
-
     }
 
 
     if (random < 0.80) {
-
         return "Peu commun";
-
     }
 
 
     if (random < 0.94) {
-
         return "Rare";
-
     }
 
 
     if (random < 0.99) {
-
         return "Épique";
-
     }
 
 
@@ -628,24 +745,6 @@ function chooseRarity() {
 
 function findEgg() {
 
-    const messageHome =
-        document.getElementById(
-            "egg-message"
-        );
-
-
-    const messagePage =
-        document.getElementById(
-            "egg-message-page"
-        );
-
-
-    const messageElements = [
-        messageHome,
-        messagePage
-    ];
-
-
     const discovered =
         getDiscoveredDragons();
 
@@ -657,13 +756,15 @@ function findEgg() {
     let possibleDragons =
         dragons.filter(
             dragon =>
-                dragon.rarity === rarity
+                dragon.rarity ===
+                rarity
         );
 
 
-    // Si aucune correspondance,
-    // on utilise tous les dragons.
-    if (possibleDragons.length === 0) {
+    if (
+        possibleDragons.length ===
+        0
+    ) {
 
         possibleDragons =
             dragons;
@@ -671,7 +772,6 @@ function findEgg() {
     }
 
 
-    // Bonus météo.
     const bonus =
         getWeatherBonus();
 
@@ -708,7 +808,9 @@ function findEgg() {
                 );
 
 
-            if (matching.length > 0) {
+            if (
+                matching.length > 0
+            ) {
 
                 boostedDragons =
                     Math.random() < 0.65
@@ -731,12 +833,14 @@ function findEgg() {
         ];
 
 
-    // XP
     let xpGain = 10;
 
 
-    // Dragon déjà découvert
-    if (discovered.includes(dragon.id)) {
+    if (
+        discovered.includes(
+            dragon.id
+        )
+    ) {
 
         xpGain = 5;
 
@@ -746,7 +850,10 @@ function findEgg() {
 
     } else {
 
-        discovered.push(dragon.id);
+        discovered.push(
+            dragon.id
+        );
+
 
         saveDiscoveredDragons(
             discovered
@@ -831,15 +938,18 @@ function displayDragon(dragon) {
             "dragon-image"
         );
 
+
     const name =
         document.getElementById(
             "dragon-name"
         );
 
+
     const rarity =
         document.getElementById(
             "dragon-rarity"
         );
+
 
     const element =
         document.getElementById(
@@ -891,6 +1001,7 @@ function updateDragonDex() {
         document.getElementById(
             "dragon-list"
         );
+
 
     const counter =
         document.getElementById(
@@ -1071,11 +1182,13 @@ function feedDragon() {
 
     player.food -= 1;
 
+
     player.hunger =
         Math.min(
             100,
             player.hunger + 15
         );
+
 
     player.happiness =
         Math.min(
@@ -1158,10 +1271,12 @@ function updateCareDisplay() {
             "hunger"
         );
 
+
     const happiness =
         document.getElementById(
             "happiness"
         );
+
 
     const cleanliness =
         document.getElementById(
@@ -1217,12 +1332,8 @@ function initGame() {
 
 
 // ======================================================
-// MISE À JOUR DE LA MÉTÉO
+// MISE À JOUR AUTOMATIQUE
 // ======================================================
-
-// Vérification régulière de l'heure française.
-// Cela permet de passer automatiquement de jour à nuit
-// sans devoir recharger la page.
 
 setInterval(
     updateWeatherDisplay,
