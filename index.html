@@ -78,12 +78,6 @@
                 </p>
 
 
-                <!--
-                    IMPORTANT :
-                    Cette valeur n'est plus "Ensoleillé".
-                    Le JavaScript va remplir cette zone.
-                -->
-
                 <h2 id="weather">
                     🌦️ Chargement...
                 </h2>
@@ -109,7 +103,7 @@
 
 
 
-        <!-- NIVEAU -->
+        <!-- NIVEAU DU JOUEUR -->
 
         <section class="level-card">
 
@@ -136,7 +130,7 @@
 
 
 
-        <!-- ŒUF -->
+        <!-- EXPLORATION -->
 
         <section class="egg-card">
 
@@ -173,187 +167,99 @@
 
         </section>
 
-
-
-        <!-- DRAGON ACTUEL -->
-
-        <section class="dragon-card">
-
-
-            <div
-                class="dragon-image"
-                id="dragon-image"
-            >
-                ❓
-            </div>
-
-
-            <div class="dragon-info">
-
-                <p
-                    class="rarity"
-                    id="dragon-rarity"
-                >
-                    INCONNU
-                </p>
-
-
-                <h2 id="dragon-name">
-                    Aucun dragon
-                </h2>
-
-
-                <p id="dragon-element">
-                    Explore pour trouver ton premier dragon !
-                </p>
-
-
-
-                <div class="dragon-stats">
-
-
-                    <div>
-
-                        <span>
-                            🍖
-                        </span>
-
-                        <small>
-                            Faim
-                        </small>
-
-                        <b id="hunger">
-                            80%
-                        </b>
-
-                    </div>
-
-
-
-                    <div>
-
-                        <span>
-                            😊
-                        </span>
-
-                        <small>
-                            Bonheur
-                        </small>
-
-                        <b id="happiness">
-                            70%
-                        </b>
-
-                    </div>
-
-
-
-                    <div>
-
-                        <span>
-                            🧼
-                        </span>
-
-                        <small>
-                            Propreté
-                        </small>
-
-                        <b id="cleanliness">
-                            90%
-                        </b>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ACTIONS -->
-
-        <section class="actions">
-
-
-            <button onclick="feedDragon()">
-
-                🍖
-
-                <span>
-                    Nourrir
-                </span>
-
-            </button>
-
-
-            <button onclick="washDragon()">
-
-                🧼
-
-                <span>
-                    Laver
-                </span>
-
-            </button>
-
-
-            <button onclick="playDragon()">
-
-                🎮
-
-                <span>
-                    Jouer
-                </span>
-
-            </button>
-
-        </section>
-
     </main>
 
 
 
     <!-- ================================================== -->
-    <!-- ÉCRAN : ŒUFS -->
+    <!-- ÉCRAN : DRAGONS -->
     <!-- ================================================== -->
 
     <main
-        id="egg-page"
+        id="dragons-page"
         class="page"
         style="display: none;"
     >
 
-        <section class="egg-card">
-
-            <p class="small-title">
-                EXPLORATION DE DRACONIA
-            </p>
+        <section class="dragons-section">
 
 
-            <div class="egg">
-                🥚
+            <div class="dragons-header">
+
+                <div>
+
+                    <p class="small-title">
+                        TON REFUGE
+                    </p>
+
+
+                    <h2>
+                        🐉 Mes dragons
+                    </h2>
+
+                </div>
+
+
+                <div class="dragons-counter">
+
+                    <b id="owned-dragons-count">
+                        0
+                    </b>
+
+                    dragon(s)
+
+                </div>
+
             </div>
 
 
-            <h2>
-                Trouver un dragon
-            </h2>
-
-
-            <p>
-                Pars explorer les terres de Draconia
-                et tente de trouver un œuf.
+            <p class="dragons-description">
+                Prends soin de tes dragons et fais-les
+                progresser.
             </p>
 
 
-            <button onclick="findEgg()">
-                🔍 Explorer
-            </button>
+            <!--
+                Les dragons seront ajoutés ici
+                automatiquement par JavaScript.
+            -->
+
+            <div
+                id="owned-dragons-list"
+                class="owned-dragons-list"
+            ></div>
 
 
-            <p id="egg-message-page"></p>
+            <!-- MESSAGE SI AUCUN DRAGON -->
+
+            <div
+                id="no-dragons"
+                class="no-dragons"
+            >
+
+                <div class="no-dragons-icon">
+                    🥚
+                </div>
+
+
+                <h3>
+                    Aucun dragon pour le moment
+                </h3>
+
+
+                <p>
+                    Explore Draconia pour trouver
+                    ton premier dragon !
+                </p>
+
+
+                <button
+                    onclick="showPage('home')"
+                >
+                    🔍 Explorer
+                </button>
+
+            </div>
 
         </section>
 
@@ -517,14 +423,14 @@
 
 
         <button
-            id="nav-eggs"
-            onclick="showPage('eggs')"
+            id="nav-dragons"
+            onclick="showPage('dragons')"
         >
 
-            🥚
+            🐉
 
             <span>
-                Œufs
+                Dragons
             </span>
 
         </button>
