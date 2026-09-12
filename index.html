@@ -2,6 +2,7 @@
 <html lang="fr">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -11,12 +12,18 @@
 
     <title>Draconia 🐉</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
+
 
 <body>
 
 <div class="game">
+
 
     <!-- ============================== -->
     <!-- BARRE DU HAUT -->
@@ -25,18 +32,33 @@
     <header class="top-bar">
 
         <div>
-            <h1>🐉 Draconia</h1>
-            <p>Refuge des dragons</p>
+
+            <h1>
+                🐉 Draconia
+            </h1>
+
+            <p>
+                Refuge des dragons
+            </p>
+
         </div>
+
 
         <div class="resources">
 
             <span>
-                💰 <b id="coins">100</b>
+                💰
+                <b id="coins">
+                    100
+                </b>
             </span>
 
+
             <span>
-                🥕 <b id="food">10</b>
+                🥕
+                <b id="food">
+                    10
+                </b>
             </span>
 
         </div>
@@ -44,13 +66,20 @@
     </header>
 
 
+
     <!-- ================================================== -->
     <!-- ÉCRAN : REFUGE -->
     <!-- ================================================== -->
 
-    <main id="home-page" class="page active-page">
+    <main
+        id="home-page"
+        class="page active-page"
+    >
 
+
+        <!-- ============================== -->
         <!-- MÉTÉO -->
+        <!-- ============================== -->
 
         <section class="weather-card">
 
@@ -60,9 +89,11 @@
                     MÉTÉO ACTUELLE
                 </p>
 
+
                 <h2 id="weather">
-                    ☀️ Ensoleillé
+                    🌦️ Chargement...
                 </h2>
+
 
                 <p>
                     La météo influence les dragons
@@ -70,6 +101,7 @@
                 </p>
 
             </div>
+
 
             <div class="temperature">
 
@@ -82,7 +114,10 @@
         </section>
 
 
+
+        <!-- ============================== -->
         <!-- NIVEAU -->
+        <!-- ============================== -->
 
         <section class="level-card">
 
@@ -92,11 +127,19 @@
                     Niveau 1
                 </span>
 
+
                 <span>
-                    <b id="xp">0</b> / 100 XP
+
+                    <b id="xp">
+                        0
+                    </b>
+
+                    / 100 XP
+
                 </span>
 
             </div>
+
 
             <div class="xp-bar">
 
@@ -107,7 +150,10 @@
         </section>
 
 
-        <!-- ŒUF -->
+
+        <!-- ============================== -->
+        <!-- EXPLORATION -->
+        <!-- ============================== -->
 
         <section class="egg-card">
 
@@ -115,18 +161,22 @@
                 EXPLORATION
             </p>
 
+
             <div class="egg">
                 🥚
             </div>
+
 
             <h2>
                 Œuf mystérieux
             </h2>
 
+
             <p>
                 Explore Draconia pour avoir une chance
                 de découvrir un dragon.
             </p>
+
 
             <button
                 id="egg-button"
@@ -135,14 +185,19 @@
                 🔍 Explorer
             </button>
 
+
             <p id="egg-message"></p>
 
         </section>
 
 
+
+        <!-- ============================== -->
         <!-- DRAGON ACTUEL -->
+        <!-- ============================== -->
 
         <section class="dragon-card">
+
 
             <div
                 class="dragon-image"
@@ -151,7 +206,9 @@
                 ❓
             </div>
 
+
             <div class="dragon-info">
+
 
                 <p
                     class="rarity"
@@ -160,54 +217,83 @@
                     INCONNU
                 </p>
 
+
                 <h2 id="dragon-name">
                     Aucun dragon
                 </h2>
+
 
                 <p id="dragon-element">
                     Explore pour trouver ton premier dragon !
                 </p>
 
 
+
+                <!-- ============================== -->
+                <!-- STATS -->
+                <!-- ============================== -->
+
                 <div class="dragon-stats">
 
+
                     <div>
-                        <span>🍖</span>
+
+                        <span>
+                            🍖
+                        </span>
+
 
                         <small>
                             Faim
                         </small>
 
+
                         <b id="hunger">
                             80%
                         </b>
+
                     </div>
 
 
+
                     <div>
-                        <span>😊</span>
+
+                        <span>
+                            😊
+                        </span>
+
 
                         <small>
                             Bonheur
                         </small>
 
+
                         <b id="happiness">
                             70%
                         </b>
+
                     </div>
 
 
+
                     <div>
-                        <span>🧼</span>
+
+                        <span>
+                            🧼
+                        </span>
+
 
                         <small>
                             Propreté
                         </small>
 
+
                         <b id="cleanliness">
                             90%
                         </b>
+
                     </div>
+
 
                 </div>
 
@@ -216,28 +302,60 @@
         </section>
 
 
+
+        <!-- ============================== -->
         <!-- ACTIONS -->
+        <!-- ============================== -->
 
         <section class="actions">
 
-            <button onclick="feedDragon()">
+
+            <button
+                onclick="feedDragon()"
+            >
+
                 🍖
-                <span>Nourrir</span>
+
+                <span>
+                    Nourrir
+                </span>
+
             </button>
 
-            <button onclick="washDragon()">
+
+
+            <button
+                onclick="washDragon()"
+            >
+
                 🧼
-                <span>Laver</span>
+
+                <span>
+                    Laver
+                </span>
+
             </button>
 
-            <button onclick="playDragon()">
+
+
+            <button
+                onclick="playDragon()"
+            >
+
                 🎮
-                <span>Jouer</span>
+
+                <span>
+                    Jouer
+                </span>
+
             </button>
+
 
         </section>
 
+
     </main>
+
 
 
     <!-- ================================================== -->
@@ -250,24 +368,30 @@
         style="display: none;"
     >
 
+
         <section class="egg-card">
+
 
             <p class="small-title">
                 EXPLORATION DE DRACONIA
             </p>
 
+
             <div class="egg">
                 🥚
             </div>
+
 
             <h2>
                 Trouver un dragon
             </h2>
 
+
             <p>
                 Pars explorer les terres de Draconia
                 et tente de trouver un œuf.
             </p>
+
 
             <button
                 onclick="findEgg()"
@@ -275,11 +399,15 @@
                 🔍 Explorer
             </button>
 
+
             <p id="egg-message-page"></p>
+
 
         </section>
 
+
     </main>
+
 
 
     <!-- ================================================== -->
@@ -292,9 +420,12 @@
         style="display: none;"
     >
 
+
         <section class="dragondex">
 
+
             <div class="dragondex-header">
+
 
                 <div>
 
@@ -302,11 +433,14 @@
                         COLLECTION
                     </p>
 
+
                     <h2>
                         📖 DragonDex
                     </h2>
 
                 </div>
+
+
 
                 <div class="dex-counter">
 
@@ -318,7 +452,9 @@
 
                 </div>
 
+
             </div>
+
 
 
             <p class="dragondex-description">
@@ -326,16 +462,19 @@
             </p>
 
 
+
             <div
                 class="dragon-list"
                 id="dragon-list"
             >
-
             </div>
+
 
         </section>
 
+
     </main>
+
 
 
     <!-- ================================================== -->
@@ -348,27 +487,36 @@
         style="display: none;"
     >
 
+
         <section class="weather-card">
 
+
             <div>
+
 
                 <p class="small-title">
                     INVENTAIRE
                 </p>
 
+
                 <h2>
                     🎒 Ton sac
                 </h2>
+
 
                 <p>
                     Ton inventaire sera bientôt disponible.
                 </p>
 
+
             </div>
+
 
         </section>
 
+
     </main>
+
 
 
     <!-- ================================================== -->
@@ -381,28 +529,37 @@
         style="display: none;"
     >
 
+
         <section class="weather-card">
 
+
             <div>
+
 
                 <p class="small-title">
                     JOUEUR
                 </p>
 
+
                 <h2>
                     👤 Mon profil
                 </h2>
+
 
                 <p>
                     Ton profil et tes statistiques
                     arriveront bientôt.
                 </p>
 
+
             </div>
+
 
         </section>
 
+
     </main>
+
 
 
     <!-- ================================================== -->
@@ -410,6 +567,7 @@
     <!-- ================================================== -->
 
     <nav class="bottom-nav">
+
 
         <button
             id="nav-home"
@@ -426,6 +584,7 @@
         </button>
 
 
+
         <button
             id="nav-eggs"
             onclick="showPage('eggs')"
@@ -438,6 +597,7 @@
             </span>
 
         </button>
+
 
 
         <button
@@ -454,6 +614,7 @@
         </button>
 
 
+
         <button
             id="nav-inventory"
             onclick="showPage('inventory')"
@@ -466,6 +627,7 @@
             </span>
 
         </button>
+
 
 
         <button
@@ -481,12 +643,19 @@
 
         </button>
 
+
     </nav>
+
 
 </div>
 
 
+<!-- ============================== -->
+<!-- SCRIPT -->
+<!-- ============================== -->
+
 <script src="script.js"></script>
+
 
 </body>
 
