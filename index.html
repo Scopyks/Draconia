@@ -11,19 +11,16 @@
 
     <title>Draconia 🐉</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="game">
 
-    <!-- ================================= -->
+    <!-- ============================== -->
     <!-- BARRE DU HAUT -->
-    <!-- ================================= -->
+    <!-- ============================== -->
 
     <header class="top-bar">
 
@@ -35,13 +32,11 @@
         <div class="resources">
 
             <span>
-                💰
-                <b id="coins">100</b>
+                💰 <b id="coins">100</b>
             </span>
 
             <span>
-                🥕
-                <b id="food">10</b>
+                🥕 <b id="food">10</b>
             </span>
 
         </div>
@@ -49,295 +44,377 @@
     </header>
 
 
-    <!-- ================================= -->
-    <!-- MÉTÉO -->
-    <!-- ================================= -->
+    <!-- ================================================== -->
+    <!-- ÉCRAN : REFUGE -->
+    <!-- ================================================== -->
 
-    <section class="weather-card">
+    <main id="home-page" class="page active-page">
 
-        <div>
+        <!-- MÉTÉO -->
 
-            <p class="small-title">
-                MÉTÉO ACTUELLE
-            </p>
-
-            <h2 id="weather">
-                ☀️ Ensoleillé
-            </h2>
-
-            <p>
-                La météo influence les dragons
-                qui peuvent apparaître.
-            </p>
-
-        </div>
-
-        <div class="temperature">
-
-            <strong id="temperature">
-                22°
-            </strong>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================= -->
-    <!-- NIVEAU -->
-    <!-- ================================= -->
-
-    <section class="level-card">
-
-        <div class="level-info">
-
-            <span>
-                Niveau 1
-            </span>
-
-            <span>
-                <b id="xp">0</b> / 100 XP
-            </span>
-
-        </div>
-
-        <div class="xp-bar">
-
-            <div id="xp-fill"></div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================= -->
-    <!-- ŒUF -->
-    <!-- ================================= -->
-
-    <section class="egg-card">
-
-        <p class="small-title">
-            EXPLORATION
-        </p>
-
-        <div class="egg">
-            🥚
-        </div>
-
-        <h2>
-            Œuf mystérieux
-        </h2>
-
-        <p>
-            Explore Draconia pour avoir une chance
-            de découvrir un dragon.
-        </p>
-
-        <button
-            id="egg-button"
-            onclick="findEgg()"
-        >
-            🔍 Explorer
-        </button>
-
-        <p id="egg-message"></p>
-
-    </section>
-
-
-    <!-- ================================= -->
-    <!-- DRAGON ACTUEL -->
-    <!-- ================================= -->
-
-    <section class="dragon-card">
-
-        <div
-            class="dragon-image"
-            id="dragon-image"
-        >
-            ❓
-        </div>
-
-
-        <div class="dragon-info">
-
-            <p
-                class="rarity"
-                id="dragon-rarity"
-            >
-                INCONNU
-            </p>
-
-            <h2 id="dragon-name">
-                Aucun dragon
-            </h2>
-
-            <p id="dragon-element">
-                Explore pour trouver ton premier dragon !
-            </p>
-
-
-            <!-- STATISTIQUES -->
-
-            <div class="dragon-stats">
-
-                <div>
-
-                    <span>🍖</span>
-
-                    <small>
-                        Faim
-                    </small>
-
-                    <b id="hunger">
-                        80%
-                    </b>
-
-                </div>
-
-
-                <div>
-
-                    <span>😊</span>
-
-                    <small>
-                        Bonheur
-                    </small>
-
-                    <b id="happiness">
-                        70%
-                    </b>
-
-                </div>
-
-
-                <div>
-
-                    <span>🧼</span>
-
-                    <small>
-                        Propreté
-                    </small>
-
-                    <b id="cleanliness">
-                        90%
-                    </b>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================= -->
-    <!-- ACTIONS -->
-    <!-- ================================= -->
-
-    <section class="actions">
-
-        <button onclick="feedDragon()">
-
-            🍖
-
-            <span>
-                Nourrir
-            </span>
-
-        </button>
-
-
-        <button onclick="washDragon()">
-
-            🧼
-
-            <span>
-                Laver
-            </span>
-
-        </button>
-
-
-        <button onclick="playDragon()">
-
-            🎮
-
-            <span>
-                Jouer
-            </span>
-
-        </button>
-
-    </section>
-
-
-    <!-- ================================= -->
-    <!-- DRAGONDEX -->
-    <!-- ================================= -->
-
-    <section
-        class="dragondex"
-        id="dragondex"
-    >
-
-        <div class="dragondex-header">
+        <section class="weather-card">
 
             <div>
 
                 <p class="small-title">
-                    COLLECTION
+                    MÉTÉO ACTUELLE
+                </p>
+
+                <h2 id="weather">
+                    ☀️ Ensoleillé
+                </h2>
+
+                <p>
+                    La météo influence les dragons
+                    qui peuvent apparaître.
+                </p>
+
+            </div>
+
+            <div class="temperature">
+
+                <strong id="temperature">
+                    22°
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- NIVEAU -->
+
+        <section class="level-card">
+
+            <div class="level-info">
+
+                <span>
+                    Niveau 1
+                </span>
+
+                <span>
+                    <b id="xp">0</b> / 100 XP
+                </span>
+
+            </div>
+
+            <div class="xp-bar">
+
+                <div id="xp-fill"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ŒUF -->
+
+        <section class="egg-card">
+
+            <p class="small-title">
+                EXPLORATION
+            </p>
+
+            <div class="egg">
+                🥚
+            </div>
+
+            <h2>
+                Œuf mystérieux
+            </h2>
+
+            <p>
+                Explore Draconia pour avoir une chance
+                de découvrir un dragon.
+            </p>
+
+            <button
+                id="egg-button"
+                onclick="findEgg()"
+            >
+                🔍 Explorer
+            </button>
+
+            <p id="egg-message"></p>
+
+        </section>
+
+
+        <!-- DRAGON ACTUEL -->
+
+        <section class="dragon-card">
+
+            <div
+                class="dragon-image"
+                id="dragon-image"
+            >
+                ❓
+            </div>
+
+            <div class="dragon-info">
+
+                <p
+                    class="rarity"
+                    id="dragon-rarity"
+                >
+                    INCONNU
+                </p>
+
+                <h2 id="dragon-name">
+                    Aucun dragon
+                </h2>
+
+                <p id="dragon-element">
+                    Explore pour trouver ton premier dragon !
+                </p>
+
+
+                <div class="dragon-stats">
+
+                    <div>
+                        <span>🍖</span>
+
+                        <small>
+                            Faim
+                        </small>
+
+                        <b id="hunger">
+                            80%
+                        </b>
+                    </div>
+
+
+                    <div>
+                        <span>😊</span>
+
+                        <small>
+                            Bonheur
+                        </small>
+
+                        <b id="happiness">
+                            70%
+                        </b>
+                    </div>
+
+
+                    <div>
+                        <span>🧼</span>
+
+                        <small>
+                            Propreté
+                        </small>
+
+                        <b id="cleanliness">
+                            90%
+                        </b>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTIONS -->
+
+        <section class="actions">
+
+            <button onclick="feedDragon()">
+                🍖
+                <span>Nourrir</span>
+            </button>
+
+            <button onclick="washDragon()">
+                🧼
+                <span>Laver</span>
+            </button>
+
+            <button onclick="playDragon()">
+                🎮
+                <span>Jouer</span>
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================================== -->
+    <!-- ÉCRAN : ŒUFS -->
+    <!-- ================================================== -->
+
+    <main
+        id="egg-page"
+        class="page"
+        style="display: none;"
+    >
+
+        <section class="egg-card">
+
+            <p class="small-title">
+                EXPLORATION DE DRACONIA
+            </p>
+
+            <div class="egg">
+                🥚
+            </div>
+
+            <h2>
+                Trouver un dragon
+            </h2>
+
+            <p>
+                Pars explorer les terres de Draconia
+                et tente de trouver un œuf.
+            </p>
+
+            <button
+                onclick="findEgg()"
+            >
+                🔍 Explorer
+            </button>
+
+            <p id="egg-message-page"></p>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================================== -->
+    <!-- ÉCRAN : DRAGONDEX -->
+    <!-- ================================================== -->
+
+    <main
+        id="dex-page"
+        class="page"
+        style="display: none;"
+    >
+
+        <section class="dragondex">
+
+            <div class="dragondex-header">
+
+                <div>
+
+                    <p class="small-title">
+                        COLLECTION
+                    </p>
+
+                    <h2>
+                        📖 DragonDex
+                    </h2>
+
+                </div>
+
+                <div class="dex-counter">
+
+                    <b id="dex-count">
+                        0
+                    </b>
+
+                    / 10
+
+                </div>
+
+            </div>
+
+
+            <p class="dragondex-description">
+                Découvre tous les dragons de Draconia.
+            </p>
+
+
+            <div
+                class="dragon-list"
+                id="dragon-list"
+            >
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================================== -->
+    <!-- ÉCRAN : SAC -->
+    <!-- ================================================== -->
+
+    <main
+        id="inventory-page"
+        class="page"
+        style="display: none;"
+    >
+
+        <section class="weather-card">
+
+            <div>
+
+                <p class="small-title">
+                    INVENTAIRE
                 </p>
 
                 <h2>
-                    📖 DragonDex
+                    🎒 Ton sac
                 </h2>
 
-            </div>
-
-            <div class="dex-counter">
-
-                <b id="dex-count">
-                    0
-                </b>
-
-                / 10
+                <p>
+                    Ton inventaire sera bientôt disponible.
+                </p>
 
             </div>
 
-        </div>
+        </section>
+
+    </main>
 
 
-        <p class="dragondex-description">
-            Découvre tous les dragons de Draconia.
-        </p>
+    <!-- ================================================== -->
+    <!-- ÉCRAN : PROFIL -->
+    <!-- ================================================== -->
+
+    <main
+        id="profile-page"
+        class="page"
+        style="display: none;"
+    >
+
+        <section class="weather-card">
+
+            <div>
+
+                <p class="small-title">
+                    JOUEUR
+                </p>
+
+                <h2>
+                    👤 Mon profil
+                </h2>
+
+                <p>
+                    Ton profil et tes statistiques
+                    arriveront bientôt.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
 
 
-        <div
-            class="dragon-list"
-            id="dragon-list"
-        >
-
-            <!--
-                Les dragons seront ajoutés
-                automatiquement par JavaScript.
-            -->
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================= -->
+    <!-- ================================================== -->
     <!-- NAVIGATION -->
-    <!-- ================================= -->
+    <!-- ================================================== -->
 
     <nav class="bottom-nav">
 
         <button
+            id="nav-home"
             class="active"
-            onclick="scrollToTop()"
+            onclick="showPage('home')"
         >
 
             🏠
@@ -350,7 +427,8 @@
 
 
         <button
-            onclick="scrollToEgg()"
+            id="nav-eggs"
+            onclick="showPage('eggs')"
         >
 
             🥚
@@ -363,7 +441,8 @@
 
 
         <button
-            onclick="scrollToDex()"
+            id="nav-dex"
+            onclick="showPage('dex')"
         >
 
             📖
@@ -376,7 +455,8 @@
 
 
         <button
-            onclick="showInventory()"
+            id="nav-inventory"
+            onclick="showPage('inventory')"
         >
 
             🎒
@@ -389,7 +469,8 @@
 
 
         <button
-            onclick="showProfile()"
+            id="nav-profile"
+            onclick="showPage('profile')"
         >
 
             👤
@@ -404,10 +485,6 @@
 
 </div>
 
-
-<!-- ================================= -->
-<!-- JAVASCRIPT -->
-<!-- ================================= -->
 
 <script src="script.js"></script>
 
