@@ -1,6 +1,6 @@
-// ===============================
-// DRACONIA - SYSTÈME PRINCIPAL
-// ===============================
+// ==========================================
+// 🐉 DRACONIA - SYSTÈME DES DRAGONS
+// ==========================================
 
 let xp = 0;
 let coins = 100;
@@ -11,53 +11,292 @@ let happiness = 70;
 let cleanliness = 90;
 
 
-// ===============================
-// UTILITAIRES
-// ===============================
+// ==========================================
+// 🐲 LISTE DES DRAGONS
+// ==========================================
 
-function updateScreen() {
-    document.getElementById("coins").textContent = coins;
-    document.getElementById("food").textContent = food;
+const dragons = [
+    {
+        name: "Flambyra",
+        element: "Feu",
+        rarity: "Commun",
+        emoji: "🔥🐉"
+    },
+    {
+        name: "Aquaryn",
+        element: "Eau",
+        rarity: "Commun",
+        emoji: "💧🐉"
+    },
+    {
+        name: "Floréon",
+        element: "Nature",
+        rarity: "Commun",
+        emoji: "🌿🐉"
+    },
+    {
+        name: "Zéphyr",
+        element: "Air",
+        rarity: "Commun",
+        emoji: "🌪️🐉"
+    },
+    {
+        name: "Voltaris",
+        element: "Foudre",
+        rarity: "Peu commun",
+        emoji: "⚡🐉"
+    },
+    {
+        name: "Cryon",
+        element: "Glace",
+        rarity: "Peu commun",
+        emoji: "❄️🐉"
+    },
+    {
+        name: "Terragon",
+        element: "Terre",
+        rarity: "Rare",
+        emoji: "🪨🐉"
+    },
+    {
+        name: "Noctyra",
+        element: "Ombre",
+        rarity: "Rare",
+        emoji: "🌑🐉"
+    },
+    {
+        name: "Solarys",
+        element: "Lumière",
+        rarity: "Épique",
+        emoji: "☀️🐉"
+    },
+    {
+        name: "Astréon",
+        element: "Cosmique",
+        rarity: "Légendaire",
+        emoji: "🌌🐉"
+    }
+];
 
-    document.getElementById("hunger").textContent = hunger + "%";
-    document.getElementById("happiness").textContent = happiness + "%";
-    document.getElementById("cleanliness").textContent = cleanliness + "%";
 
-    document.getElementById("xp").textContent = xp;
+// ==========================================
+// 📖 DRAGONS DÉCOUVERTS
+// ==========================================
 
-    const xpFill = document.getElementById("xp-fill");
-    xpFill.style.width = xp + "%";
+let discoveredDragons = [];
+
+
+// ==========================================
+// 🎲 CHOISIR UNE RARETÉ
+// ==========================================
+
+function chooseRarity() {
+
+    const chance = Math.random();
+
+    if (chance < 0.02) {
+        return "Légendaire";
+    }
+
+    if (chance < 0.07) {
+        return "Épique";
+    }
+
+    if (chance < 0.20) {
+        return "Rare";
+    }
+
+    if (chance < 0.45) {
+        return "Peu commun";
+    }
+
+    return "Commun";
 }
 
 
-// ===============================
-// XP
-// ===============================
+// ==========================================
+// 🐲 FAIRE APPARAÎTRE UN DRAGON
+// ==========================================
+
+function discoverDragon() {
+
+    const rarity = chooseRarity();
+
+    const possibleDragons = dragons.filter(
+        dragon => dragon.rarity === rarity
+    );
+
+    const dragon =
+        possibleDragons[
+            Math.floor(Math.random() * possibleDragons.length)
+        ];
+
+    const alreadyOwned =
+        discoveredDragons.includes(dragon.name);
+
+    if (alreadyOwned) {
+
+        // Doublon = XP
+        addXP(25);
+
+        return {
+            dragon: dragon,
+            duplicate: true
+        };
+    }
+
+    discoveredDragons.push(dragon.name);
+
+    return {
+        dragon: dragon,
+        duplicate: false
+    };
+}
+
+
+// ==========================================
+// 🔎 EXPLORATION
+// ==========================================
+
+function findEgg() {
+
+    const message =
+        document.getElementById("egg-message");
+
+    const button =
+        document.getElementById("egg-button");
+
+    button.disabled = true;
+
+    message.textContent =
+        "🔎 Tu explores les terres de Draconia...";
+
+    setTimeout(() => {
+
+        const foundEgg =
+            Math.random() < 0.35;
+
+        if (!foundEgg) {
+
+            message.textContent =
+                "🌲 Rien cette fois... continue ton exploration !";
+
+            addXP(3);
+
+            button.disabled = false;
+
+            return;
+        }
+
+
+        // 🥚 ŒUF TROUVÉ
+
+        message.textContent =
+            "🥚 Un œuf mystérieux vient d'être découvert !";
+
+        setTimeout(() => {
+
+            const result =
+                discoverDragon();
+
+            const dragon =
+                result.dragon;
+
+
+            if (result.duplicate) {
+
+                message.innerHTML =
+                    `🐉 Doublon : <b>${dragon.name}</b> !<br>
+                    ⭐ +25 XP`;
+
+            } else {
+
+                message.innerHTML =
+                    `🎉 NOUVEAU DRAGON !<br>
+                    ${dragon.emoji}<br>
+                    <b>${dragon.name}</b><br>
+                    ${dragon.element} • ${dragon.rarity}`;
+
+                showDragon(dragon);
+
+                addXP(20);
+            }
+
+            button.disabled = false;
+
+        }, 1200);
+
+    }, 1200);
+}
+
+
+// ==========================================
+// 🐉 AFFICHER LE DRAGON
+// ==========================================
+
+function showDragon(dragon) {
+
+    const dragonName =
+        document.getElementById("dragon-name");
+
+    dragonName.textContent =
+        dragon.name;
+
+    const dragonImage =
+        document.querySelector(".dragon-image");
+
+    dragonImage.textContent =
+        dragon.emoji;
+
+    const rarity =
+        document.querySelector(".rarity");
+
+    rarity.textContent =
+        dragon.rarity.toUpperCase();
+
+    const element =
+        document.querySelector(".dragon-info > p:not(.rarity)");
+
+    element.textContent =
+        "🐉 Dragon de " + dragon.element;
+}
+
+
+// ==========================================
+// ⭐ XP
+// ==========================================
 
 function addXP(amount) {
 
     xp += amount;
 
     if (xp >= 100) {
-        xp = 0;
+
+        xp -= 100;
 
         coins += 25;
 
-        alert("🎉 Ton dragon est monté de niveau !\n\n💰 +25 pièces");
+        alert(
+            "🎉 Ton dragon gagne un niveau !\n\n💰 +25 pièces"
+        );
     }
 
     updateScreen();
 }
 
 
-// ===============================
-// NOURRIR LE DRAGON
-// ===============================
+// ==========================================
+// 🍖 NOURRIR
+// ==========================================
 
 function feedDragon() {
 
     if (food <= 0) {
-        alert("🥕 Tu n'as plus de nourriture !");
+
+        alert(
+            "🥕 Tu n'as plus de nourriture !"
+        );
+
         return;
     }
 
@@ -81,9 +320,9 @@ function feedDragon() {
 }
 
 
-// ===============================
-// LAVER LE DRAGON
-// ===============================
+// ==========================================
+// 🧼 LAVER
+// ==========================================
 
 function washDragon() {
 
@@ -105,9 +344,9 @@ function washDragon() {
 }
 
 
-// ===============================
-// JOUER AVEC LE DRAGON
-// ===============================
+// ==========================================
+// 🎮 JOUER
+// ==========================================
 
 function playDragon() {
 
@@ -123,48 +362,41 @@ function playDragon() {
 }
 
 
-// ===============================
-// EXPLORATION / ŒUF
-// ===============================
+// ==========================================
+// 🔄 METTRE À JOUR L'ÉCRAN
+// ==========================================
 
-function findEgg() {
+function updateScreen() {
 
-    const message = document.getElementById("egg-message");
-    const button = document.getElementById("egg-button");
+    document.getElementById("coins").textContent =
+        coins;
 
-    button.disabled = true;
+    document.getElementById("food").textContent =
+        food;
 
-    message.textContent = "🔎 Exploration de Draconia...";
+    document.getElementById("hunger").textContent =
+        hunger + "%";
 
-    setTimeout(() => {
+    document.getElementById("happiness").textContent =
+        happiness + "%";
 
-        const chance = Math.random();
+    document.getElementById("cleanliness").textContent =
+        cleanliness + "%";
 
-        if (chance < 0.35) {
+    document.getElementById("xp").textContent =
+        xp;
 
-            message.textContent =
-                "🥚 Tu as trouvé un œuf mystérieux !";
-
-            addXP(15);
-
-        } else {
-
-            message.textContent =
-                "🌲 Rien cette fois... continue d'explorer !";
-
-            addXP(3);
-        }
-
-        button.disabled = false;
-
-    }, 1200);
+    document.getElementById("xp-fill").style.width =
+        xp + "%";
 }
 
 
-// ===============================
-// INITIALISATION
-// ===============================
+// ==========================================
+// 🚀 DÉMARRAGE
+// ==========================================
 
 updateScreen();
 
-console.log("🐉 Bienvenue dans Draconia !");
+console.log(
+    "🐉 Draconia est lancé !"
+);
