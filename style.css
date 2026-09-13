@@ -1,1518 +1,1341 @@
 /* ==========================================
 DRACONIA - STYLE
 ========================================== */
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    }
-
+}
+html,
 body {
-font-family: Arial, sans-serif;
-background: #0f1020;
-color: #ffffff;
-min-height: 100vh;
+    width: 100%;
+    min-height: 100%;
 }
-
+body {
+    font-family: Arial, sans-serif;
+    background: #0f1020;
+    color: #ffffff;
+    min-height: 100vh;
+}
 button {
-font-family: inherit;
-cursor: pointer;
+    font-family: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
 }
-
 .game {
-width: 100%;
-max-width: 600px;
-margin: 0 auto;
-padding-bottom: 90px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 90px;
 }
-
 /* ==========================================
 BARRE DU HAUT
 ========================================== */
-
 .top-bar {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 18px 16px;
-background: #17182c;
-border-bottom: 1px solid #292b48;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 16px;
+    background: #17182c;
+    border-bottom: 1px solid #292b48;
 }
-
 .top-bar h1 {
-font-size: 22px;
+    font-size: 22px;
 }
-
 .top-bar p {
-margin-top: 4px;
-color: #999dbd;
-font-size: 13px;
+    margin-top: 4px;
+    color: #999dbd;
+    font-size: 13px;
 }
-
 .resources {
-display: flex;
-gap: 10px;
+    display: flex;
+    gap: 10px;
 }
-
 .resources span {
-background: #22243c;
-padding: 8px 10px;
-border-radius: 12px;
-font-size: 13px;
+    background: #22243c;
+    padding: 8px 10px;
+    border-radius: 12px;
+    font-size: 13px;
 }
-
 /* ==========================================
 PAGES
 ========================================== */
-
 .page {
-padding: 16px;
+    padding: 16px;
 }
-
 .page.active-page {
-display: block;
+    display: block;
 }
-
 /* ==========================================
 CARTES
 ========================================== */
-
 .weather-card,
 .level-card,
 .egg-card,
 .dragon-card {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-margin-bottom: 14px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    margin-bottom: 14px;
 }
-
 /* ==========================================
 MÉTÉO
 ========================================== */
-
 .weather-card {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px;
 }
-
 .small-title {
-color: #8589ad;
-font-size: 11px;
-font-weight: bold;
-letter-spacing: 1px;
-margin-bottom: 7px;
+    color: #8589ad;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 7px;
 }
-
 .weather-card h2 {
-font-size: 19px;
+    font-size: 19px;
 }
-
 .weather-card p:not(.small-title) {
-color: #9da0bd;
-font-size: 13px;
-margin-top: 7px;
-line-height: 1.4;
+    color: #9da0bd;
+    font-size: 13px;
+    margin-top: 7px;
+    line-height: 1.4;
 }
-
 .temperature {
-font-size: 24px;
+    font-size: 24px;
 }
-
 /* ==========================================
 XP
 ========================================== */
-
 .level-card {
-padding: 16px;
+    padding: 16px;
 }
-
 .level-info {
-display: flex;
-justify-content: space-between;
-margin-bottom: 9px;
-font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 9px;
+    font-size: 13px;
 }
-
 .xp-bar {
-width: 100%;
-height: 10px;
-background: #292b48;
-border-radius: 20px;
-overflow: hidden;
+    width: 100%;
+    height: 10px;
+    background: #292b48;
+    border-radius: 20px;
+    overflow: hidden;
 }
-
 #xp-fill {
-height: 100%;
-width: 0%;
-background: #8b6cff;
-border-radius: 20px;
-transition: width 0.3s ease;
+    height: 100%;
+    width: 0%;
+    background: #8b6cff;
+    border-radius: 20px;
+    transition: width 0.3s ease;
 }
-
 /* ==========================================
 ŒUF
 ========================================== */
-
 .egg-card {
-text-align: center;
-padding: 24px 18px;
+    text-align: center;
+    padding: 24px 18px;
 }
-
 .egg {
-font-size: 75px;
-margin: 15px 0;
-animation: floating 2s infinite ease-in-out;
+    font-size: 75px;
+    margin: 15px 0;
+    animation: floating 2s infinite ease-in-out;
 }
-
 @keyframes floating {
-
-0% {
-    transform: translateY(0);
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+    100% {
+        transform: translateY(0);
+    }
 }
-50% {
-    transform: translateY(-8px);
-}
-100% {
-    transform: translateY(0);
-}
-
-}
-
 .egg-card h2 {
-margin-bottom: 8px;
+    margin-bottom: 8px;
 }
-
 .egg-card p {
-color: #9da0bd;
-font-size: 14px;
-line-height: 1.5;
+    color: #9da0bd;
+    font-size: 14px;
+    line-height: 1.5;
 }
-
 .egg-card button {
-margin-top: 18px;
-width: 100%;
-border: none;
-border-radius: 14px;
-padding: 14px;
-background: #795cff;
-color: white;
-font-size: 16px;
-font-weight: bold;
+    margin-top: 18px;
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    background: #795cff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
 }
-
 .egg-card button:active {
-transform: scale(0.98);
+    transform: scale(0.98);
 }
-
 .egg-card button:disabled {
-opacity: 0.6;
+    opacity: 0.6;
 }
-
 #egg-message,
 #egg-message-page {
-margin-top: 15px;
-min-height: 20px;
-color: #c5c8e5;
+    margin-top: 15px;
+    min-height: 20px;
+    color: #c5c8e5;
 }
-
 /* ==========================================
 RÉCOLTE DES RESSOURCES
 ========================================== */
-
 .gathering-section {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 18px;
-margin-bottom: 14px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
 }
-
 .gathering-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
-
 .gathering-header h2 {
-font-size: 21px;
+    font-size: 21px;
 }
-
 .gathering-description {
-color: #8589ad;
-font-size: 13px;
-line-height: 1.5;
-margin-bottom: 16px;
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
 }
-
-/* ==========================================
-LIEUX DE RÉCOLTE
-========================================== */
-
 .gathering-location {
-display: flex;
-align-items: center;
-gap: 11px;
-background: #22243c;
-border: 1px solid #292b48;
-border-radius: 15px;
-padding: 12px;
-margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    background: #22243c;
+    border: 1px solid #292b48;
+    border-radius: 15px;
+    padding: 12px;
+    margin-bottom: 10px;
 }
-
 .gathering-location:last-of-type {
-margin-bottom: 0;
+    margin-bottom: 0;
 }
-
 .gathering-location-icon {
-width: 50px;
-min-width: 50px;
-height: 50px;
-display: flex;
-align-items: center;
-justify-content: center;
-background: #292b48;
-border-radius: 13px;
-font-size: 26px;
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #292b48;
+    border-radius: 13px;
+    font-size: 26px;
 }
-
 .gathering-location-info {
-flex: 1;
-min-width: 0;
+    flex: 1;
+    min-width: 0;
 }
-
 .gathering-location-info h3 {
-font-size: 14px;
-margin-bottom: 4px;
+    font-size: 14px;
+    margin-bottom: 4px;
 }
-
 .gathering-location-info p {
-color: #8589ad;
-font-size: 10px;
-line-height: 1.4;
+    color: #8589ad;
+    font-size: 10px;
+    line-height: 1.4;
 }
-
 .gather-button {
-border: none;
-background: #795cff;
-color: #ffffff;
-border-radius: 11px;
-padding: 10px 9px;
-font-size: 11px;
-font-weight: bold;
-white-space: nowrap;
-transition: transform 0.15s ease, opacity 0.15s ease;
+    border: none;
+    background: #795cff;
+    color: #ffffff;
+    border-radius: 11px;
+    padding: 10px 9px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
-
 .gather-button:active {
-transform: scale(0.95);
+    transform: scale(0.95);
 }
-
 .gather-button:disabled {
-opacity: 0.5;
-cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
-
 .fishing-location {
-margin-top: 2px;
+    margin-top: 2px;
 }
-
 .gathering-message {
-min-height: 20px;
-margin-top: 14px;
-color: #c5c8e5;
-font-size: 13px;
-line-height: 1.4;
-text-align: center;
+    min-height: 20px;
+    margin-top: 14px;
+    color: #c5c8e5;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
 }
-
 /* ==========================================
-FENÊTRES DES MINI-JEUX
+FENÊTRE PRINCIPALE DES MINI-JEUX
 ========================================== */
-
-.gathering-game-window {
-position: fixed;
-inset: 0;
-z-index: 500;
-width: 100%;
-max-width: 600px;
-margin: 0 auto;
-padding: 18px 16px 100px;
-background: #0f1020;
-overflow-y: auto;
+.gathering-game {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 18px 16px 100px;
+    background: #0f1020;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
-
+.gathering-game[style*="display: none"] {
+    display: none !important;
+}
+.gathering-game[style*="display: block"] {
+    display: block !important;
+}
+.mini-game {
+    width: 100%;
+}
+.mini-game[style*="display: none"] {
+    display: none !important;
+}
+.mini-game[style*="display: block"] {
+    display: block !important;
+}
+/* ==========================================
+EN-TÊTE DES MINI-JEUX
+========================================== */
 .gathering-game-header {
-position: relative;
-text-align: center;
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 22px 18px;
-margin-bottom: 15px;
+    position: relative;
+    text-align: center;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 22px 18px;
+    margin-bottom: 15px;
 }
-
 .gathering-game-header h2 {
-font-size: 24px;
-margin-bottom: 7px;
+    font-size: 24px;
+    margin-bottom: 7px;
+    padding-right: 35px;
 }
-
 .gathering-game-header p:not(.small-title) {
-color: #9da0bd;
-font-size: 13px;
-line-height: 1.5;
+    color: #9da0bd;
+    font-size: 13px;
+    line-height: 1.5;
 }
-
 .game-close-button {
-position: absolute;
-top: 12px;
-right: 12px;
-width: 35px;
-height: 35px;
-border: 1px solid #292b48;
-border-radius: 50%;
-background: #22243c;
-color: #ffffff;
-font-size: 16px;
-font-weight: bold;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #292b48;
+    border-radius: 50%;
+    background: #22243c;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 20;
 }
-
 .game-close-button:active {
-transform: scale(0.92);
+    transform: scale(0.92);
 }
-
 /* ==========================================
 MINI-JEU FORÊT
 ========================================== */
-
 .forest-tree-area {
-background: linear-gradient(
-180deg,
-#1d2740,
-#192b2a
-);
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 25px 15px;
-text-align: center;
-min-height: 280px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
+    background: linear-gradient(
+        180deg,
+        #1d2740,
+        #192b2a
+    );
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 25px 15px;
+    text-align: center;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-
 .forest-tree-button {
-border: none;
-background: transparent;
-font-size: 125px;
-line-height: 1;
-transition: transform 0.1s ease;
-touch-action: manipulation;
+    border: none;
+    background: transparent;
+    font-size: 125px;
+    line-height: 1;
+    transition: transform 0.1s ease;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
-
 .forest-tree-button:active {
-transform: scale(0.92) rotate(-4deg);
+    transform: scale(0.92) rotate(-4deg);
 }
-
 #forest-tree-message {
-margin-top: 18px;
-color: #c5c8e5;
-font-size: 14px;
+    margin-top: 18px;
+    color: #c5c8e5;
+    font-size: 14px;
 }
-
 .mushroom-area {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 18px;
-margin-top: 14px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 18px;
+    margin-top: 14px;
 }
-
 .mushroom-area h3 {
-font-size: 17px;
-margin-bottom: 5px;
+    font-size: 17px;
+    margin-bottom: 5px;
 }
-
 .mushroom-area > p {
-color: #8589ad;
-font-size: 12px;
-margin-bottom: 14px;
+    color: #8589ad;
+    font-size: 12px;
+    margin-bottom: 14px;
 }
-
 .mushroom-grid {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 9px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
 }
-
 .mushroom-button {
-min-height: 65px;
-border: 1px solid #292b48;
-border-radius: 14px;
-background: #22243c;
-font-size: 30px;
-transition: transform 0.12s ease, opacity 0.2s ease;
+    min-height: 65px;
+    border: 1px solid #292b48;
+    border-radius: 14px;
+    background: #22243c;
+    font-size: 30px;
+    transition: transform 0.12s ease, opacity 0.2s ease;
 }
-
 .mushroom-button:active {
-transform: scale(0.9);
+    transform: scale(0.9);
 }
-
+.mushroom-button:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
 /* ==========================================
 MINI-JEU PLAINES
 ========================================== */
-
 .watering-area {
-background: linear-gradient(
-180deg,
-#1e2c42,
-#192b30
-);
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 25px 18px;
-text-align: center;
+    background: linear-gradient(
+        180deg,
+        #1e2c42,
+        #192b30
+    );
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 25px 18px;
+    text-align: center;
 }
-
 .watering-plant {
-font-size: 90px;
-margin-bottom: 15px;
+    font-size: 90px;
+    margin-bottom: 15px;
 }
-
 .game-action-button {
-width: 100%;
-border: none;
-border-radius: 14px;
-padding: 14px;
-background: #795cff;
-color: #ffffff;
-font-size: 15px;
-font-weight: bold;
-transition: transform 0.12s ease, opacity 0.2s ease;
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    background: #795cff;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: bold;
+    transition: transform 0.12s ease, opacity 0.2s ease;
 }
-
 .game-action-button:active {
-transform: scale(0.97);
+    transform: scale(0.97);
 }
-
 .game-action-button:disabled {
-opacity: 0.5;
+    opacity: 0.5;
 }
-
 #watering-message,
 #plants-growth-message {
-color: #9da0bd;
-font-size: 13px;
-line-height: 1.4;
-margin-top: 12px;
+    color: #9da0bd;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-top: 12px;
 }
-
 .plants-area {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 18px;
-margin-top: 14px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 18px;
+    margin-top: 14px;
 }
-
 .plants-area h3 {
-font-size: 17px;
-margin-bottom: 4px;
+    font-size: 17px;
+    margin-bottom: 4px;
 }
-
 .plants-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 10px;
-margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
 }
-
 .plant-button {
-min-height: 110px;
-border: 1px solid #292b48;
-border-radius: 16px;
-background: #22243c;
-font-size: 52px;
-transition: transform 0.12s ease, background 0.2s ease;
+    min-height: 110px;
+    border: 1px solid #292b48;
+    border-radius: 16px;
+    background: #22243c;
+    font-size: 52px;
+    transition: transform 0.12s ease, background 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
 }
-
 .plant-button:active {
-transform: scale(0.94);
+    transform: scale(0.94);
 }
-
 .plant-button.ready {
-background: #263d32;
-border-color: #4f8d63;
+    background: #263d32;
+    border-color: #4f8d63;
 }
-
 /* ==========================================
 MINI-JEU PÊCHE
 ========================================== */
-
 .fishing-scene {
-position: relative;
-min-height: 280px;
-overflow: hidden;
-border: 1px solid #292b48;
-border-radius: 20px;
-background: linear-gradient(
-180deg,
-#1d2740 0%,
-#1b3950 48%,
-#123249 49%,
-#10293d 100%
-);
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
+    position: relative;
+    min-height: 280px;
+    overflow: hidden;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    background: linear-gradient(
+        180deg,
+        #1d2740 0%,
+        #1b3950 48%,
+        #123249 49%,
+        #10293d 100%
+    );
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-
 .fishing-rod {
-font-size: 100px;
-transform: rotate(-12deg);
-margin-bottom: 15px;
-transition: transform 0.15s ease;
+    font-size: 100px;
+    transform: rotate(-12deg);
+    margin-bottom: 15px;
+    transition: transform 0.15s ease;
+    user-select: none;
 }
-
 .fishing-water {
-font-size: 27px;
-letter-spacing: 3px;
-opacity: 0.8;
+    font-size: 27px;
+    letter-spacing: 3px;
+    opacity: 0.8;
 }
-
 .fishing-reaction {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 18px;
-margin-top: 14px;
-text-align: center;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 18px;
+    margin-top: 14px;
+    text-align: center;
 }
-
 #fishing-status {
-min-height: 20px;
-color: #c5c8e5;
-font-size: 13px;
-margin-bottom: 14px;
+    min-height: 20px;
+    color: #c5c8e5;
+    font-size: 13px;
+    margin-bottom: 14px;
 }
-
 .fishing-bar {
-position: relative;
-width: 100%;
-height: 38px;
-background: #292b48;
-border-radius: 20px;
-overflow: hidden;
-margin-bottom: 15px;
+    position: relative;
+    width: 100%;
+    height: 38px;
+    background: #292b48;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 15px;
 }
-
 .fishing-green-zone {
-position: absolute;
-top: 0;
-bottom: 0;
-left: 35%;
-width: 25%;
-background: #4db878;
-border-radius: 20px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 35%;
+    width: 25%;
+    background: #4db878;
+    border-radius: 20px;
 }
-
 .fishing-arrow {
-position: absolute;
-top: 0;
-left: 0%;
-width: 35px;
-height: 38px;
-display: flex;
-align-items: center;
-justify-content: center;
-color: #ffffff;
-font-size: 20px;
-transform: translateX(-50%);
-pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0%;
+    width: 35px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 20px;
+    transform: translateX(-50%);
+    pointer-events: none;
 }
-
 /* ==========================================
 MINI-JEU CHASSE
 ========================================== */
-
 .hunting-field {
-position: relative;
-width: 100%;
-min-height: 390px;
-overflow: hidden;
-border: 1px solid #292b48;
-border-radius: 20px;
-background:
-linear-gradient(
-180deg,
-#1d2b3c 0%,
-#203d35 50%,
-#182c27 100%
-);
+    position: relative;
+    width: 100%;
+    min-height: 390px;
+    overflow: hidden;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            180deg,
+            #1d2b3c 0%,
+            #203d35 50%,
+            #182c27 100%
+        );
 }
-
 .hunting-field::before {
-content: “🌲     🌳       🌲       🌳     🌲”;
-position: absolute;
-top: 20px;
-left: 0;
-width: 100%;
-text-align: center;
-font-size: 30px;
-opacity: 0.55;
-pointer-events: none;
+    content: "🌲     🌳       🌲       🌳     🌲";
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 30px;
+    opacity: 0.55;
+    pointer-events: none;
 }
-
 .hunting-field::after {
-content: “🌿  🌿  🌱  🌿  🌱  🌿  🌿”;
-position: absolute;
-bottom: 18px;
-left: 0;
-width: 100%;
-text-align: center;
-font-size: 23px;
-opacity: 0.6;
-pointer-events: none;
+    content: "🌿  🌿  🌱  🌿  🌱  🌿  🌿";
+    position: absolute;
+    bottom: 18px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 23px;
+    opacity: 0.6;
+    pointer-events: none;
 }
-
 .hunting-duck {
-position: absolute;
-z-index: 3;
-font-size: 52px;
-padding: 8px;
-border-radius: 50%;
-animation: duck-float 0.7s infinite alternate ease-in-out;
-touch-action: manipulation;
+    position: absolute;
+    z-index: 3;
+    font-size: 52px;
+    padding: 8px;
+    border-radius: 50%;
+    animation: duck-float 0.7s infinite alternate ease-in-out;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
-
 @keyframes duck-float {
-
-from {
-    transform: translateY(0) rotate(-3deg);
+    from {
+        transform: translateY(0) rotate(-3deg);
+    }
+    to {
+        transform: translateY(-8px) rotate(3deg);
+    }
 }
-to {
-    transform: translateY(-8px) rotate(3deg);
-}
-
-}
-
 .hunting-bow {
-position: absolute;
-z-index: 5;
-left: 50%;
-bottom: 25px;
-transform: translateX(-50%);
-width: 90px;
-height: 90px;
-border: 1px solid #292b48;
-border-radius: 50%;
-background: #22243c;
-font-size: 52px;
-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-transition: transform 0.12s ease;
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    bottom: 25px;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 90px;
+    border: 1px solid #292b48;
+    border-radius: 50%;
+    background: #22243c;
+    font-size: 52px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.12s ease;
 }
-
 .hunting-bow:active {
-transform: translateX(-50%) scale(0.9);
+    transform: translateX(-50%) scale(0.9);
 }
-
 .hunting-info {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 15px;
-margin-top: 14px;
-text-align: center;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 15px;
+    margin-top: 14px;
+    text-align: center;
 }
-
 .hunting-info p {
-color: #8589ad;
-font-size: 12px;
-line-height: 1.5;
+    color: #8589ad;
+    font-size: 12px;
+    line-height: 1.5;
 }
-
 .hunting-info strong {
-color: #ffffff;
+    color: #ffffff;
 }
-
 #hunting-status {
-margin-top: 7px;
-color: #c5c8e5;
+    margin-top: 7px;
+    color: #c5c8e5;
 }
-
 /* ==========================================
 PAGE DRAGONS
 ========================================== */
-
 .dragons-section {
-width: 100%;
+    width: 100%;
 }
-
 .dragons-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-gap: 12px;
-margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
 }
-
 .dragons-header h2 {
-font-size: 22px;
+    font-size: 22px;
 }
-
 .dragons-counter {
-flex-shrink: 0;
-background: #292b48;
-color: #aaaed0;
-padding: 8px 11px;
-border-radius: 12px;
-font-size: 13px;
+    flex-shrink: 0;
+    background: #292b48;
+    color: #aaaed0;
+    padding: 8px 11px;
+    border-radius: 12px;
+    font-size: 13px;
 }
-
 .dragons-counter b {
-color: #ffffff;
+    color: #ffffff;
 }
-
 .dragons-description {
-color: #8589ad;
-font-size: 13px;
-line-height: 1.5;
-margin-bottom: 16px;
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
 }
-
 /* ==========================================
 LISTE DES DRAGONS POSSÉDÉS
 ========================================== */
-
 .owned-dragons-list {
-display: flex;
-flex-direction: column;
-gap: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
-
 .owned-dragon-card {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 16px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 16px;
 }
-
 .owned-dragon-top {
-display: flex;
-align-items: center;
-gap: 13px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
 }
-
 .owned-dragon-icon {
-width: 70px;
-min-width: 70px;
-height: 70px;
-display: flex;
-align-items: center;
-justify-content: center;
-background: #242641;
-border-radius: 17px;
-font-size: 38px;
+    width: 70px;
+    min-width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #242641;
+    border-radius: 17px;
+    font-size: 38px;
 }
-
 .owned-dragon-info {
-flex: 1;
-min-width: 0;
+    flex: 1;
+    min-width: 0;
 }
-
 .owned-dragon-info h3 {
-font-size: 19px;
-margin-bottom: 4px;
+    font-size: 19px;
+    margin-bottom: 4px;
 }
-
 .owned-dragon-info p {
-color: #9da0bd;
-font-size: 12px;
-margin-top: 3px;
+    color: #9da0bd;
+    font-size: 12px;
+    margin-top: 3px;
 }
-
 .owned-dragon-info .rarity {
-margin-bottom: 3px;
+    margin-bottom: 3px;
 }
-
 .dragon-level {
-display: inline-block;
-margin-top: 7px;
-padding: 5px 8px;
-background: #292b48;
-border-radius: 8px;
-color: #c5c8e5;
-font-size: 11px;
-font-weight: bold;
+    display: inline-block;
+    margin-top: 7px;
+    padding: 5px 8px;
+    background: #292b48;
+    border-radius: 8px;
+    color: #c5c8e5;
+    font-size: 11px;
+    font-weight: bold;
 }
-
 /* ==========================================
 XP DES DRAGONS
 ========================================== */
-
 .dragon-xp-section {
-margin-top: 15px;
+    margin-top: 15px;
 }
-
 .dragon-xp-info {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 6px;
-color: #8589ad;
-font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    color: #8589ad;
+    font-size: 11px;
 }
-
 .dragon-xp-info b {
-color: #c5c8e5;
+    color: #c5c8e5;
 }
-
 .dragon-xp-bar {
-width: 100%;
-height: 7px;
-background: #292b48;
-border-radius: 20px;
-overflow: hidden;
+    width: 100%;
+    height: 7px;
+    background: #292b48;
+    border-radius: 20px;
+    overflow: hidden;
 }
-
 .dragon-xp-fill {
-height: 100%;
-width: 0%;
-background: #8b6cff;
-border-radius: 20px;
-transition: width 0.3s ease;
+    height: 100%;
+    width: 0%;
+    background: #8b6cff;
+    border-radius: 20px;
+    transition: width 0.3s ease;
 }
-
 /* ==========================================
 STATS / SOINS DU DRAGON
 ========================================== */
-
 .dragon-care-stats {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 8px;
-margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 15px;
 }
-
 .dragon-care-stat {
-background: #22243c;
-border-radius: 11px;
-padding: 9px 5px;
-text-align: center;
+    background: #22243c;
+    border-radius: 11px;
+    padding: 9px 5px;
+    text-align: center;
 }
-
 .dragon-care-stat span {
-display: block;
-font-size: 17px;
-margin-bottom: 3px;
+    display: block;
+    font-size: 17px;
+    margin-bottom: 3px;
 }
-
 .dragon-care-stat small {
-display: block;
-color: #8589ad;
-font-size: 9px;
+    display: block;
+    color: #8589ad;
+    font-size: 9px;
 }
-
 .dragon-care-stat b {
-display: block;
-margin-top: 3px;
-font-size: 11px;
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
 }
-
 /* ==========================================
 ACTIONS DU DRAGON
 ========================================== */
-
 .dragon-care-actions {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 8px;
-margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
 }
-
 .dragon-care-actions button {
-border: 1px solid #292b48;
-background: #22243c;
-color: #ffffff;
-border-radius: 12px;
-padding: 11px 5px;
-font-size: 12px;
-transition: transform 0.15s ease, background 0.15s ease;
+    border: 1px solid #292b48;
+    background: #22243c;
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 11px 5px;
+    font-size: 12px;
+    transition: transform 0.15s ease, background 0.15s ease;
 }
-
 .dragon-care-actions button:active {
-transform: scale(0.96);
+    transform: scale(0.96);
 }
-
 .dragon-care-actions button:hover {
-background: #292b48;
+    background: #292b48;
 }
-
 /* ==========================================
 AUCUN DRAGON
 ========================================== */
-
 .no-dragons {
-text-align: center;
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 35px 20px;
+    text-align: center;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 35px 20px;
 }
-
 .no-dragons-icon {
-font-size: 55px;
-margin-bottom: 12px;
+    font-size: 55px;
+    margin-bottom: 12px;
 }
-
 .no-dragons h3 {
-font-size: 18px;
-margin-bottom: 7px;
+    font-size: 18px;
+    margin-bottom: 7px;
 }
-
 .no-dragons p {
-color: #8589ad;
-font-size: 13px;
-line-height: 1.5;
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
 }
-
 .no-dragons button {
-margin-top: 16px;
-border: none;
-border-radius: 12px;
-padding: 11px 16px;
-background: #795cff;
-color: #ffffff;
-font-weight: bold;
+    margin-top: 16px;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 16px;
+    background: #795cff;
+    color: #ffffff;
+    font-weight: bold;
 }
-
 /* ==========================================
 DRAGON
 ========================================== */
-
 .dragon-card {
-display: flex;
-gap: 15px;
-padding: 18px;
+    display: flex;
+    gap: 15px;
+    padding: 18px;
 }
-
 .dragon-image {
-width: 105px;
-min-width: 105px;
-height: 105px;
-display: flex;
-justify-content: center;
-align-items: center;
-background: #242641;
-border-radius: 18px;
-font-size: 48px;
+    width: 105px;
+    min-width: 105px;
+    height: 105px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #242641;
+    border-radius: 18px;
+    font-size: 48px;
 }
-
 .dragon-info {
-flex: 1;
+    flex: 1;
 }
-
 .rarity {
-color: #a991ff;
-font-size: 10px;
-font-weight: bold;
-letter-spacing: 1px;
-margin-bottom: 5px;
+    color: #a991ff;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
 }
-
 .dragon-info h2 {
-font-size: 21px;
-margin-bottom: 5px;
+    font-size: 21px;
+    margin-bottom: 5px;
 }
-
 .dragon-info > p {
-color: #9da0bd;
-font-size: 13px;
+    color: #9da0bd;
+    font-size: 13px;
 }
-
 /* ==========================================
 STATS DU DRAGON
 ========================================== */
-
 .dragon-stats {
-display: flex;
-gap: 8px;
-margin-top: 15px;
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
 }
-
 .dragon-stats div {
-flex: 1;
-background: #22243c;
-border-radius: 10px;
-padding: 7px;
-text-align: center;
+    flex: 1;
+    background: #22243c;
+    border-radius: 10px;
+    padding: 7px;
+    text-align: center;
 }
-
 .dragon-stats span {
-display: block;
-font-size: 16px;
+    display: block;
+    font-size: 16px;
 }
-
 .dragon-stats small {
-display: block;
-color: #8589ad;
-font-size: 9px;
-margin-top: 3px;
+    display: block;
+    color: #8589ad;
+    font-size: 9px;
+    margin-top: 3px;
 }
-
 .dragon-stats b {
-display: block;
-font-size: 11px;
-margin-top: 3px;
+    display: block;
+    font-size: 11px;
+    margin-top: 3px;
 }
-
 /* ==========================================
 ACTIONS
 ========================================== */
-
 .actions {
-display: flex;
-gap: 10px;
-margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
 }
-
 .actions button {
-flex: 1;
-border: 1px solid #292b48;
-background: #191a30;
-color: white;
-border-radius: 15px;
-padding: 13px 5px;
+    flex: 1;
+    border: 1px solid #292b48;
+    background: #191a30;
+    color: white;
+    border-radius: 15px;
+    padding: 13px 5px;
 }
-
 .actions button span {
-display: block;
-color: #9da0bd;
-font-size: 11px;
-margin-top: 5px;
+    display: block;
+    color: #9da0bd;
+    font-size: 11px;
+    margin-top: 5px;
 }
-
 /* ==========================================
 DRAGONDEX
 ========================================== */
-
 .dragondex {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 18px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 18px;
 }
-
 .dragondex-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-
 .dragondex-header h2 {
-font-size: 21px;
+    font-size: 21px;
 }
-
 .dex-counter {
-background: #292b48;
-padding: 8px 12px;
-border-radius: 12px;
-color: #aaaed0;
+    background: #292b48;
+    padding: 8px 12px;
+    border-radius: 12px;
+    color: #aaaed0;
 }
-
 .dex-counter b {
-color: white;
+    color: white;
 }
-
 .dragondex-description {
-color: #8589ad;
-font-size: 13px;
-margin: 8px 0 16px;
+    color: #8589ad;
+    font-size: 13px;
+    margin: 8px 0 16px;
 }
-
 /* ==========================================
 LISTE DES DRAGONS
 ========================================== */
-
 .dragon-list {
-display: flex;
-flex-direction: column;
-gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
-
 .dex-dragon {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 12px;
-background: #22243c;
-border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #22243c;
+    border-radius: 15px;
 }
-
 .dex-dragon-image {
-width: 55px;
-min-width: 55px;
-height: 55px;
-display: flex;
-align-items: center;
-justify-content: center;
-background: #292b48;
-border-radius: 12px;
-font-size: 27px;
+    width: 55px;
+    min-width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #292b48;
+    border-radius: 12px;
+    font-size: 27px;
 }
-
 .dex-dragon-info {
-flex: 1;
+    flex: 1;
 }
-
 .dex-dragon-info h3 {
-font-size: 15px;
-margin-bottom: 3px;
+    font-size: 15px;
+    margin-bottom: 3px;
 }
-
 .dex-dragon-info p {
-color: #8f93b2;
-font-size: 11px;
+    color: #8f93b2;
+    font-size: 11px;
 }
-
 .dex-dragon-info span {
-display: inline-block;
-margin-top: 5px;
-color: #a991ff;
-font-size: 10px;
+    display: inline-block;
+    margin-top: 5px;
+    color: #a991ff;
+    font-size: 10px;
 }
-
 .dex-check {
-font-size: 18px;
+    font-size: 18px;
 }
-
 /* ==========================================
 INVENTAIRE
 ========================================== */
-
 .inventory-section {
-width: 100%;
+    width: 100%;
 }
-
 .inventory-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-gap: 12px;
-margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
 }
-
 .inventory-header h2 {
-font-size: 22px;
+    font-size: 22px;
 }
-
 .inventory-counter {
-flex-shrink: 0;
-background: #292b48;
-color: #aaaed0;
-padding: 8px 11px;
-border-radius: 12px;
-font-size: 12px;
+    flex-shrink: 0;
+    background: #292b48;
+    color: #aaaed0;
+    padding: 8px 11px;
+    border-radius: 12px;
+    font-size: 12px;
 }
-
 .inventory-counter b {
-color: #ffffff;
-font-size: 14px;
+    color: #ffffff;
+    font-size: 14px;
 }
-
 .inventory-description {
-color: #8589ad;
-font-size: 13px;
-line-height: 1.5;
-margin-bottom: 16px;
+    color: #8589ad;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
 }
-
 /* ==========================================
 CATÉGORIES DE L’INVENTAIRE
 ========================================== */
-
 .inventory-category {
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 16px;
-margin-bottom: 14px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 14px;
 }
-
 .inventory-category-header {
-margin-bottom: 13px;
+    margin-bottom: 13px;
 }
-
 .inventory-category-header h3 {
-font-size: 17px;
-margin-bottom: 4px;
+    font-size: 17px;
+    margin-bottom: 4px;
 }
-
 .inventory-category-header span {
-color: #8589ad;
-font-size: 11px;
+    color: #8589ad;
+    font-size: 11px;
 }
-
 /* ==========================================
 GRILLE DES RESSOURCES
 ========================================== */
-
 .inventory-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 9px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
 }
-
 .inventory-item {
-display: flex;
-align-items: center;
-gap: 9px;
-min-width: 0;
-padding: 10px;
-background: #22243c;
-border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    padding: 10px;
+    background: #22243c;
+    border-radius: 14px;
 }
-
 .inventory-item-icon {
-width: 39px;
-min-width: 39px;
-height: 39px;
-display: flex;
-align-items: center;
-justify-content: center;
-background: #292b48;
-border-radius: 10px;
-font-size: 21px;
+    width: 39px;
+    min-width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #292b48;
+    border-radius: 10px;
+    font-size: 21px;
 }
-
 .inventory-item-info {
-flex: 1;
-min-width: 0;
+    flex: 1;
+    min-width: 0;
 }
-
 .inventory-item-info h4 {
-font-size: 12px;
-margin-bottom: 3px;
+    font-size: 12px;
+    margin-bottom: 3px;
 }
-
 .inventory-item-info p {
-color: #8589ad;
-font-size: 9px;
-line-height: 1.3;
+    color: #8589ad;
+    font-size: 9px;
+    line-height: 1.3;
 }
-
 .inventory-item-count {
-flex-shrink: 0;
-min-width: 24px;
-text-align: center;
-color: #ffffff;
-font-size: 13px;
+    flex-shrink: 0;
+    min-width: 24px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 13px;
 }
-
 /* ==========================================
 APERÇU DE LA MARMITE
 ========================================== */
-
 .cooking-preview {
-display: flex;
-align-items: center;
-gap: 13px;
-background: #191a30;
-border: 1px solid #292b48;
-border-radius: 20px;
-padding: 17px;
-margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    background: #191a30;
+    border: 1px solid #292b48;
+    border-radius: 20px;
+    padding: 17px;
+    margin-bottom: 14px;
 }
-
 .cooking-preview-icon {
-width: 52px;
-min-width: 52px;
-height: 52px;
-display: flex;
-align-items: center;
-justify-content: center;
-background: #242641;
-border-radius: 14px;
-font-size: 27px;
+    width: 52px;
+    min-width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #242641;
+    border-radius: 14px;
+    font-size: 27px;
 }
-
 .cooking-preview h3 {
-font-size: 16px;
-margin-bottom: 5px;
+    font-size: 16px;
+    margin-bottom: 5px;
 }
-
 .cooking-preview p {
-color: #8589ad;
-font-size: 11px;
-line-height: 1.4;
+    color: #8589ad;
+    font-size: 11px;
+    line-height: 1.4;
 }
-
 /* ==========================================
 NAVIGATION DU BAS
 ========================================== */
-
 .bottom-nav {
-position: fixed;
-bottom: 0;
-left: 50%;
-transform: translateX(-50%);
-width: 100%;
-max-width: 600px;
-height: 72px;
-display: flex;
-justify-content: space-around;
-align-items: center;
-background: #17182c;
-border-top: 1px solid #292b48;
-z-index: 100;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    height: 72px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #17182c;
+    border-top: 1px solid #292b48;
+    z-index: 1000;
 }
-
 .bottom-nav button {
-flex: 1;
-height: 100%;
-border: none;
-background: transparent;
-color: #707492;
-font-size: 20px;
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: #707492;
+    font-size: 20px;
 }
-
 .bottom-nav button span {
-display: block;
-margin-top: 3px;
-font-size: 9px;
+    display: block;
+    margin-top: 3px;
+    font-size: 9px;
 }
-
 .bottom-nav button.active {
-color: #a991ff;
+    color: #a991ff;
 }
-
 /* ==========================================
 PETITS ÉCRANS
 ========================================== */
-
 @media (max-width: 380px) {
+    .top-bar {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    .top-bar h1 {
+        font-size: 19px;
+    }
+    .resources {
+        gap: 5px;
+    }
+    .resources span {
+        padding: 7px 8px;
+        font-size: 11px;
+    }
+    .page {
+        padding: 13px;
+    }
+    .dragons-header h2 {
+        font-size: 20px;
+    }
+    .dragons-counter {
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+    .owned-dragon-card {
+        padding: 13px;
+    }
+    .owned-dragon-icon {
+        width: 62px;
+        min-width: 62px;
+        height: 62px;
+        font-size: 33px;
+    }
+    .owned-dragon-info h3 {
+        font-size: 17px;
+    }
+    .dragon-care-actions button {
+        font-size: 11px;
+        padding: 10px 3px;
+    }
+    .dragon-card {
+        flex-direction: column;
+    }
+    .dragon-image {
+        width: 100%;
+    }
+    .dragon-stats {
+        gap: 5px;
+    }
+    .gathering-section {
+        padding: 14px;
+    }
+    .gathering-location {
+        gap: 8px;
+        padding: 10px;
+    }
+    .gathering-location-icon {
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        font-size: 23px;
+    }
+    .gather-button {
+        padding: 9px 7px;
+        font-size: 10px;
+    }
+    .inventory-section {
+        width: 100%;
+    }
+    .inventory-category {
+        padding: 13px;
+    }
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
+    .inventory-item {
+        padding: 10px;
+    }
+    /* Mini-jeux sur petits écrans */
+    .gathering-game {
+        padding: 13px 12px 95px;
+    }
+    .gathering-game-header {
+        padding: 20px 15px;
+    }
+    .gathering-game-header h2 {
+        font-size: 21px;
+    }
+    .forest-tree-area {
+        min-height: 250px;
+    }
+    .forest-tree-button {
+        font-size: 105px;
+    }
+    .mushroom-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px;
+    }
+    .mushroom-button {
+        min-height: 55px;
+        font-size: 25px;
+    }
+    .fishing-scene {
+        min-height: 245px;
+    }
+    .fishing-rod {
+        font-size: 85px;
+    }
+    .hunting-field {
+        min-height: 330px;
+    }
+    .hunting-bow {
+        width: 78px;
+        height: 78px;
+        font-size: 43px;
+    }
+}
 
-.top-bar {
-    padding-left: 12px;
-    padding-right: 12px;
-}
-.top-bar h1 {
-    font-size: 19px;
-}
-.resources {
-    gap: 5px;
-}
-.resources span {
-    padding: 7px 8px;
-    font-size: 11px;
-}
-.page {
-    padding: 13px;
-}
-.dragons-header h2 {
-    font-size: 20px;
-}
-.dragons-counter {
-    padding: 7px 9px;
-    font-size: 12px;
-}
-.owned-dragon-card {
-    padding: 13px;
-}
-.owned-dragon-icon {
-    width: 62px;
-    min-width: 62px;
-    height: 62px;
-    font-size: 33px;
-}
-.owned-dragon-info h3 {
-    font-size: 17px;
-}
-.dragon-care-actions button {
-    font-size: 11px;
-    padding: 10px 3px;
-}
-.dragon-card {
-    flex-direction: column;
-}
-.dragon-image {
-    width: 100%;
-}
-.dragon-stats {
-    gap: 5px;
-}
-.gathering-section {
-    padding: 14px;
-}
-.gathering-location {
-    gap: 8px;
-    padding: 10px;
-}
-.gathering-location-icon {
-    width: 44px;
-    min-width: 44px;
-    height: 44px;
-    font-size: 23px;
-}
-.gather-button {
-    padding: 9px 7px;
-    font-size: 10px;
-}
-.inventory-section {
-    width: 100%;
-}
-.inventory-category {
-    padding: 13px;
-}
-.inventory-grid {
-    grid-template-columns: 1fr;
-}
-.inventory-item {
-    padding: 10px;
-}
-/* Mini-jeux sur petits écrans */
-.gathering-game-window {
-    padding: 13px 12px 95px;
-}
-.gathering-game-header {
-    padding: 20px 15px;
-}
-.gathering-game-header h2 {
-    font-size: 21px;
-}
-.forest-tree-area {
-    min-height: 250px;
-}
-.forest-tree-button {
-    font-size: 105px;
-}
-.mushroom-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 7px;
-}
-.mushroom-button {
-    min-height: 55px;
-    font-size: 25px;
-}
-.fishing-scene {
-    min-height: 245px;
-}
-.fishing-rod {
-    font-size: 85px;
-}
-.hunting-field {
-    min-height: 330px;
-}
-.hunting-bow {
-    width: 78px;
-    height: 78px;
-    font-size: 43px;
-}
+Remplace tout ton style.css par celui-ci, puis enregistre/publie sur GitHub Pages. Ne touche pas à index.html ni script.js pour le moment.
 
-}
+Ensuite teste directement 🌲 Forêt, 🌾 Plaines, 🎣 Pêche et 🏹 Chasse. Si ça ne fonctionne toujours pas, on passera au fichier script.js, mais toujours en te demandant ton fichier actuel avant de le modifier.
