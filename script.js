@@ -885,6 +885,55 @@ function goFishing() {
     }
 }
 // ======================================================
+// CHASSE 🏹
+// ======================================================
+function goHunting() {
+    const successChance =
+        0.65;
+    const success =
+        Math.random() <
+        successChance;
+    if (!success) {
+        const xpAmount = 1;
+        const levelUp =
+            addPlayerXP(
+                xpAmount
+            );
+        if (levelUp) {
+            showGatheringMessage(
+                `🏹 La proie s'échappe... mais tu gagnes ${xpAmount} XP ! Niveau ${player.level} !`
+            );
+        } else {
+            showGatheringMessage(
+                "🏹 La proie s'échappe... Essaie encore ! +1 XP"
+            );
+        }
+        return;
+    }
+    const amount =
+        Math.floor(
+            Math.random() * 3
+        ) + 1;
+    addResource(
+        "meat",
+        amount
+    );
+    const xpAmount = 3;
+    const levelUp =
+        addPlayerXP(
+            xpAmount
+        );
+    if (levelUp) {
+        showGatheringMessage(
+            `🏹 Belle chasse ! ${amount} × 🍖 Viande ! +${xpAmount} XP • Niveau ${player.level} !`
+        );
+    } else {
+        showGatheringMessage(
+            `🏹 Belle chasse ! ${amount} × 🍖 Viande ! +${xpAmount} XP`
+        );
+    }
+}
+// ======================================================
 // BARRE D'XP DU JOUEUR
 // ======================================================
 function updateXPBar() {
