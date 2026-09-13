@@ -23,14 +23,14 @@
             Refuge des dragons
         </p>
     </div>
-    <div class="resources">
-        <span>
-            💰 <b id="coins">100</b>
-        </span>
-        <span>
-            🍖 <b id="food">10</b>
-        </span>
-    </div>
+<div class="resources">
+    <span>
+        💰 <b id="coins">100</b>
+    </span>
+    <span>
+        🍖 <b id="food">10</b>
+    </span>
+</div>
 </header>
 <!-- ================================================== -->
 <!-- ÉCRAN : REFUGE -->
@@ -39,150 +39,171 @@
     id="home-page"
     class="page active-page"
 >
-    <!-- MÉTÉO -->
-    <section class="weather-card">
-        <div>
-            <p class="small-title">
-                MÉTÉO ACTUELLE
-            </p>
-            <h2 id="weather">
-                🌦️ Chargement...
-            </h2>
-            <p>
-                La météo influence les dragons
-                qui peuvent apparaître.
-            </p>
-        </div>
-        <div class="temperature">
-            <strong id="temperature">
-                22°
-            </strong>
-        </div>
-    </section>
-    <!-- NIVEAU DU JOUEUR -->
-    <section class="level-card">
-        <div class="level-info">
-            <span>
-                Niveau 1
-            </span>
-            <span>
-                <b id="xp">0</b> / 100 XP
-            </span>
-        </div>
-        <div class="xp-bar">
-            <div id="xp-fill"></div>
-        </div>
-    </section>
-    <!-- EXPLORATION DES DRAGONS -->
-    <section class="egg-card">
+<!-- MÉTÉO -->
+<section class="weather-card">
+    <div>
         <p class="small-title">
-            EXPLORATION
+            MÉTÉO ACTUELLE
         </p>
-        <div class="egg">
-            🥚
-        </div>
-        <h2>
-            Œuf mystérieux
+        <h2 id="weather">
+            🌦️ Chargement...
         </h2>
         <p>
-            Explore Draconia pour avoir une chance
-            de découvrir un dragon.
+            La météo influence les dragons
+            qui peuvent apparaître.
         </p>
+    </div>
+    <div class="temperature">
+        <strong id="temperature">
+            22°
+        </strong>
+    </div>
+</section>
+<!-- NIVEAU DU JOUEUR -->
+<section class="level-card">
+    <div class="level-info">
+        <span>
+            Niveau 1
+        </span>
+        <span>
+            <b id="xp">0</b> / 100 XP
+        </span>
+    </div>
+    <div class="xp-bar">
+        <div id="xp-fill"></div>
+    </div>
+</section>
+<!-- EXPLORATION DES DRAGONS -->
+<section class="egg-card">
+    <p class="small-title">
+        EXPLORATION
+    </p>
+    <div class="egg">
+        🥚
+    </div>
+    <h2>
+        Œuf mystérieux
+    </h2>
+    <p>
+        Explore Draconia pour avoir une chance
+        de découvrir un dragon.
+    </p>
+    <button
+        id="egg-button"
+        onclick="findEgg()"
+    >
+        🔍 Explorer
+    </button>
+    <p id="egg-message"></p>
+</section>
+<!-- ================================================== -->
+<!-- RÉCOLTE DES RESSOURCES -->
+<!-- ================================================== -->
+<section class="gathering-section">
+    <div class="gathering-header">
+        <div>
+            <p class="small-title">
+                RESSOURCES
+            </p>
+            <h2>
+                🌿 Explorer la nature
+            </h2>
+        </div>
+    </div>
+    <p class="gathering-description">
+        Pars à la recherche de ressources pour
+        remplir ton sac et préparer la nourriture
+        de tes dragons.
+    </p>
+    <!-- FORÊT -->
+    <div class="gathering-location">
+        <div class="gathering-location-icon">
+            🌲
+        </div>
+        <div class="gathering-location-info">
+            <h3>
+                Forêt de Draconia
+            </h3>
+            <p>
+                Pommes, baies, herbes,
+                champignons et insectes.
+            </p>
+        </div>
         <button
-            id="egg-button"
-            onclick="findEgg()"
+            class="gather-button"
+            onclick="gatherResources('forest')"
         >
-            🔍 Explorer
+            🌿 Récolter
         </button>
-        <p id="egg-message"></p>
-    </section>
-    <!-- ================================================== -->
-    <!-- RÉCOLTE DES RESSOURCES -->
-    <!-- ================================================== -->
-    <section class="gathering-section">
-        <div class="gathering-header">
-            <div>
-                <p class="small-title">
-                    RESSOURCES
-                </p>
-                <h2>
-                    🌿 Explorer la nature
-                </h2>
-            </div>
+    </div>
+    <!-- PLAINE -->
+    <div class="gathering-location">
+        <div class="gathering-location-icon">
+            🌾
         </div>
-        <p class="gathering-description">
-            Pars à la recherche de ressources pour
-            remplir ton sac et préparer la nourriture
-            de tes dragons.
-        </p>
-        <!-- FORÊT -->
-        <div class="gathering-location">
-            <div class="gathering-location-icon">
-                🌲
-            </div>
-            <div class="gathering-location-info">
-                <h3>
-                    Forêt de Draconia
-                </h3>
-                <p>
-                    Pommes, baies, herbes,
-                    champignons et insectes.
-                </p>
-            </div>
-            <button
-                class="gather-button"
-                onclick="gatherResources('forest')"
-            >
-                🌿 Récolter
-            </button>
+        <div class="gathering-location-info">
+            <h3>
+                Grandes plaines
+            </h3>
+            <p>
+                Légumes, herbes et autres
+                ressources sauvages.
+            </p>
         </div>
-        <!-- PLAINE -->
-        <div class="gathering-location">
-            <div class="gathering-location-icon">
-                🌾
-            </div>
-            <div class="gathering-location-info">
-                <h3>
-                    Grandes plaines
-                </h3>
-                <p>
-                    Légumes, herbes et autres
-                    ressources sauvages.
-                </p>
-            </div>
-            <button
-                class="gather-button"
-                onclick="gatherResources('plains')"
-            >
-                🥕 Récolter
-            </button>
+        <button
+            class="gather-button"
+            onclick="gatherResources('plains')"
+        >
+            🥕 Récolter
+        </button>
+    </div>
+    <!-- PÊCHE -->
+    <div class="gathering-location fishing-location">
+        <div class="gathering-location-icon">
+            🎣
         </div>
-        <!-- PÊCHE -->
-        <div class="gathering-location fishing-location">
-            <div class="gathering-location-icon">
-                🎣
-            </div>
-            <div class="gathering-location-info">
-                <h3>
-                    Lac de Draconia
-                </h3>
-                <p>
-                    Pars pêcher pour essayer
-                    d'obtenir du poisson.
-                </p>
-            </div>
-            <button
-                class="gather-button"
-                onclick="goFishing()"
-            >
-                🎣 Pêcher
-            </button>
+        <div class="gathering-location-info">
+            <h3>
+                Lac de Draconia
+            </h3>
+            <p>
+                Pars pêcher pour essayer
+                d'obtenir du poisson.
+            </p>
         </div>
-        <p
-            id="gathering-message"
-            class="gathering-message"
-        ></p>
-    </section>
+        <button
+            class="gather-button"
+            onclick="goFishing()"
+        >
+            🎣 Pêcher
+        </button>
+    </div>
+    <!-- CHASSE -->
+    <div class="gathering-location hunting-location">
+        <div class="gathering-location-icon">
+            🏹
+        </div>
+        <div class="gathering-location-info">
+            <h3>
+                🏹 Zone de chasse
+            </h3>
+            <p>
+                Pars chasser dans les bois
+                pour obtenir de la viande.
+            </p>
+        </div>
+        <button
+            class="gather-button"
+            onclick="goHunting()"
+        >
+            🏹 Chasser
+        </button>
+    </div>
+    <p
+        id="gathering-message"
+        class="gathering-message"
+    ></p>
+</section>
 </main>
 <!-- ================================================== -->
 <!-- ÉCRAN : DRAGONS -->
@@ -192,52 +213,52 @@
     class="page"
     style="display: none;"
 >
-    <section class="dragons-section">
-        <div class="dragons-header">
-            <div>
-                <p class="small-title">
-                    TON REFUGE
-                </p>
-                <h2>
-                    🐉 Mes dragons
-                </h2>
-            </div>
-            <div class="dragons-counter">
-                <b id="owned-dragons-count">
-                    0
-                </b>
-                dragon(s)
-            </div>
-        </div>
-        <p class="dragons-description">
-            Prends soin de tes dragons et fais-les
-            progresser.
-        </p>
-        <div
-            id="owned-dragons-list"
-            class="owned-dragons-list"
-        ></div>
-        <div
-            id="no-dragons"
-            class="no-dragons"
-        >
-            <div class="no-dragons-icon">
-                🥚
-            </div>
-            <h3>
-                Aucun dragon pour le moment
-            </h3>
-            <p>
-                Explore Draconia pour trouver
-                ton premier dragon !
+<section class="dragons-section">
+    <div class="dragons-header">
+        <div>
+            <p class="small-title">
+                TON REFUGE
             </p>
-            <button
-                onclick="showPage('home')"
-            >
-                🔍 Explorer
-            </button>
+            <h2>
+                🐉 Mes dragons
+            </h2>
         </div>
-    </section>
+        <div class="dragons-counter">
+            <b id="owned-dragons-count">
+                0
+            </b>
+            dragon(s)
+        </div>
+    </div>
+    <p class="dragons-description">
+        Prends soin de tes dragons et fais-les
+        progresser.
+    </p>
+    <div
+        id="owned-dragons-list"
+        class="owned-dragons-list"
+    ></div>
+    <div
+        id="no-dragons"
+        class="no-dragons"
+    >
+        <div class="no-dragons-icon">
+            🥚
+        </div>
+        <h3>
+            Aucun dragon pour le moment
+        </h3>
+        <p>
+            Explore Draconia pour trouver
+            ton premier dragon !
+        </p>
+        <button
+            onclick="showPage('home')"
+        >
+            🔍 Explorer
+        </button>
+    </div>
+</section>
 </main>
 <!-- ================================================== -->
 <!-- ÉCRAN : DRAGONDEX -->
@@ -247,31 +268,31 @@
     class="page"
     style="display: none;"
 >
-    <section class="dragondex">
-        <div class="dragondex-header">
-            <div>
-                <p class="small-title">
-                    COLLECTION
-                </p>
-                <h2>
-                    📖 DragonDex
-                </h2>
-            </div>
-            <div class="dex-counter">
-                <b id="dex-count">
-                    0
-                </b>
-                / 10
-            </div>
+<section class="dragondex">
+    <div class="dragondex-header">
+        <div>
+            <p class="small-title">
+                COLLECTION
+            </p>
+            <h2>
+                📖 DragonDex
+            </h2>
         </div>
-        <p class="dragondex-description">
-            Découvre tous les dragons de Draconia.
-        </p>
-        <div
-            class="dragon-list"
-            id="dragon-list"
-        ></div>
-    </section>
+        <div class="dex-counter">
+            <b id="dex-count">
+                0
+            </b>
+            / 10
+        </div>
+    </div>
+    <p class="dragondex-description">
+        Découvre tous les dragons de Draconia.
+    </p>
+    <div
+        class="dragon-list"
+        id="dragon-list"
+    ></div>
+</section>
 </main>
 <!-- ================================================== -->
 <!-- ÉCRAN : SAC / RESSOURCES -->
@@ -281,217 +302,217 @@
     class="page"
     style="display: none;"
 >
-    <section class="inventory-section">
-        <!-- EN-TÊTE DU SAC -->
-        <div class="inventory-header">
-            <div>
-                <p class="small-title">
-                    RESSOURCES
-                </p>
-                <h2>
-                    🎒 Mon sac
-                </h2>
-            </div>
-            <div class="inventory-counter">
-                <b id="inventory-total">
+<section class="inventory-section">
+    <!-- EN-TÊTE DU SAC -->
+    <div class="inventory-header">
+        <div>
+            <p class="small-title">
+                RESSOURCES
+            </p>
+            <h2>
+                🎒 Mon sac
+            </h2>
+        </div>
+        <div class="inventory-counter">
+            <b id="inventory-total">
+                0
+            </b>
+            objet(s)
+        </div>
+    </div>
+    <p class="inventory-description">
+        Récupère des ressources dans Draconia
+        pour préparer les plats de tes dragons.
+    </p>
+    <!-- ================================================== -->
+    <!-- NOURRITURE / INGRÉDIENTS -->
+    <!-- ================================================== -->
+    <section class="inventory-category">
+        <div class="inventory-category-header">
+            <h3>
+                🍖 Nourriture
+            </h3>
+            <span>
+                Ingrédients pour la cuisine
+            </span>
+        </div>
+        <div
+            id="food-inventory"
+            class="inventory-grid"
+        >
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🍖
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Viande
+                    </h4>
+                    <p>
+                        Aliment de base
+                    </p>
+                </div>
+                <b
+                    id="resource-meat"
+                    class="inventory-item-count"
+                >
                     0
                 </b>
-                objet(s)
+            </div>
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🐟
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Poisson
+                    </h4>
+                    <p>
+                        Peut être pêché
+                    </p>
+                </div>
+                <b
+                    id="resource-fish"
+                    class="inventory-item-count"
+                >
+                    0
+                </b>
+            </div>
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🍎
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Pomme
+                    </h4>
+                    <p>
+                        Fruit à récolter
+                    </p>
+                </div>
+                <b
+                    id="resource-apple"
+                    class="inventory-item-count"
+                >
+                    0
+                </b>
+            </div>
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🍓
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Baie
+                    </h4>
+                    <p>
+                        Fruit sauvage
+                    </p>
+                </div>
+                <b
+                    id="resource-berry"
+                    class="inventory-item-count"
+                >
+                    0
+                </b>
             </div>
         </div>
-        <p class="inventory-description">
-            Récupère des ressources dans Draconia
-            pour préparer les plats de tes dragons.
-        </p>
-        <!-- ================================================== -->
-        <!-- NOURRITURE / INGRÉDIENTS -->
-        <!-- ================================================== -->
-        <section class="inventory-category">
-            <div class="inventory-category-header">
-                <h3>
-                    🍖 Nourriture
-                </h3>
-                <span>
-                    Ingrédients pour la cuisine
-                </span>
-            </div>
-            <div
-                id="food-inventory"
-                class="inventory-grid"
-            >
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🍖
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Viande
-                        </h4>
-                        <p>
-                            Aliment de base
-                        </p>
-                    </div>
-                    <b
-                        id="resource-meat"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🐟
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Poisson
-                        </h4>
-                        <p>
-                            Peut être pêché
-                        </p>
-                    </div>
-                    <b
-                        id="resource-fish"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🍎
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Pomme
-                        </h4>
-                        <p>
-                            Fruit à récolter
-                        </p>
-                    </div>
-                    <b
-                        id="resource-apple"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🍓
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Baie
-                        </h4>
-                        <p>
-                            Fruit sauvage
-                        </p>
-                    </div>
-                    <b
-                        id="resource-berry"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-            </div>
-        </section>
-        <!-- ================================================== -->
-        <!-- RESSOURCES DE RÉCOLTE -->
-        <!-- ================================================== -->
-        <section class="inventory-category">
-            <div class="inventory-category-header">
-                <h3>
-                    🌿 Récolte
-                </h3>
-                <span>
-                    Ressources trouvées dans la nature
-                </span>
-            </div>
-            <div
-                id="gathering-inventory"
-                class="inventory-grid"
-            >
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🌿
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Herbe
-                        </h4>
-                        <p>
-                            Plante sauvage
-                        </p>
-                    </div>
-                    <b
-                        id="resource-herb"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🍄
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Champignon
-                        </h4>
-                        <p>
-                            Ressource forestière
-                        </p>
-                    </div>
-                    <b
-                        id="resource-mushroom"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🥕
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Légume
-                        </h4>
-                        <p>
-                            Peut être récolté
-                        </p>
-                    </div>
-                    <b
-                        id="resource-vegetable"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-                <div class="inventory-item">
-                    <div class="inventory-item-icon">
-                        🐛
-                    </div>
-                    <div class="inventory-item-info">
-                        <h4>
-                            Insecte
-                        </h4>
-                        <p>
-                            Ressource sauvage
-                        </p>
-                    </div>
-                    <b
-                        id="resource-insect"
-                        class="inventory-item-count"
-                    >
-                        0
-                    </b>
-                </div>
-            </div>
-        </section>
     </section>
+    <!-- ================================================== -->
+    <!-- RESSOURCES DE RÉCOLTE -->
+    <!-- ================================================== -->
+    <section class="inventory-category">
+        <div class="inventory-category-header">
+            <h3>
+                🌿 Récolte
+            </h3>
+            <span>
+                Ressources trouvées dans la nature
+            </span>
+        </div>
+        <div
+            id="gathering-inventory"
+            class="inventory-grid"
+        >
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🌿
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Herbe
+                    </h4>
+                    <p>
+                        Plante sauvage
+                    </p>
+                </div>
+                <b
+                    id="resource-herb"
+                    class="inventory-item-count"
+                >
+                    0
+                </b>
+            </div>
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🍄
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Champignon
+                    </h4>
+                    <p>
+                        Ressource forestière
+                    </p>
+                </div>
+                <b
+                    id="resource-mushroom"
+                    class="inventory-item-count"
+                >
+                    0
+                </b>
+            </div>
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🥕
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Légume
+                    </h4>
+                    <p>
+                        Peut être récolté
+                    </p>
+                </div>
+                <b
+                    id="resource-vegetable"
+                    class="inventory-item-count"
+                >
+                    0
+                </b>
+            </div>
+            <div class="inventory-item">
+                <div class="inventory-item-icon">
+                    🐛
+                </div>
+                <div class="inventory-item-info">
+                    <h4>
+                        Insecte
+                    </h4>
+                    <p>
+                        Ressource sauvage
+                    </p>
+                </div>
+                <b
+                    id="resource-insect"
+                    class="inventory-item-count"
+                >
+                    0
+                </b>
+            </div>
+        </div>
+    </section>
+</section>
 </main>
 <!-- ================================================== -->
 <!-- ÉCRAN : MARMITE -->
@@ -501,67 +522,67 @@
     class="page"
     style="display: none;"
 >
-    <section class="inventory-section">
-        <!-- EN-TÊTE -->
-        <div class="inventory-header">
-            <div>
-                <p class="small-title">
-                    CUISINE
-                </p>
-                <h2>
-                    🍲 Marmite de Draconia
-                </h2>
-            </div>
-            <div class="inventory-counter">
-                🔥 Cuisine
-            </div>
+<section class="inventory-section">
+    <!-- EN-TÊTE -->
+    <div class="inventory-header">
+        <div>
+            <p class="small-title">
+                CUISINE
+            </p>
+            <h2>
+                🍲 Marmite de Draconia
+            </h2>
         </div>
-        <p class="inventory-description">
-            Utilise les ingrédients de ton sac pour
-            préparer des plats adaptés à chaque type
-            de dragon.
-        </p>
-        <!-- ================================================== -->
-        <!-- MARMITE -->
-        <!-- ================================================== -->
-        <section class="cooking-preview">
-            <div class="cooking-preview-icon">
-                🍲
-            </div>
-            <div>
-                <h3>
-                    La grande marmite
-                </h3>
-                <p>
-                    Choisis une recette et prépare
-                    un plat pour tes dragons.
-                </p>
-            </div>
-        </section>
-        <!-- ================================================== -->
-        <!-- RECETTES -->
-        <!-- ================================================== -->
-        <section class="inventory-category">
-            <div class="inventory-category-header">
-                <h3>
-                    📖 Recettes
-                </h3>
-                <span>
-                    Un plat pour chaque élément
-                </span>
-            </div>
-            <div
-                id="recipes-list"
-                class="inventory-grid"
-            >
-                <!-- Le script.js remplira cette zone -->
-            </div>
-        </section>
-        <p
-            id="cooking-message"
-            class="gathering-message"
-        ></p>
+        <div class="inventory-counter">
+            🔥 Cuisine
+        </div>
+    </div>
+    <p class="inventory-description">
+        Utilise les ingrédients de ton sac pour
+        préparer des plats adaptés à chaque type
+        de dragon.
+    </p>
+    <!-- ================================================== -->
+    <!-- MARMITE -->
+    <!-- ================================================== -->
+    <section class="cooking-preview">
+        <div class="cooking-preview-icon">
+            🍲
+        </div>
+        <div>
+            <h3>
+                La grande marmite
+            </h3>
+            <p>
+                Choisis une recette et prépare
+                un plat pour tes dragons.
+            </p>
+        </div>
     </section>
+    <!-- ================================================== -->
+    <!-- RECETTES -->
+    <!-- ================================================== -->
+    <section class="inventory-category">
+        <div class="inventory-category-header">
+            <h3>
+                📖 Recettes
+            </h3>
+            <span>
+                Un plat pour chaque élément
+            </span>
+        </div>
+        <div
+            id="recipes-list"
+            class="inventory-grid"
+        >
+            <!-- Le script.js remplira cette zone -->
+        </div>
+    </section>
+    <p
+        id="cooking-message"
+        class="gathering-message"
+    ></p>
+</section>
 </main>
 <!-- ================================================== -->
 <!-- ÉCRAN : PROFIL -->
@@ -571,80 +592,80 @@
     class="page"
     style="display: none;"
 >
-    <section class="weather-card">
-        <div>
-            <p class="small-title">
-                JOUEUR
-            </p>
-            <h2>
-                👤 Mon profil
-            </h2>
-            <p>
-                Ton profil et tes statistiques
-                arriveront bientôt.
-            </p>
-        </div>
-    </section>
+<section class="weather-card">
+    <div>
+        <p class="small-title">
+            JOUEUR
+        </p>
+        <h2>
+            👤 Mon profil
+        </h2>
+        <p>
+            Ton profil et tes statistiques
+            arriveront bientôt.
+        </p>
+    </div>
+</section>
 </main>
 <!-- ================================================== -->
 <!-- NAVIGATION -->
 <!-- ================================================== -->
 <nav class="bottom-nav">
-    <button
-        id="nav-home"
-        class="active"
-        onclick="showPage('home')"
-    >
-        🏠
-        <span>
-            Refuge
-        </span>
-    </button>
-    <button
-        id="nav-dragons"
-        onclick="showPage('dragons')"
-    >
-        🐉
-        <span>
-            Dragons
-        </span>
-    </button>
-    <button
-        id="nav-dex"
-        onclick="showPage('dex')"
-    >
-        📖
-        <span>
-            DragonDex
-        </span>
-    </button>
-    <button
-        id="nav-inventory"
-        onclick="showPage('inventory')"
-    >
-        🎒
-        <span>
-            Sac
-        </span>
-    </button>
-    <button
-        id="nav-cooking"
-        onclick="showPage('cooking')"
-    >
-        🍲
-        <span>
-            Marmite
-        </span>
-    </button>
-    <button
-        id="nav-profile"
-        onclick="showPage('profile')"
-    >
-        👤
-        <span>
-            Profil
-        </span>
-    </button>
+<button
+    id="nav-home"
+    class="active"
+    onclick="showPage('home')"
+>
+    🏠
+    <span>
+        Refuge
+    </span>
+</button>
+<button
+    id="nav-dragons"
+    onclick="showPage('dragons')"
+>
+    🐉
+    <span>
+        Dragons
+    </span>
+</button>
+<button
+    id="nav-dex"
+    onclick="showPage('dex')"
+>
+    📖
+    <span>
+        DragonDex
+    </span>
+</button>
+<button
+    id="nav-inventory"
+    onclick="showPage('inventory')"
+>
+    🎒
+    <span>
+        Sac
+    </span>
+</button>
+<button
+    id="nav-cooking"
+    onclick="showPage('cooking')"
+>
+    🍲
+    <span>
+        Marmite
+    </span>
+</button>
+<button
+    id="nav-profile"
+    onclick="showPage('profile')"
+>
+    👤
+    <span>
+        Profil
+    </span>
+</button>
 </nav>
 </div>
 <!--
