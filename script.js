@@ -40,92 +40,180 @@ const INVENTORY_STORAGE_KEY =
 
 
 // ======================================================
-// LISTE DES DRAGONS
+// PLATS CUISINÉS
 // ======================================================
 
-const dragons = [
+let preparedMeals = {
+
+    flame_stew: 0,
+    deep_soup: 0,
+    wild_salad: 0,
+    berry_cloud: 0,
+    electric_stew: 0,
+    crystal_sorbet: 0,
+    mountain_stew: 0,
+    night_elixir: 0,
+    solar_nectar: 0,
+    cosmic_cake: 0
+
+};
+
+
+const MEALS_STORAGE_KEY =
+    "draconiaPreparedMeals";
+
+
+// ======================================================
+// RECETTES
+// ======================================================
+
+const recipes = [
 
     {
-        id: "flambyra",
-        name: "Flambyra",
+        id: "flame_stew",
+        name: "Ragoût flamboyant",
+        icon: "🔥",
         element: "Feu",
-        rarity: "Commun",
-        icon: "🔥🐉"
+        description: "Un plat épicé qui réchauffe les dragons de Feu.",
+        ingredients: {
+            meat: 1,
+            herb: 1
+        }
     },
 
     {
-        id: "aquaryn",
-        name: "Aquaryn",
+        id: "deep_soup",
+        name: "Soupe des profondeurs",
+        icon: "💧",
         element: "Eau",
-        rarity: "Commun",
-        icon: "💧🐉"
+        description: "Une soupe fraîche préparée avec les trésors du lac.",
+        ingredients: {
+            fish: 1,
+            herb: 1
+        }
     },
 
     {
-        id: "floreon",
-        name: "Floréon",
+        id: "wild_salad",
+        name: "Salade sauvage",
+        icon: "🌿",
         element: "Nature",
-        rarity: "Commun",
-        icon: "🌿🐉"
+        description: "Un mélange de fruits et de plantes sauvages.",
+        ingredients: {
+            apple: 1,
+            berry: 1,
+            herb: 1
+        }
     },
 
     {
-        id: "zephyr",
-        name: "Zéphyr",
+        id: "berry_cloud",
+        name: "Nuage de baies",
+        icon: "🌪️",
         element: "Air",
-        rarity: "Commun",
-        icon: "🌪️🐉"
+        description: "Une préparation légère adorée par les dragons du ciel.",
+        ingredients: {
+            berry: 2,
+            insect: 1
+        }
     },
 
     {
-        id: "voltaris",
-        name: "Voltaris",
+        id: "electric_stew",
+        name: "Ragoût électrique",
+        icon: "⚡",
         element: "Foudre",
-        rarity: "Peu commun",
-        icon: "⚡🐉"
+        description: "Un plat énergisant pour les dragons de Foudre.",
+        ingredients: {
+            fish: 1,
+            mushroom: 1
+        }
     },
 
     {
-        id: "cryon",
-        name: "Cryon",
+        id: "crystal_sorbet",
+        name: "Sorbet cristallin",
+        icon: "❄️",
         element: "Glace",
-        rarity: "Peu commun",
-        icon: "❄️🐉"
+        description: "Un dessert fruité et glacé.",
+        ingredients: {
+            berry: 2,
+            apple: 1
+        }
     },
 
     {
-        id: "terragon",
-        name: "Terragon",
+        id: "mountain_stew",
+        name: "Ragoût de montagne",
+        icon: "🪨",
         element: "Terre",
-        rarity: "Rare",
-        icon: "🪨🐉"
+        description: "Un plat copieux pour les dragons robustes.",
+        ingredients: {
+            meat: 1,
+            vegetable: 1,
+            mushroom: 1
+        }
     },
 
     {
-        id: "noctyra",
-        name: "Noctyra",
+        id: "night_elixir",
+        name: "Élixir nocturne",
+        icon: "🌑",
         element: "Ombre",
-        rarity: "Rare",
-        icon: "🌑🐉"
+        description: "Une mystérieuse préparation aux ingrédients sauvages.",
+        ingredients: {
+            mushroom: 2,
+            insect: 1
+        }
     },
 
     {
-        id: "solarys",
-        name: "Solarys",
+        id: "solar_nectar",
+        name: "Nectar solaire",
+        icon: "☀️",
         element: "Lumière",
-        rarity: "Épique",
-        icon: "☀️🐉"
+        description: "Un nectar fruité rempli d'énergie.",
+        ingredients: {
+            apple: 2,
+            berry: 1,
+            herb: 1
+        }
     },
 
     {
-        id: "astreon",
-        name: "Astréon",
+        id: "cosmic_cake",
+        name: "Gâteau cosmique",
+        icon: "🌌",
         element: "Cosmique",
-        rarity: "Légendaire",
-        icon: "🌌🐉"
+        description: "Une recette exceptionnelle pour les dragons légendaires.",
+        ingredients: {
+            fish: 1,
+            apple: 1,
+            mushroom: 1,
+            insect: 1
+        }
     }
 
 ];
+
+
+// ======================================================
+// NOMS DES RESSOURCES
+// ======================================================
+
+const resourceNames = {
+
+    meat: "🍖 Viande",
+    fish: "🐟 Poisson",
+    apple: "🍎 Pomme",
+    berry: "🍓 Baie",
+
+    herb: "🌿 Herbe",
+    mushroom: "🍄 Champignon",
+    vegetable: "🥕 Légume",
+    insect: "🐛 Insecte"
+
+};
 
 
 // ======================================================
@@ -646,6 +734,66 @@ function loadInventory() {
 
 
 // ======================================================
+// SAUVEGARDE DES PLATS
+// ======================================================
+
+function savePreparedMeals() {
+
+    localStorage.setItem(
+        MEALS_STORAGE_KEY,
+        JSON.stringify(preparedMeals)
+    );
+
+}
+
+
+// ======================================================
+// CHARGEMENT DES PLATS
+// ======================================================
+
+function loadPreparedMeals() {
+
+    const savedMeals =
+        localStorage.getItem(
+            MEALS_STORAGE_KEY
+        );
+
+
+    if (!savedMeals) {
+
+        savePreparedMeals();
+
+        return;
+
+    }
+
+
+    try {
+
+        const parsed =
+            JSON.parse(savedMeals);
+
+
+        preparedMeals = {
+
+            ...preparedMeals,
+
+            ...parsed
+
+        };
+
+    } catch (error) {
+
+        console.log(
+            "Impossible de charger les plats."
+        );
+
+    }
+
+}
+
+
+// ======================================================
 // AJOUTER UNE RESSOURCE
 // ======================================================
 
@@ -723,8 +871,39 @@ function removeResource(
 
 function getInventoryTotal() {
 
+    const resourcesTotal =
+        Object.values(
+            inventory
+        ).reduce(
+            (total, amount) =>
+                total + amount,
+            0
+        );
+
+
+    const mealsTotal =
+        Object.values(
+            preparedMeals
+        ).reduce(
+            (total, amount) =>
+                total + amount,
+            0
+        );
+
+
+    return resourcesTotal + mealsTotal;
+
+}
+
+
+// ======================================================
+// COMPTER LES PLATS CUISINÉS
+// ======================================================
+
+function getPreparedMealsTotal() {
+
     return Object.values(
-        inventory
+        preparedMeals
     ).reduce(
         (total, amount) =>
             total + amount,
@@ -789,6 +968,23 @@ function updateInventoryDisplay() {
 
     }
 
+
+    const foodElement =
+        document.getElementById(
+            "food"
+        );
+
+
+    if (foodElement) {
+
+        foodElement.textContent =
+            getPreparedMealsTotal();
+
+    }
+
+
+    renderRecipes();
+
 }
 
 
@@ -827,7 +1023,7 @@ function updatePlayerDisplay() {
     if (foodElement) {
 
         foodElement.textContent =
-            player.food;
+            getPreparedMealsTotal();
 
     }
 
@@ -977,18 +1173,6 @@ function gatherResources(location) {
         );
 
 
-    const resourceNames = {
-
-        apple: "🍎 Pomme",
-        berry: "🍓 Baie",
-        herb: "🌿 Herbe",
-        mushroom: "🍄 Champignon",
-        insect: "🐛 Insecte",
-        vegetable: "🥕 Légume"
-
-    };
-
-
     const resourceName =
         resourceNames[resource] ||
         resource;
@@ -1119,6 +1303,225 @@ function updateXPBar() {
 
     xpFill.style.width =
         `${percentage}%`;
+
+}
+
+
+// ======================================================
+// VÉRIFIER LES INGRÉDIENTS D'UNE RECETTE
+// ======================================================
+
+function canCraftRecipe(recipe) {
+
+    return Object.entries(
+        recipe.ingredients
+    ).every(
+        ([resource, amount]) =>
+            inventory[resource] >= amount
+    );
+
+}
+
+
+// ======================================================
+// TEXTE DES INGRÉDIENTS
+// ======================================================
+
+function getRecipeIngredientsText(recipe) {
+
+    return Object.entries(
+        recipe.ingredients
+    )
+        .map(
+            ([resource, amount]) =>
+                `${amount} × ${resourceNames[resource]}`
+        )
+        .join(" • ");
+
+}
+
+
+// ======================================================
+// CUISINER UNE RECETTE 🍲
+// ======================================================
+
+function cookRecipe(recipeId) {
+
+    const recipe =
+        recipes.find(
+            currentRecipe =>
+                currentRecipe.id ===
+                recipeId
+        );
+
+
+    if (!recipe) {
+        return;
+    }
+
+
+    if (
+        !canCraftRecipe(recipe)
+    ) {
+
+        alert(
+            `🍲 Tu n'as pas tous les ingrédients pour préparer ${recipe.name}.`
+        );
+
+        return;
+
+    }
+
+
+    Object.entries(
+        recipe.ingredients
+    )
+        .forEach(
+            ([resource, amount]) => {
+
+                inventory[resource] -= amount;
+
+            }
+        );
+
+
+    preparedMeals[recipe.id] =
+        (preparedMeals[recipe.id] || 0) + 1;
+
+
+    saveInventory();
+
+    savePreparedMeals();
+
+
+    const xpAmount = 4;
+
+    const levelUp =
+        addPlayerXP(
+            xpAmount
+        );
+
+
+    updateInventoryDisplay();
+
+    updatePlayerDisplay();
+
+
+    if (levelUp) {
+
+        alert(
+            `🍲 ${recipe.name} est prêt ! +${xpAmount} XP • Niveau ${player.level} !`
+        );
+
+    } else {
+
+        alert(
+            `🍲 ${recipe.icon} ${recipe.name} est prêt ! +${xpAmount} XP`
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// AFFICHAGE DES RECETTES 🍲
+// ======================================================
+
+function renderRecipes() {
+
+    const list =
+        document.getElementById(
+            "recipes-list"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    recipes.forEach(recipe => {
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "inventory-item";
+
+
+        const canCraft =
+            canCraftRecipe(
+                recipe
+            );
+
+
+        const mealCount =
+            preparedMeals[recipe.id] || 0;
+
+
+        const ingredientsText =
+            getRecipeIngredientsText(
+                recipe
+            );
+
+
+        card.innerHTML = `
+
+            <div class="inventory-item-icon">
+                ${recipe.icon}
+            </div>
+
+
+            <div class="inventory-item-info">
+
+                <h4>
+                    ${recipe.name}
+                </h4>
+
+
+                <p>
+                    ${recipe.description}
+                </p>
+
+
+                <p>
+                    🐉 Dragons ${recipe.element}
+                </p>
+
+
+                <p>
+                    🥕 ${ingredientsText}
+                </p>
+
+
+                <button
+                    class="gather-button"
+                    onclick="cookRecipe('${recipe.id}')"
+                    ${canCraft ? "" : "disabled"}
+                >
+                    ${canCraft ? "🍲 Cuisiner" : "🔒 Ingrédients manquants"}
+                </button>
+
+            </div>
+
+
+            <b class="inventory-item-count">
+                ${mealCount}
+            </b>
+
+        `;
+
+
+        list.appendChild(card);
+
+    });
 
 }
 
@@ -1344,10 +1747,6 @@ function findEgg() {
         getOwnedDragons();
 
 
-    // ==================================================
-    // CHANCE DE TROUVER UN ŒUF
-    // ==================================================
-
     const eggChance =
         Math.random();
 
@@ -1363,10 +1762,6 @@ function findEgg() {
 
     }
 
-
-    // ==================================================
-    // CHOIX DE LA RARETÉ
-    // ==================================================
 
     const rarity =
         chooseRarity();
@@ -1390,10 +1785,6 @@ function findEgg() {
 
     }
 
-
-    // ==================================================
-    // INFLUENCE DE LA MÉTÉO
-    // ==================================================
 
     const bonus =
         getWeatherBonus();
@@ -1447,10 +1838,6 @@ function findEgg() {
     }
 
 
-    // ==================================================
-    // CHOIX DU DRAGON
-    // ==================================================
-
     const dragon =
         boostedDragons[
             Math.floor(
@@ -1459,10 +1846,6 @@ function findEgg() {
             )
         ];
 
-
-    // ==================================================
-    // NOUVEAU DRAGON
-    // ==================================================
 
     if (
         !discovered.includes(
@@ -1518,14 +1901,7 @@ function findEgg() {
 
         }
 
-    }
-
-
-    // ==================================================
-    // DRAGON DÉJÀ DÉCOUVERT
-    // ==================================================
-
-    else {
+    } else {
 
         const ownedDragon =
             owned.find(
@@ -1701,6 +2077,22 @@ function renderOwnedDragons() {
             );
 
 
+        const compatibleRecipe =
+            recipes.find(
+                recipe =>
+                    recipe.element ===
+                    dragon.element
+            );
+
+
+        const compatibleMealCount =
+            compatibleRecipe
+                ? preparedMeals[
+                    compatibleRecipe.id
+                ] || 0
+                : 0;
+
+
         card.innerHTML = `
 
             <div class="owned-dragon-top">
@@ -1830,8 +2222,9 @@ function renderOwnedDragons() {
 
                 <button
                     onclick="feedDragon('${dragon.id}')"
+                    ${compatibleMealCount > 0 ? "" : "disabled"}
                 >
-                    🍖 Nourrir
+                    🍲 Nourrir
                 </button>
 
 
@@ -2047,7 +2440,7 @@ function showPage(page) {
 
 
 // ======================================================
-// NOURRIR UN DRAGON
+// NOURRIR UN DRAGON 🍲
 // ======================================================
 
 function feedDragon(dragonId) {
@@ -2069,10 +2462,18 @@ function feedDragon(dragonId) {
     }
 
 
-    if (player.food <= 0) {
+    const recipe =
+        recipes.find(
+            currentRecipe =>
+                currentRecipe.element ===
+                dragon.element
+        );
+
+
+    if (!recipe) {
 
         alert(
-            "🍖 Tu n'as plus de nourriture !"
+            "🍲 Aucun plat adapté à ce dragon."
         );
 
         return;
@@ -2080,33 +2481,72 @@ function feedDragon(dragonId) {
     }
 
 
-    player.food -= 1;
+    const mealCount =
+        preparedMeals[recipe.id] || 0;
+
+
+    if (mealCount <= 0) {
+
+        alert(
+            `🍲 ${dragon.name} a besoin de « ${recipe.name} » ! Va dans 🎒 Sac pour cuisiner ce plat.`
+        );
+
+        return;
+
+    }
+
+
+    preparedMeals[recipe.id] -= 1;
 
 
     dragon.hunger =
         Math.min(
             100,
-            dragon.hunger + 15
+            dragon.hunger + 25
         );
 
 
     dragon.happiness =
         Math.min(
             100,
-            dragon.happiness + 3
+            dragon.happiness + 10
         );
 
+
+    const levelUp =
+        addDragonXP(
+            dragon,
+            8
+        );
+
+
+    savePreparedMeals();
 
     saveOwnedDragons(
         owned
     );
 
 
-    renderOwnedDragons();
+    updateInventoryDisplay();
 
     updatePlayerDisplay();
 
-    savePlayer();
+    renderOwnedDragons();
+
+
+    if (levelUp) {
+
+        alert(
+            `🍲 ${dragon.name} adore son ${recipe.name} ! ⭐ Il passe niveau ${dragon.level} !`
+        );
+
+    } else {
+
+        alert(
+            `🍲 ${dragon.name} mange son ${recipe.name} avec plaisir ! ❤️`
+        );
+
+    }
 
 }
 
@@ -2214,6 +2654,8 @@ function initGame() {
     loadPlayer();
 
     loadInventory();
+
+    loadPreparedMeals();
 
     generateDailyWeather();
 
