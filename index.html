@@ -364,18 +364,11 @@
             </p>
 
 
-            <!--
-                Les dragons seront ajoutés ici
-                automatiquement par JavaScript.
-            -->
-
             <div
                 id="owned-dragons-list"
                 class="owned-dragons-list"
             ></div>
 
-
-            <!-- MESSAGE SI AUCUN DRAGON -->
 
             <div
                 id="no-dragons"
@@ -560,6 +553,7 @@
                                 Viande
                             </h4>
 
+
                             <p>
                                 Aliment de base
                             </p>
@@ -590,6 +584,7 @@
                             <h4>
                                 Poisson
                             </h4>
+
 
                             <p>
                                 Peut être pêché
@@ -622,6 +617,7 @@
                                 Pomme
                             </h4>
 
+
                             <p>
                                 Fruit à récolter
                             </p>
@@ -652,6 +648,7 @@
                             <h4>
                                 Baie
                             </h4>
+
 
                             <p>
                                 Fruit sauvage
@@ -687,6 +684,7 @@
                         🌿 Récolte
                     </h3>
 
+
                     <span>
                         Ressources trouvées dans la nature
                     </span>
@@ -712,6 +710,7 @@
                             <h4>
                                 Herbe
                             </h4>
+
 
                             <p>
                                 Plante sauvage
@@ -744,6 +743,7 @@
                                 Champignon
                             </h4>
 
+
                             <p>
                                 Ressource forestière
                             </p>
@@ -774,6 +774,7 @@
                             <h4>
                                 Légume
                             </h4>
+
 
                             <p>
                                 Peut être récolté
@@ -806,6 +807,7 @@
                                 Insecte
                             </h4>
 
+
                             <p>
                                 Ressource sauvage
                             </p>
@@ -832,6 +834,376 @@
             <!-- CUISINE -->
             <!-- ================================================== -->
 
+            <section class="inventory-category">
+
+                <div class="inventory-category-header">
+
+                    <h3>
+                        🍲 Cuisine de Draconia
+                    </h3>
+
+
+                    <span>
+                        Chaque dragon possède ses propres plats préférés
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="recipes-list"
+                    class="inventory-grid"
+                >
+
+
+                    <!-- DRAGONS FEU -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🔥
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Ragoût flamboyant
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Feu
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-fire"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS EAU -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            💧
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Soupe des profondeurs
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Eau
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-water"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS NATURE -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🌿
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Salade sauvage
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Nature
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-nature"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS AIR -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🌪️
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Nuage de baies
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Air
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-air"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS FOUDRE -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            ⚡
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Ragoût électrique
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Foudre
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-lightning"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS GLACE -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            ❄️
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Sorbet cristallin
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Glace
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-ice"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS TERRE -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🪨
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Ragoût de montagne
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Terre
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-earth"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS OMBRE -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🌑
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Élixir nocturne
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Ombre
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-shadow"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS LUMIÈRE -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            ☀️
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Nectar solaire
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Lumière
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-light"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+
+
+                    <!-- DRAGONS COSMIQUES -->
+
+                    <div class="inventory-item">
+
+                        <div class="inventory-item-icon">
+                            🌌
+                        </div>
+
+
+                        <div class="inventory-item-info">
+
+                            <h4>
+                                Gâteau cosmique
+                            </h4>
+
+
+                            <p>
+                                Pour les dragons Cosmiques
+                            </p>
+
+                        </div>
+
+
+                        <b
+                            id="recipe-cosmic"
+                            class="inventory-item-count"
+                        >
+                            🔒
+                        </b>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================== -->
+            <!-- APERÇU MARMITE -->
+            <!-- ================================================== -->
+
             <section class="cooking-preview">
 
                 <div class="cooking-preview-icon">
@@ -842,14 +1214,14 @@
                 <div>
 
                     <h3>
-                        Marmite
+                        Marmite de Draconia
                     </h3>
 
 
                     <p>
-                        Bientôt, tu pourras utiliser
-                        tes ressources pour créer
-                        des recettes pour tes dragons.
+                        Réunis les bons ingrédients pour
+                        préparer des plats adaptés à chaque
+                        type de dragon.
                     </p>
 
                 </div>
@@ -988,7 +1360,7 @@
 
 <!--
     IMPORTANT :
-    ?v=3 force le navigateur à charger
+    ?v=4 force le navigateur à charger
     la nouvelle version de script.js.
 -->
 
