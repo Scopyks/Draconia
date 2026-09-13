@@ -3,6 +3,81 @@
 // SCRIPT PRINCIPAL
 // ======================================================
 // ======================================================
+// LISTE DES DRAGONS 🐉
+// ======================================================
+const dragons = [
+    {
+        id: "dragon-feu",
+        name: "Flamio",
+        element: "Feu",
+        rarity: "Commun",
+        icon: "🔥🐉"
+    },
+    {
+        id: "dragon-eau",
+        name: "Aquaria",
+        element: "Eau",
+        rarity: "Commun",
+        icon: "💧🐉"
+    },
+    {
+        id: "dragon-nature",
+        name: "Floragon",
+        element: "Nature",
+        rarity: "Peu commun",
+        icon: "🌿🐉"
+    },
+    {
+        id: "dragon-air",
+        name: "Aéris",
+        element: "Air",
+        rarity: "Peu commun",
+        icon: "🌪️🐉"
+    },
+    {
+        id: "dragon-foudre",
+        name: "Voltix",
+        element: "Foudre",
+        rarity: "Rare",
+        icon: "⚡🐉"
+    },
+    {
+        id: "dragon-glace",
+        name: "Givrax",
+        element: "Glace",
+        rarity: "Rare",
+        icon: "❄️🐉"
+    },
+    {
+        id: "dragon-terre",
+        name: "Rocdor",
+        element: "Terre",
+        rarity: "Commun",
+        icon: "🪨🐉"
+    },
+    {
+        id: "dragon-ombre",
+        name: "Noctis",
+        element: "Ombre",
+        rarity: "Épique",
+        icon: "🌑🐉"
+    },
+    {
+        id: "dragon-lumiere",
+        name: "Solarys",
+        element: "Lumière",
+        rarity: "Épique",
+        icon: "☀️🐉"
+    },
+    {
+        id: "dragon-cosmique",
+        name: "Cosmix",
+        element: "Cosmique",
+        rarity: "Légendaire",
+        icon: "🌌🐉"
+    }
+];
+// ======================================================
 // DONNÉES DU JOUEUR
 // ======================================================
 let player = {
@@ -27,7 +102,7 @@ let inventory = {
 const INVENTORY_STORAGE_KEY =
     "draconiaInventory";
 // ======================================================
-// PLATS CUISINÉS
+// PLATS CUISINÉS 🍲
 // ======================================================
 let preparedMeals = {
     flame_stew: 0,
@@ -249,8 +324,7 @@ function getFranceDateParts() {
     const result = {};
     parts.forEach(part => {
         if (part.type !== "literal") {
-            result[part.type] =
-                part.value;
+            result[part.type] = part.value;
         }
     });
     return result;
@@ -271,26 +345,22 @@ function getFranceHour() {
     return Number(hourPart.value);
 }
 function getTodayDate() {
-    const parts =
-        getFranceDateParts();
+    const parts = getFranceDateParts();
     return `${parts.year}-${parts.month}-${parts.day}`;
 }
 // ======================================================
 // JOUR / NUIT
 // ======================================================
 function isNight() {
-    const hour =
-        getFranceHour();
+    const hour = getFranceHour();
     return hour >= 21 || hour < 6;
 }
 // ======================================================
 // TEMPÉRATURE
 // ======================================================
 function generateTemperature(weather) {
-    const min =
-        weather.minTemp;
-    const max =
-        weather.maxTemp;
+    const min = weather.minTemp;
+    const max = weather.maxTemp;
     return Math.floor(
         Math.random() *
         (max - min + 1)
@@ -300,8 +370,7 @@ function generateTemperature(weather) {
 // GÉNÉRATION DE LA MÉTÉO DU JOUR
 // ======================================================
 function generateDailyWeather() {
-    const today =
-        getTodayDate();
+    const today = getTodayDate();
     const savedWeather =
         localStorage.getItem(
             WEATHER_STORAGE_KEY
@@ -349,15 +418,13 @@ function generateDailyWeather() {
         );
     dailyWeather = {
         ...selectedWeather,
-        temperature:
-            temperature
+        temperature
     };
     localStorage.setItem(
         WEATHER_STORAGE_KEY,
         JSON.stringify({
             date: today,
-            weather:
-                dailyWeather.id,
+            weather: dailyWeather.id,
             temperature:
                 dailyWeather.temperature
         })
@@ -1110,7 +1177,7 @@ function chooseRarity() {
     return "Légendaire";
 }
 // ======================================================
-// RECHERCHE D'UN DRAGON
+// RECHERCHE D'UN DRAGON 🐉
 // ======================================================
 function findEgg() {
     const discovered =
@@ -1159,10 +1226,9 @@ function findEgg() {
             const matching =
                 possibleDragons.filter(
                     dragon =>
-                        bonusMap[bonus]
-                            .includes(
-                                dragon.element
-                            )
+                        bonusMap[bonus].includes(
+                            dragon.element
+                        )
                 );
             if (
                 matching.length > 0
@@ -1181,6 +1247,14 @@ function findEgg() {
                 boostedDragons.length
             )
         ];
+    if (
+        !dragon
+    ) {
+        showEggMessage(
+            "🌿 Tu explores Draconia... mais aucun dragon n'est apparu."
+        );
+        return;
+    }
     if (
         !discovered.includes(
             dragon.id
@@ -1426,7 +1500,7 @@ function renderOwnedDragons() {
     });
 }
 // ======================================================
-// DRAGONDEX
+// DRAGONDEX 📖
 // ======================================================
 function updateDragonDex() {
     const list =
