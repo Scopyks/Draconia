@@ -101,10 +101,10 @@
         <p class="small-title">
             RESSOURCES
         </p>
-        <h2>
-            🌿 Explorer la nature
-        </h2>
-    </div>
+    <h2>
+        🌿 Explorer la nature
+    </h2>
+</div>
 </div>
 <p class="gathering-description">
     Pars à la recherche de ressources pour
@@ -113,87 +113,87 @@
 </p>
 <!-- FORÊT -->
 <div class="gathering-location">
-    <div class="gathering-location-icon">
-        🌲
-    </div>
-    <div class="gathering-location-info">
-        <h3>
-            Forêt de Draconia
-        </h3>
-        <p>
-            Pommes, baies, herbes,
-            champignons et insectes.
-        </p>
-    </div>
-    <button
-        class="gather-button"
-        onclick="openGatheringGame('forest')"
-    >
-        🌿 Récolter
-    </button>
+<div class="gathering-location-icon">
+    🌲
+</div>
+<div class="gathering-location-info">
+    <h3>
+        Forêt de Draconia
+    </h3>
+    <p>
+        Pommes, baies, herbes,
+        champignons et insectes.
+    </p>
+</div>
+<button
+    class="gather-button"
+    onclick="openGatheringGame('forest')"
+>
+    🌿 Récolter
+</button>
 </div>
 <!-- PLAINES -->
 <div class="gathering-location">
-    <div class="gathering-location-icon">
-        🌾
-    </div>
-    <div class="gathering-location-info">
-        <h3>
-            Grandes plaines
-        </h3>
-        <p>
-            Légumes, herbes et autres
-            ressources sauvages.
-        </p>
-    </div>
-    <button
-        class="gather-button"
-        onclick="openGatheringGame('plains')"
-    >
-        🥕 Récolter
-    </button>
+<div class="gathering-location-icon">
+    🌾
+</div>
+<div class="gathering-location-info">
+    <h3>
+        Grandes plaines
+    </h3>
+    <p>
+        Légumes, herbes et autres
+        ressources sauvages.
+    </p>
+</div>
+<button
+    class="gather-button"
+    onclick="openGatheringGame('plains')"
+>
+    🥕 Récolter
+</button>
 </div>
 <!-- PÊCHE -->
 <div class="gathering-location fishing-location">
-    <div class="gathering-location-icon">
-        🎣
-    </div>
-    <div class="gathering-location-info">
-        <h3>
-            Lac de Draconia
-        </h3>
-        <p>
-            Pars pêcher pour essayer
-            d'obtenir du poisson.
-        </p>
-    </div>
-    <button
-        class="gather-button"
-        onclick="openGatheringGame('fishing')"
-    >
-        🎣 Pêcher
-    </button>
+<div class="gathering-location-icon">
+    🎣
+</div>
+<div class="gathering-location-info">
+    <h3>
+        Lac de Draconia
+    </h3>
+    <p>
+        Pars pêcher pour essayer
+        d'obtenir du poisson.
+    </p>
+</div>
+<button
+    class="gather-button"
+    onclick="openGatheringGame('fishing')"
+>
+    🎣 Pêcher
+</button>
 </div>
 <!-- CHASSE -->
 <div class="gathering-location hunting-location">
-    <div class="gathering-location-icon">
-        🏹
-    </div>
-    <div class="gathering-location-info">
-        <h3>
-            🏹 Zone de chasse
-        </h3>
-        <p>
-            Pars chasser dans les bois
-            pour obtenir de la viande.
-        </p>
-    </div>
-    <button
-        class="gather-button"
-        onclick="openGatheringGame('hunting')"
-    >
-        🏹 Chasser
-    </button>
+<div class="gathering-location-icon">
+    🏹
+</div>
+<div class="gathering-location-info">
+    <h3>
+        🏹 Zone de chasse
+    </h3>
+    <p>
+        Pars chasser dans les bois
+        pour obtenir de la viande.
+    </p>
+</div>
+<button
+    class="gather-button"
+    onclick="openGatheringGame('hunting')"
+>
+    🏹 Chasser
+</button>
 </div>
 <p
     id="gathering-message"
@@ -217,147 +217,146 @@
     class="mini-game"
     style="display: none;"
 >
+
 <button
-    class="game-close-button"
-    onclick="closeGatheringGame()"
->
-    ✕
+class=“game-close-button”
+onclick=“closeGatheringGame()”
+
+✕
 </button>
 <div class="forest-game-header">
-    <p class="small-title">
-        FORÊT DE DRACONIA
-    </p>
-    <h2>
-        🌳 La forêt enchantée
-    </h2>
-    <p>
-        Touche l'arbre pour le secouer
-        et fais tomber les ressources !
-    </p>
+<p class="small-title">
+    FORÊT DE DRACONIA
+</p>
+<h2>
+    🌳 La forêt enchantée
+</h2>
+<p>
+    Touche l'arbre pour le secouer
+    et fais tomber les ressources !
+</p>
 </div>
-<!-- ================================================== -->
 <!-- SCÈNE DE FORÊT -->
-<!-- ================================================== -->
 <div
     id="forest-scene"
     class="forest-scene"
 >
-    <!-- CIEL / FOND -->
-    <div class="forest-background">
-        <div class="forest-sun">
-            ☀️
-        </div>
-        <div class="forest-cloud forest-cloud-one">
-            ☁️
-        </div>
-        <div class="forest-cloud forest-cloud-two">
-            ☁️
-        </div>
+<!-- CIEL / FOND -->
+<div class="forest-background">
+    <div class="forest-sun">
+        ☀️
     </div>
-    <!-- ARBRE -->
+    <div class="forest-cloud forest-cloud-one">
+        ☁️
+    </div>
+    <div class="forest-cloud forest-cloud-two">
+        ☁️
+    </div>
+</div>
+<!-- ARBRE -->
+<button
+    id="forest-tree-button"
+    class="forest-tree"
+    onclick="shakeTree()"
+    aria-label="Secouer l'arbre"
+>
+    <span class="tree-crown tree-crown-back"></span>
+    <span class="tree-branch branch-one"></span>
+    <span class="tree-branch branch-two"></span>
+    <span class="tree-branch branch-three"></span>
+    <span class="tree-trunk"></span>
+    <span class="tree-crown tree-crown-main"></span>
+    <span class="tree-leaf leaf-one"></span>
+    <span class="tree-leaf leaf-two"></span>
+    <span class="tree-leaf leaf-three"></span>
+    <span class="tree-leaf leaf-four"></span>
+    <span class="tree-leaf leaf-five"></span>
+</button>
+<!-- RESSOURCES QUI TOMBENT -->
+<div
+    id="forest-dropped-resources"
+    class="forest-dropped-resources"
+></div>
+<!-- CHAMPIGNONS -->
+<div
+    id="forest-mushrooms"
+    class="forest-mushroom-ground"
+>
     <button
-        id="forest-tree-button"
-        class="forest-tree"
-        onclick="shakeTree()"
-        aria-label="Secouer l'arbre"
+        class="forest-mushroom"
+        data-mushroom-index="0"
+        onclick="pickMushroom(0)"
+        aria-label="Ramasser le champignon"
     >
-        <span class="tree-crown tree-crown-back"></span>
-        <span class="tree-branch branch-one"></span>
-        <span class="tree-branch branch-two"></span>
-        <span class="tree-branch branch-three"></span>
-        <span class="tree-trunk"></span>
-        <span class="tree-crown tree-crown-main"></span>
-        <span class="tree-leaf leaf-one"></span>
-        <span class="tree-leaf leaf-two"></span>
-        <span class="tree-leaf leaf-three"></span>
-        <span class="tree-leaf leaf-four"></span>
-        <span class="tree-leaf leaf-five"></span>
+        <span class="mushroom-cap"></span>
+        <span class="mushroom-stem"></span>
     </button>
-    <!-- RESSOURCES QUI TOMBENT -->
-    <div
-        id="forest-dropped-resources"
-        class="forest-dropped-resources"
-    ></div>
-    <!-- CHAMPIGNONS PLANTÉS DANS LE SOL -->
-    <div
-        id="forest-mushrooms"
-        class="forest-mushroom-ground"
+    <button
+        class="forest-mushroom"
+        data-mushroom-index="1"
+        onclick="pickMushroom(1)"
+        aria-label="Ramasser le champignon"
     >
-        <button
-            class="forest-mushroom"
-            data-mushroom-index="0"
-            onclick="pickMushroom(0)"
-            aria-label="Ramasser le champignon"
-        >
-            <span class="mushroom-cap"></span>
-            <span class="mushroom-stem"></span>
-        </button>
-        <button
-            class="forest-mushroom"
-            data-mushroom-index="1"
-            onclick="pickMushroom(1)"
-            aria-label="Ramasser le champignon"
-        >
-            <span class="mushroom-cap"></span>
-            <span class="mushroom-stem"></span>
-        </button>
-        <button
-            class="forest-mushroom"
-            data-mushroom-index="2"
-            onclick="pickMushroom(2)"
-            aria-label="Ramasser le champignon"
-        >
-            <span class="mushroom-cap"></span>
-            <span class="mushroom-stem"></span>
-        </button>
-        <button
-            class="forest-mushroom"
-            data-mushroom-index="3"
-            onclick="pickMushroom(3)"
-            aria-label="Ramasser le champignon"
-        >
-            <span class="mushroom-cap"></span>
-            <span class="mushroom-stem"></span>
-        </button>
-        <button
-            class="forest-mushroom"
-            data-mushroom-index="4"
-            onclick="pickMushroom(4)"
-            aria-label="Ramasser le champignon"
-        >
-            <span class="mushroom-cap"></span>
-            <span class="mushroom-stem"></span>
-        </button>
-        <button
-            class="forest-mushroom"
-            data-mushroom-index="5"
-            onclick="pickMushroom(5)"
-            aria-label="Ramasser le champignon"
-        >
-            <span class="mushroom-cap"></span>
-            <span class="mushroom-stem"></span>
-        </button>
-        <button
-            class="forest-mushroom"
-            data-mushroom-index="6"
-            onclick="pickMushroom(6)"
-            aria-label="Ramasser le champignon"
-        >
-            <span class="mushroom-cap"></span>
-            <span class="mushroom-stem"></span>
-        </button>
-    </div>
-    <!-- SOL -->
-    <div class="forest-ground">
-        <div class="grass-blade grass-one">🌱</div>
-        <div class="grass-blade grass-two">🌱</div>
-        <div class="grass-blade grass-three">🌱</div>
-        <div class="grass-blade grass-four">🌱</div>
-        <div class="grass-blade grass-five">🌱</div>
-        <div class="grass-blade grass-six">🌱</div>
-        <div class="grass-blade grass-seven">🌱</div>
-        <div class="grass-blade grass-eight">🌱</div>
-    </div>
+        <span class="mushroom-cap"></span>
+        <span class="mushroom-stem"></span>
+    </button>
+    <button
+        class="forest-mushroom"
+        data-mushroom-index="2"
+        onclick="pickMushroom(2)"
+        aria-label="Ramasser le champignon"
+    >
+        <span class="mushroom-cap"></span>
+        <span class="mushroom-stem"></span>
+    </button>
+    <button
+        class="forest-mushroom"
+        data-mushroom-index="3"
+        onclick="pickMushroom(3)"
+        aria-label="Ramasser le champignon"
+    >
+        <span class="mushroom-cap"></span>
+        <span class="mushroom-stem"></span>
+    </button>
+    <button
+        class="forest-mushroom"
+        data-mushroom-index="4"
+        onclick="pickMushroom(4)"
+        aria-label="Ramasser le champignon"
+    >
+        <span class="mushroom-cap"></span>
+        <span class="mushroom-stem"></span>
+    </button>
+    <button
+        class="forest-mushroom"
+        data-mushroom-index="5"
+        onclick="pickMushroom(5)"
+        aria-label="Ramasser le champignon"
+    >
+        <span class="mushroom-cap"></span>
+        <span class="mushroom-stem"></span>
+    </button>
+    <button
+        class="forest-mushroom"
+        data-mushroom-index="6"
+        onclick="pickMushroom(6)"
+        aria-label="Ramasser le champignon"
+    >
+        <span class="mushroom-cap"></span>
+        <span class="mushroom-stem"></span>
+    </button>
+</div>
+<!-- SOL -->
+<div class="forest-ground">
+    <div class="grass-blade grass-one">🌱</div>
+    <div class="grass-blade grass-two">🌱</div>
+    <div class="grass-blade grass-three">🌱</div>
+    <div class="grass-blade grass-four">🌱</div>
+    <div class="grass-blade grass-five">🌱</div>
+    <div class="grass-blade grass-six">🌱</div>
+    <div class="grass-blade grass-seven">🌱</div>
+    <div class="grass-blade grass-eight">🌱</div>
+</div>
 </div>
 <p
     id="forest-tree-message"
@@ -378,11 +377,12 @@
     class="mini-game"
     style="display: none;"
 >
+
 <button
-    class="game-close-button"
-    onclick="closeGatheringGame()"
->
-    ✕
+class=“game-close-button”
+onclick=“closeGatheringGame()”
+
+✕
 </button>
 <p class="small-title">
     GRANDES PLAINES
@@ -394,12 +394,13 @@
     Arrose les plantes puis attends
     leur croissance.
 </p>
+
 <button
-    id="watering-button"
-    class="mini-game-main-button"
-    onclick="waterPlants()"
->
-    💧 Arroser
+id=“watering-button”
+class=“mini-game-main-button”
+onclick=“waterPlants()”
+
+💧 Arroser
 </button>
 <p id="watering-message"></p>
 <p id="plants-growth-message"></p>
@@ -407,30 +408,30 @@
     id="plants-grid"
     class="plants-grid"
 >
-    <button
-        class="plant-button"
-        onclick="harvestPlant(0)"
-    >
-        🌱
-    </button>
-    <button
-        class="plant-button"
-        onclick="harvestPlant(1)"
-    >
-        🌱
-    </button>
-    <button
-        class="plant-button"
-        onclick="harvestPlant(2)"
-    >
-        🌱
-    </button>
-    <button
-        class="plant-button"
-        onclick="harvestPlant(3)"
-    >
-        🌱
-    </button>
+<button
+    class="plant-button"
+    onclick="harvestPlant(0)"
+>
+    🌱
+</button>
+<button
+    class="plant-button"
+    onclick="harvestPlant(1)"
+>
+    🌱
+</button>
+<button
+    class="plant-button"
+    onclick="harvestPlant(2)"
+>
+    🌱
+</button>
+<button
+    class="plant-button"
+    onclick="harvestPlant(3)"
+>
+    🌱
+</button>
 </div>
 <p id="plains-game-message"></p>
 </div>
@@ -442,11 +443,12 @@
     class="mini-game"
     style="display: none;"
 >
+
 <button
-    class="game-close-button"
-    onclick="closeGatheringGame()"
->
-    ✕
+class=“game-close-button”
+onclick=“closeGatheringGame()”
+
+✕
 </button>
 <p class="small-title">
     LAC DE DRACONIA
@@ -473,21 +475,22 @@
     id="fishing-bar"
     class="fishing-bar"
 >
-    <div
-        id="fishing-green-zone"
-        class="fishing-green-zone"
-    ></div>
-    <div
-        id="fishing-arrow"
-        class="fishing-arrow"
-    ></div>
+<div
+    id="fishing-green-zone"
+    class="fishing-green-zone"
+></div>
+<div
+    id="fishing-arrow"
+    class="fishing-arrow"
+></div>
 </div>
+
 <button
-    id="fishing-catch-button"
-    class="mini-game-main-button"
-    onclick="catchFish()"
->
-    🐟 Attraper !
+id=“fishing-catch-button”
+class=“mini-game-main-button”
+onclick=“catchFish()”
+
+🐟 Attraper !
 </button>
 <p id="fishing-game-message"></p>
 </div>
@@ -499,11 +502,12 @@
     class="mini-game"
     style="display: none;"
 >
+
 <button
-    class="game-close-button"
-    onclick="closeGatheringGame()"
->
-    ✕
+class=“game-close-button”
+onclick=“closeGatheringGame()”
+
+✕
 </button>
 <p class="small-title">
     ZONE DE CHASSE
@@ -518,20 +522,21 @@
     id="hunting-field"
     class="hunting-field"
 >
-    <div
-        id="hunting-duck"
-        class="hunting-duck"
-        style="display: none;"
-    >
-        🦆
-    </div>
-</div>
-<button
-    id="hunting-bow"
-    class="mini-game-main-button"
-    onclick="shootDuck()"
+<div
+    id="hunting-duck"
+    class="hunting-duck"
+    style="display: none;"
 >
-    🏹 Tirer
+    🦆
+</div>
+</div>
+
+<button
+id=“hunting-bow”
+class=“mini-game-main-button”
+onclick=“shootDuck()”
+
+🏹 Tirer
 </button>
 <p id="hunting-game-message"></p>
 </div>
@@ -546,20 +551,20 @@
 >
 <section class="dragons-section">
 <div class="dragons-header">
-    <div>
-        <p class="small-title">
-            TON REFUGE
-        </p>
-        <h2>
-            🐉 Mes dragons
-        </h2>
-    </div>
-    <div class="dragons-counter">
-        <b id="owned-dragons-count">
-            0
-        </b>
-        dragon(s)
-    </div>
+<div>
+    <p class="small-title">
+        TON REFUGE
+    </p>
+    <h2>
+        🐉 Mes dragons
+    </h2>
+</div>
+<div class="dragons-counter">
+    <b id="owned-dragons-count">
+        0
+    </b>
+    dragon(s)
+</div>
 </div>
 <p class="dragons-description">
     Prends soin de tes dragons et fais-les
@@ -573,21 +578,21 @@
     id="no-dragons"
     class="no-dragons"
 >
-    <div class="no-dragons-icon">
-        🥚
-    </div>
-    <h3>
-        Aucun dragon pour le moment
-    </h3>
-    <p>
-        Explore Draconia pour trouver
-        ton premier dragon !
-    </p>
-    <button
-        onclick="showPage('home')"
-    >
-        🔍 Explorer
-    </button>
+<div class="no-dragons-icon">
+    🥚
+</div>
+<h3>
+    Aucun dragon pour le moment
+</h3>
+<p>
+    Explore Draconia pour trouver
+    ton premier dragon !
+</p>
+<button
+    onclick="showPage('home')"
+>
+    🔍 Explorer
+</button>
 </div>
 </section>
 </main>
@@ -601,20 +606,20 @@
 >
 <section class="dragondex">
 <div class="dragondex-header">
-    <div>
-        <p class="small-title">
-            COLLECTION
-        </p>
-        <h2>
-            📖 DragonDex
-        </h2>
-    </div>
-    <div class="dex-counter">
-        <b id="dex-count">
-            0
-        </b>
-        / 10
-    </div>
+<div>
+    <p class="small-title">
+        COLLECTION
+    </p>
+    <h2>
+        📖 DragonDex
+    </h2>
+</div>
+<div class="dex-counter">
+    <b id="dex-count">
+        0
+    </b>
+    / 10
+</div>
 </div>
 <p class="dragondex-description">
     Découvre tous les dragons de Draconia.
@@ -635,20 +640,20 @@
 >
 <section class="inventory-section">
 <div class="inventory-header">
-    <div>
-        <p class="small-title">
-            RESSOURCES
-        </p>
-        <h2>
-            🎒 Mon sac
-        </h2>
-    </div>
-    <div class="inventory-counter">
-        <b id="inventory-total">
-            0
-        </b>
-        objet(s)
-    </div>
+<div>
+    <p class="small-title">
+        RESSOURCES
+    </p>
+    <h2>
+        🎒 Mon sac
+    </h2>
+</div>
+<div class="inventory-counter">
+    <b id="inventory-total">
+        0
+    </b>
+    objet(s)
+</div>
 </div>
 <p class="inventory-description">
     Récupère des ressources dans Draconia
@@ -656,195 +661,195 @@
 </p>
 <!-- NOURRITURE -->
 <section class="inventory-category">
-    <div class="inventory-category-header">
-        <h3>
-            🍖 Nourriture
-        </h3>
-        <span>
-            Ingrédients pour la cuisine
-        </span>
+<div class="inventory-category-header">
+<h3>
+    🍖 Nourriture
+</h3>
+<span>
+    Ingrédients pour la cuisine
+</span>
+</div>
+<div
+    id="food-inventory"
+    class="inventory-grid"
+>
+<!-- VIANDE -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🍖
     </div>
-    <div
-        id="food-inventory"
-        class="inventory-grid"
+    <div class="inventory-item-info">
+        <h4>
+            Viande
+        </h4>
+        <p>
+            Aliment de base
+        </p>
+    </div>
+    <b
+        id="resource-meat"
+        class="inventory-item-count"
     >
-        <!-- VIANDE -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🍖
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Viande
-                </h4>
-                <p>
-                    Aliment de base
-                </p>
-            </div>
-            <b
-                id="resource-meat"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
-        <!-- POISSON -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🐟
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Poisson
-                </h4>
-                <p>
-                    Peut être pêché
-                </p>
-            </div>
-            <b
-                id="resource-fish"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
-        <!-- POMME -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🍎
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Pomme
-                </h4>
-                <p>
-                    Fruit à récolter
-                </p>
-            </div>
-            <b
-                id="resource-apple"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
-        <!-- BAIE -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🍓
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Baie
-                </h4>
-                <p>
-                    Fruit sauvage
-                </p>
-            </div>
-            <b
-                id="resource-berry"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
+        0
+    </b>
+</div>
+<!-- POISSON -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🐟
     </div>
+    <div class="inventory-item-info">
+        <h4>
+            Poisson
+        </h4>
+        <p>
+            Peut être pêché
+        </p>
+    </div>
+    <b
+        id="resource-fish"
+        class="inventory-item-count"
+    >
+        0
+    </b>
+</div>
+<!-- POMME -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🍎
+    </div>
+    <div class="inventory-item-info">
+        <h4>
+            Pomme
+        </h4>
+        <p>
+            Fruit à récolter
+        </p>
+    </div>
+    <b
+        id="resource-apple"
+        class="inventory-item-count"
+    >
+        0
+    </b>
+</div>
+<!-- BAIE -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🍓
+    </div>
+    <div class="inventory-item-info">
+        <h4>
+            Baie
+        </h4>
+        <p>
+            Fruit sauvage
+        </p>
+    </div>
+    <b
+        id="resource-berry"
+        class="inventory-item-count"
+    >
+        0
+    </b>
+</div>
+</div>
 </section>
 <!-- RÉCOLTE -->
 <section class="inventory-category">
-    <div class="inventory-category-header">
-        <h3>
-            🌿 Récolte
-        </h3>
-        <span>
-            Ressources trouvées dans la nature
-        </span>
+<div class="inventory-category-header">
+<h3>
+    🌿 Récolte
+</h3>
+<span>
+    Ressources trouvées dans la nature
+</span>
+</div>
+<div
+    id="gathering-inventory"
+    class="inventory-grid"
+>
+<!-- HERBE -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🌿
     </div>
-    <div
-        id="gathering-inventory"
-        class="inventory-grid"
+    <div class="inventory-item-info">
+        <h4>
+            Herbe
+        </h4>
+        <p>
+            Plante sauvage
+        </p>
+    </div>
+    <b
+        id="resource-herb"
+        class="inventory-item-count"
     >
-        <!-- HERBE -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🌿
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Herbe
-                </h4>
-                <p>
-                    Plante sauvage
-                </p>
-            </div>
-            <b
-                id="resource-herb"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
-        <!-- CHAMPIGNON -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🍄
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Champignon
-                </h4>
-                <p>
-                    Ressource forestière
-                </p>
-            </div>
-            <b
-                id="resource-mushroom"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
-        <!-- LÉGUME -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🥕
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Légume
-                </h4>
-                <p>
-                    Peut être récolté
-                </p>
-            </div>
-            <b
-                id="resource-vegetable"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
-        <!-- INSECTE -->
-        <div class="inventory-item">
-            <div class="inventory-item-icon">
-                🐛
-            </div>
-            <div class="inventory-item-info">
-                <h4>
-                    Insecte
-                </h4>
-                <p>
-                    Ressource sauvage
-                </p>
-            </div>
-            <b
-                id="resource-insect"
-                class="inventory-item-count"
-            >
-                0
-            </b>
-        </div>
+        0
+    </b>
+</div>
+<!-- CHAMPIGNON -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🍄
     </div>
+    <div class="inventory-item-info">
+        <h4>
+            Champignon
+        </h4>
+        <p>
+            Ressource forestière
+        </p>
+    </div>
+    <b
+        id="resource-mushroom"
+        class="inventory-item-count"
+    >
+        0
+    </b>
+</div>
+<!-- LÉGUME -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🥕
+    </div>
+    <div class="inventory-item-info">
+        <h4>
+            Légume
+        </h4>
+        <p>
+            Peut être récolté
+        </p>
+    </div>
+    <b
+        id="resource-vegetable"
+        class="inventory-item-count"
+    >
+        0
+    </b>
+</div>
+<!-- INSECTE -->
+<div class="inventory-item">
+    <div class="inventory-item-icon">
+        🐛
+    </div>
+    <div class="inventory-item-info">
+        <h4>
+            Insecte
+        </h4>
+        <p>
+            Ressource sauvage
+        </p>
+    </div>
+    <b
+        id="resource-insect"
+        class="inventory-item-count"
+    >
+        0
+    </b>
+</div>
+</div>
 </section>
 </section>
 </main>
@@ -858,17 +863,17 @@
 >
 <section class="inventory-section">
 <div class="inventory-header">
-    <div>
-        <p class="small-title">
-            CUISINE
-        </p>
-        <h2>
-            🍲 Marmite de Draconia
-        </h2>
-    </div>
-    <div class="inventory-counter">
-        🔥 Cuisine
-    </div>
+<div>
+    <p class="small-title">
+        CUISINE
+    </p>
+    <h2>
+        🍲 Marmite de Draconia
+    </h2>
+</div>
+<div class="inventory-counter">
+    🔥 Cuisine
+</div>
 </div>
 <p class="inventory-description">
     Utilise les ingrédients de ton sac pour
@@ -877,33 +882,33 @@
 </p>
 <!-- MARMITE -->
 <section class="cooking-preview">
-    <div class="cooking-preview-icon">
-        🍲
-    </div>
-    <div>
-        <h3>
-            La grande marmite
-        </h3>
-        <p>
-            Choisis une recette et prépare
-            un plat pour tes dragons.
-        </p>
-    </div>
+<div class="cooking-preview-icon">
+    🍲
+</div>
+<div>
+    <h3>
+        La grande marmite
+    </h3>
+    <p>
+        Choisis une recette et prépare
+        un plat pour tes dragons.
+    </p>
+</div>
 </section>
 <!-- RECETTES -->
 <section class="inventory-category">
-    <div class="inventory-category-header">
-        <h3>
-            📖 Recettes
-        </h3>
-        <span>
-            Un plat pour chaque élément
-        </span>
-    </div>
-    <div
-        id="recipes-list"
-        class="inventory-grid"
-    ></div>
+<div class="inventory-category-header">
+<h3>
+    📖 Recettes
+</h3>
+<span>
+    Un plat pour chaque élément
+</span>
+</div>
+<div
+    id="recipes-list"
+    class="inventory-grid"
+></div>
 </section>
 <p
     id="cooking-message"
@@ -921,16 +926,16 @@
 >
 <section class="weather-card">
 <div>
-    <p class="small-title">
-        JOUEUR
-    </p>
-    <h2>
-        👤 Mon profil
-    </h2>
-    <p>
-        Ton profil et tes statistiques
-        arriveront bientôt.
-    </p>
+<p class="small-title">
+    JOUEUR
+</p>
+<h2>
+    👤 Mon profil
+</h2>
+<p>
+    Ton profil et tes statistiques
+    arriveront bientôt.
+</p>
 </div>
 </section>
 </main>
