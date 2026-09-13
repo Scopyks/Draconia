@@ -907,13 +907,7 @@ function showCookingMessage(message) {
 }
 
 // ======================================================
-// ======================================================
 // MINI-JEUX DE RÉCOLTE 🎮
-// ======================================================
-// ======================================================
-
-// ======================================================
-// ÉTAT GÉNÉRAL DES MINI-JEUX
 // ======================================================
 
 let currentGatheringGame = null;
@@ -986,10 +980,23 @@ function openGatheringGame(game) {
 
     currentGatheringGame = game;
 
+    const gameContainer =
+        document.getElementById(
+            "gathering-game"
+        );
+
     const gameElement =
         document.getElementById(
             `${game}-game`
         );
+
+    if (!gameContainer) {
+        console.log(
+            "Conteneur des mini-jeux introuvable."
+        );
+
+        return;
+    }
 
     if (!gameElement) {
         console.log(
@@ -999,6 +1006,12 @@ function openGatheringGame(game) {
         return;
     }
 
+    // IMPORTANT :
+    // On affiche d'abord le conteneur principal.
+    gameContainer.style.display =
+        "block";
+
+    // Puis on affiche le mini-jeu demandé.
     gameElement.style.display =
         "block";
 
@@ -1042,6 +1055,16 @@ function closeGatheringGame() {
                 "none";
         }
     });
+
+    const gameContainer =
+        document.getElementById(
+            "gathering-game"
+        );
+
+    if (gameContainer) {
+        gameContainer.style.display =
+            "none";
+    }
 
     stopFishingGame();
     stopHuntingGame();
@@ -1395,11 +1418,6 @@ function updatePlainsDisplay() {
                 if (plainsReady) {
                     button.textContent =
                         "🌾 Récolter";
-                } else if (
-                    plainsGrowing
-                ) {
-                    button.textContent =
-                        "🌱";
                 } else {
                     button.textContent =
                         "🌱";
@@ -2039,7 +2057,6 @@ function shootDuck() {
 
 // ======================================================
 // ANCIEN SYSTÈME DE RÉCOLTE
-// Conservé pour éviter de casser d'anciens boutons.
 // ======================================================
 
 function gatherResources(location) {
@@ -2111,7 +2128,6 @@ function gatherResources(location) {
 
 // ======================================================
 // ANCIENNE PÊCHE
-// Conservée comme sécurité.
 // ======================================================
 
 function goFishing() {
@@ -2122,7 +2138,6 @@ function goFishing() {
 
 // ======================================================
 // ANCIENNE CHASSE
-// Conservée comme sécurité.
 // ======================================================
 
 function goHunting() {
