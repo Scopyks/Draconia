@@ -2,11 +2,9 @@
 // DRACONIA 🐉
 // SCRIPT PRINCIPAL
 // ======================================================
-
 // ======================================================
 // LISTE DES DRAGONS 🐉
 // ======================================================
-
 const dragons = [
     {
         id: "dragon-feu",
@@ -79,22 +77,18 @@ const dragons = [
         icon: "🌌🐉"
     }
 ];
-
 // ======================================================
 // DONNÉES DU JOUEUR
 // ======================================================
-
 let player = {
     coins: 100,
     food: 10,
     xp: 0,
     level: 1
 };
-
 // ======================================================
 // INVENTAIRE DES RESSOURCES
 // ======================================================
-
 let inventory = {
     meat: 0,
     fish: 0,
@@ -105,14 +99,11 @@ let inventory = {
     vegetable: 0,
     insect: 0
 };
-
 const INVENTORY_STORAGE_KEY =
     "draconiaInventory";
-
 // ======================================================
 // PLATS CUISINÉS 🍲
 // ======================================================
-
 let preparedMeals = {
     flame_stew: 0,
     deep_soup: 0,
@@ -125,14 +116,11 @@ let preparedMeals = {
     solar_nectar: 0,
     cosmic_cake: 0
 };
-
 const MEALS_STORAGE_KEY =
     "draconiaPreparedMeals";
-
 // ======================================================
 // RECETTES 🍲
 // ======================================================
-
 const recipes = [
     {
         id: "flame_stew",
@@ -250,11 +238,9 @@ const recipes = [
         }
     }
 ];
-
 // ======================================================
 // NOMS DES RESSOURCES
 // ======================================================
-
 const resourceNames = {
     meat: "🍖 Viande",
     fish: "🐟 Poisson",
@@ -265,14 +251,11 @@ const resourceNames = {
     vegetable: "🥕 Légume",
     insect: "🐛 Insecte"
 };
-
 // ======================================================
 // MÉTÉO
 // ======================================================
-
 const WEATHER_STORAGE_KEY =
     "draconiaDailyWeatherV2";
-
 const weatherTypes = [
     {
         id: "sunny",
@@ -324,13 +307,10 @@ const weatherTypes = [
         maxTemp: 20
     }
 ];
-
 let dailyWeather = null;
-
 // ======================================================
 // HEURE ET DATE DE FRANCE 🇫🇷
 // ======================================================
-
 function getFranceDateParts() {
     const parts = new Intl.DateTimeFormat(
         "fr-FR",
@@ -341,18 +321,14 @@ function getFranceDateParts() {
             day: "2-digit"
         }
     ).formatToParts(new Date());
-
     const result = {};
-
     parts.forEach(part => {
         if (part.type !== "literal") {
             result[part.type] = part.value;
         }
     });
-
     return result;
 }
-
 function getFranceHour() {
     const parts = new Intl.DateTimeFormat(
         "fr-FR",
@@ -362,62 +338,47 @@ function getFranceHour() {
             hour12: false
         }
     ).formatToParts(new Date());
-
     const hourPart =
         parts.find(
             part => part.type === "hour"
         );
-
     return Number(hourPart.value);
 }
-
 function getTodayDate() {
     const parts = getFranceDateParts();
-
     return `${parts.year}-${parts.month}-${parts.day}`;
 }
-
 // ======================================================
 // JOUR / NUIT
 // ======================================================
-
 function isNight() {
     const hour = getFranceHour();
-
     return hour >= 21 || hour < 6;
 }
-
 // ======================================================
 // TEMPÉRATURE
 // ======================================================
-
 function generateTemperature(weather) {
     const min = weather.minTemp;
     const max = weather.maxTemp;
-
     return Math.floor(
         Math.random() *
         (max - min + 1)
     ) + min;
 }
-
 // ======================================================
 // GÉNÉRATION DE LA MÉTÉO DU JOUR
 // ======================================================
-
 function generateDailyWeather() {
     const today = getTodayDate();
-
     const savedWeather =
         localStorage.getItem(
             WEATHER_STORAGE_KEY
         );
-
     if (savedWeather) {
         try {
             const parsed =
                 JSON.parse(savedWeather);
-
             if (
                 parsed &&
                 parsed.date === today &&
@@ -429,14 +390,12 @@ function generateDailyWeather() {
                             weather.id ===
                             parsed.weather
                     );
-
                 if (existingWeather) {
                     dailyWeather = {
                         ...existingWeather,
                         temperature:
                             parsed.temperature
                     };
-
                     return;
                 }
             }
@@ -446,26 +405,21 @@ function generateDailyWeather() {
             );
         }
     }
-
     const randomIndex =
         Math.floor(
             Math.random() *
             weatherTypes.length
         );
-
     const selectedWeather =
         weatherTypes[randomIndex];
-
     const temperature =
         generateTemperature(
             selectedWeather
         );
-
     dailyWeather = {
         ...selectedWeather,
         temperature
     };
-
     localStorage.setItem(
         WEATHER_STORAGE_KEY,
         JSON.stringify({
@@ -476,30 +430,24 @@ function generateDailyWeather() {
         })
     );
 }
-
 // ======================================================
 // AFFICHAGE DE LA MÉTÉO
 // ======================================================
-
 function updateWeatherDisplay() {
     const weatherElement =
         document.getElementById(
             "weather"
         );
-
     const temperatureElement =
         document.getElementById(
             "temperature"
         );
-
     if (!weatherElement) {
         return;
     }
-
     if (!dailyWeather) {
         generateDailyWeather();
     }
-
     if (
         temperatureElement &&
         dailyWeather.temperature !== undefined
@@ -507,7 +455,6 @@ function updateWeatherDisplay() {
         temperatureElement.textContent =
             `${dailyWeather.temperature}°`;
     }
-
     if (isNight()) {
         if (
             dailyWeather.id ===
@@ -519,79 +466,60 @@ function updateWeatherDisplay() {
             weatherElement.textContent =
                 `🌙 ${dailyWeather.icon} Nuit • ${dailyWeather.name}`;
         }
-
         return;
     }
-
     weatherElement.textContent =
         `${dailyWeather.icon} ${dailyWeather.name}`;
 }
-
 // ======================================================
 // BONUS MÉTÉO
 // ======================================================
-
 function getWeatherBonus() {
     if (!dailyWeather) {
         return null;
     }
-
     switch (dailyWeather.id) {
         case "sunny":
             return "sun";
-
         case "rain":
             return "water";
-
         case "storm":
             return "lightning";
-
         case "snow":
             return "ice";
-
         case "fog":
             return "shadow";
-
         case "wind":
             return "air";
-
         case "cloudy":
             return "nature";
-
         default:
             return null;
     }
 }
-
 // ======================================================
 // SAUVEGARDE DU JOUEUR
 // ======================================================
-
 function savePlayer() {
     localStorage.setItem(
         "draconiaPlayer",
         JSON.stringify(player)
     );
 }
-
 // ======================================================
 // CHARGEMENT DU JOUEUR
 // ======================================================
-
 function loadPlayer() {
     const savedPlayer =
         localStorage.getItem(
             "draconiaPlayer"
         );
-
     if (!savedPlayer) {
         return;
     }
-
     try {
         const parsed =
             JSON.parse(savedPlayer);
-
         player = {
             ...player,
             ...parsed
@@ -602,37 +530,30 @@ function loadPlayer() {
         );
     }
 }
-
 // ======================================================
 // SAUVEGARDE DE L'INVENTAIRE
 // ======================================================
-
 function saveInventory() {
     localStorage.setItem(
         INVENTORY_STORAGE_KEY,
         JSON.stringify(inventory)
     );
 }
-
 // ======================================================
 // CHARGEMENT DE L'INVENTAIRE
 // ======================================================
-
 function loadInventory() {
     const savedInventory =
         localStorage.getItem(
             INVENTORY_STORAGE_KEY
         );
-
     if (!savedInventory) {
         saveInventory();
         return;
     }
-
     try {
         const parsed =
             JSON.parse(savedInventory);
-
         inventory = {
             ...inventory,
             ...parsed
@@ -643,37 +564,30 @@ function loadInventory() {
         );
     }
 }
-
 // ======================================================
 // SAUVEGARDE DES PLATS
 // ======================================================
-
 function savePreparedMeals() {
     localStorage.setItem(
         MEALS_STORAGE_KEY,
         JSON.stringify(preparedMeals)
     );
 }
-
 // ======================================================
 // CHARGEMENT DES PLATS
 // ======================================================
-
 function loadPreparedMeals() {
     const savedMeals =
         localStorage.getItem(
             MEALS_STORAGE_KEY
         );
-
     if (!savedMeals) {
         savePreparedMeals();
         return;
     }
-
     try {
         const parsed =
             JSON.parse(savedMeals);
-
         preparedMeals = {
             ...preparedMeals,
             ...parsed
@@ -684,11 +598,9 @@ function loadPreparedMeals() {
         );
     }
 }
-
 // ======================================================
 // AJOUTER UNE RESSOURCE
 // ======================================================
-
 function addResource(
     resource,
     amount = 1
@@ -699,20 +611,15 @@ function addResource(
         console.log(
             `Ressource inconnue : ${resource}`
         );
-
         return;
     }
-
     inventory[resource] += amount;
-
     saveInventory();
     updateInventoryDisplay();
 }
-
 // ======================================================
 // RETIRER UNE RESSOURCE
 // ======================================================
-
 function removeResource(
     resource,
     amount = 1
@@ -722,25 +629,19 @@ function removeResource(
     ) {
         return false;
     }
-
     if (
         inventory[resource] < amount
     ) {
         return false;
     }
-
     inventory[resource] -= amount;
-
     saveInventory();
     updateInventoryDisplay();
-
     return true;
 }
-
 // ======================================================
 // COMPTER LES OBJETS DU SAC
 // ======================================================
-
 function getInventoryTotal() {
     return Object.values(
         inventory
@@ -750,11 +651,9 @@ function getInventoryTotal() {
         0
     );
 }
-
 // ======================================================
 // COMPTER LES PLATS CUISINÉS
 // ======================================================
-
 function getPreparedMealsTotal() {
     return Object.values(
         preparedMeals
@@ -764,11 +663,9 @@ function getPreparedMealsTotal() {
         0
     );
 }
-
 // ======================================================
 // AFFICHAGE DU SAC
 // ======================================================
-
 function updateInventoryDisplay() {
     const resources = {
         meat: "resource-meat",
@@ -780,7 +677,6 @@ function updateInventoryDisplay() {
         vegetable: "resource-vegetable",
         insect: "resource-insect"
     };
-
     Object.entries(resources)
         .forEach(
             ([resource, elementId]) => {
@@ -788,74 +684,58 @@ function updateInventoryDisplay() {
                     document.getElementById(
                         elementId
                     );
-
                 if (element) {
                     element.textContent =
                         inventory[resource];
                 }
             }
         );
-
     const totalElement =
         document.getElementById(
             "inventory-total"
         );
-
     if (totalElement) {
         totalElement.textContent =
             getInventoryTotal();
     }
-
     renderRecipes();
 }
-
 // ======================================================
 // AFFICHAGE DES RESSOURCES DU JOUEUR
 // ======================================================
-
 function updatePlayerDisplay() {
     const coinsElement =
         document.getElementById(
             "coins"
         );
-
     const foodElement =
         document.getElementById(
             "food"
         );
-
     const xpElement =
         document.getElementById(
             "xp"
         );
-
     if (coinsElement) {
         coinsElement.textContent =
             player.coins;
     }
-
     if (foodElement) {
         foodElement.textContent =
             getPreparedMealsTotal();
     }
-
     if (xpElement) {
         xpElement.textContent =
             player.xp;
     }
-
     updateXPBar();
 }
-
 // ======================================================
 // AJOUTER DE L'XP AU JOUEUR
 // ======================================================
-
 function addPlayerXP(amount) {
     player.xp += amount;
-
     let levelUp = false;
-
     while (
         player.xp >= 100
     ) {
@@ -863,59 +743,45 @@ function addPlayerXP(amount) {
         player.level += 1;
         levelUp = true;
     }
-
     savePlayer();
     updatePlayerDisplay();
-
     return levelUp;
 }
-
 // ======================================================
 // MESSAGE DE RÉCOLTE
 // ======================================================
-
 function showGatheringMessage(message) {
     const element =
         document.getElementById(
             "gathering-message"
         );
-
     if (!element) {
         return;
     }
-
     element.textContent =
         message;
 }
-
 // ======================================================
 // MESSAGE DE CUISINE
 // ======================================================
-
 function showCookingMessage(message) {
     const element =
         document.getElementById(
             "cooking-message"
         );
-
     if (!element) {
         return;
     }
-
     element.textContent =
         message;
 }
-
 // ======================================================
 // MINI-JEUX DE RÉCOLTE 🎮
 // ======================================================
-
 let currentGatheringGame = null;
-
 // ======================================================
 // FORÊT 🌲
 // ======================================================
-
 let forestMushrooms = [
     true,
     true,
@@ -925,7 +791,6 @@ let forestMushrooms = [
     true,
     true
 ];
-
 let forestMushroomTimers = [
     null,
     null,
@@ -935,107 +800,83 @@ let forestMushroomTimers = [
     null,
     null
 ];
-
+let forestDropCounter = 0;
 // ======================================================
 // PÊCHE 🎣
 // ======================================================
-
 let fishingArrowPosition = 0;
 let fishingArrowDirection = 1;
 let fishingInterval = null;
 let fishingActive = false;
 let fishingGreenStart = 30;
 let fishingGreenWidth = 25;
-
 // ======================================================
 // PLAINES 🌾
 // ======================================================
-
 let plainsWatered = false;
 let plainsGrowing = false;
 let plainsReady = false;
 let plainsGrowthTimer = null;
-
 let plainsPlants = [
     true,
     true,
     true,
     true
 ];
-
+let plainsHoldTimer = null;
+let plainsHoldingPlant = false;
 // ======================================================
 // CHASSE 🏹
 // ======================================================
-
 let huntingInterval = null;
 let huntingDuckVisible = false;
 let huntingDuckTimeout = null;
-
 // ======================================================
 // OUVRIR UN MINI-JEU
 // ======================================================
-
 function openGatheringGame(game) {
     closeGatheringGame();
-
     currentGatheringGame = game;
-
     const gameContainer =
         document.getElementById(
             "gathering-game"
         );
-
     const gameElement =
         document.getElementById(
             `${game}-game`
         );
-
     if (!gameContainer) {
         console.log(
             "Conteneur des mini-jeux introuvable."
         );
-
         return;
     }
-
     if (!gameElement) {
         console.log(
             `Mini-jeu introuvable : ${game}`
         );
-
         return;
     }
-
-    // IMPORTANT :
-    // On affiche d'abord le conteneur principal.
     gameContainer.style.display =
         "block";
-
-    // Puis on affiche le mini-jeu demandé.
     gameElement.style.display =
         "block";
-
     if (game === "forest") {
         startForestGame();
     }
-
     if (game === "plains") {
         startPlainsGame();
     }
-
     if (game === "fishing") {
         startFishingGame();
     }
-
     if (game === "hunting") {
         startHuntingGame();
     }
 }
-
 // ======================================================
 // FERMER UN MINI-JEU
 // ======================================================
-
 function closeGatheringGame() {
     const games = [
         "forest",
@@ -1043,67 +884,150 @@ function closeGatheringGame() {
         "fishing",
         "hunting"
     ];
-
     games.forEach(game => {
         const element =
             document.getElementById(
                 `${game}-game`
             );
-
         if (element) {
             element.style.display =
                 "none";
         }
     });
-
     const gameContainer =
         document.getElementById(
             "gathering-game"
         );
-
     if (gameContainer) {
         gameContainer.style.display =
             "none";
     }
-
     stopFishingGame();
     stopHuntingGame();
-
+    if (plainsHoldTimer) {
+        clearTimeout(
+            plainsHoldTimer
+        );
+        plainsHoldTimer = null;
+    }
+    plainsHoldingPlant = false;
     currentGatheringGame = null;
 }
-
 // ======================================================
 // FORÊT : DÉMARRAGE 🌲
 // ======================================================
-
 function startForestGame() {
     renderForestMushrooms();
-
+    createForestDropArea();
     const message =
         document.getElementById(
             "forest-tree-message"
         );
-
     if (message) {
         message.textContent =
             "🌲 Secoue l'arbre pour faire tomber des ressources !";
     }
-
     const gameMessage =
         document.getElementById(
             "forest-game-message"
         );
-
     if (gameMessage) {
         gameMessage.textContent =
-            "";
+            "🍄 7 champignons sont cachés dans le sol.";
     }
 }
-
+// ======================================================
+// FORÊT : ZONE DES RESSOURCES QUI TOMBENT
+// ======================================================
+function createForestDropArea() {
+    const forestGame =
+        document.getElementById(
+            "forest-game"
+        );
+    if (!forestGame) {
+        return null;
+    }
+    let dropArea =
+        document.getElementById(
+            "forest-resource-drops"
+        );
+    if (!dropArea) {
+        dropArea =
+            document.createElement(
+                "div"
+            );
+        dropArea.id =
+            "forest-resource-drops";
+        dropArea.className =
+            "forest-resource-drops";
+        forestGame.appendChild(
+            dropArea
+        );
+    }
+    return dropArea;
+}
+// ======================================================
+// FORÊT : FAIRE TOMBER UNE RESSOURCE
+// ======================================================
+function createFallingForestResource(
+    resource
+) {
+    const dropArea =
+        createForestDropArea();
+    if (!dropArea) {
+        return;
+    }
+    forestDropCounter += 1;
+    const item =
+        document.createElement(
+            "span"
+        );
+    item.className =
+        "forest-resource-drop";
+    item.dataset.dropId =
+        forestDropCounter;
+    const icons = {
+        apple: "🍎",
+        berry: "🍓",
+        herb: "🌿",
+        insect: "🐛"
+    };
+    item.textContent =
+        icons[resource] || "🌿";
+    const left =
+        Math.floor(
+            Math.random() * 70
+        ) + 15;
+    const rotation =
+        Math.floor(
+            Math.random() * 50
+        ) - 25;
+    const duration =
+        (Math.random() * 0.8 + 1.2)
+        .toFixed(2);
+    item.style.left =
+        `${left}%`;
+    item.style.setProperty(
+        "--drop-rotation",
+        `${rotation}deg`
+    );
+    item.style.animationDuration =
+        `${duration}s`;
+    dropArea.appendChild(
+        item
+    );
+    setTimeout(
+        () => {
+            if (item.parentNode) {
+                item.remove();
+            }
+        },
+        Number(duration) * 1000 + 300
+    );
+}
 // ======================================================
 // FORÊT : SECOUER L'ARBRE 🌲
 // ======================================================
-
 function shakeTree() {
     if (
         currentGatheringGame !==
@@ -1111,91 +1035,96 @@ function shakeTree() {
     ) {
         return;
     }
-
     const treeButton =
         document.getElementById(
             "forest-tree-button"
         );
-
     if (treeButton) {
         treeButton.classList.remove(
             "shake-tree"
         );
-
         void treeButton.offsetWidth;
-
         treeButton.classList.add(
             "shake-tree"
         );
     }
-
     const possibleResources = [
         "apple",
         "berry",
         "herb",
         "insect"
     ];
-
-    const resource =
-        possibleResources[
-            Math.floor(
-                Math.random() *
-                possibleResources.length
-            )
-        ];
-
     const amount =
         Math.floor(
             Math.random() * 3
         ) + 1;
-
-    addResource(
-        resource,
-        amount
-    );
-
+    const fallenResources = [];
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
+        const resource =
+            possibleResources[
+                Math.floor(
+                    Math.random() *
+                    possibleResources.length
+                )
+            ];
+        fallenResources.push(
+            resource
+        );
+        createFallingForestResource(
+            resource
+        );
+        addResource(
+            resource,
+            1
+        );
+    }
     const xpAmount = 2;
-
     const levelUp =
         addPlayerXP(
             xpAmount
         );
-
     const message =
         document.getElementById(
             "forest-tree-message"
         );
-
+    const names =
+        fallenResources
+            .map(
+                resource =>
+                    resourceNames[
+                        resource
+                    ]
+            )
+            .join(" • ");
     if (message) {
         if (levelUp) {
             message.textContent =
-                `🌳 L'arbre tremble ! ${amount} × ${resourceNames[resource]} tombent ! +${xpAmount} XP • Niveau ${player.level} !`;
+                `🌳 L'arbre tremble ! ${names} tombent ! +${xpAmount} XP • Niveau ${player.level} !`;
         } else {
             message.textContent =
-                `🌳 L'arbre tremble ! ${amount} × ${resourceNames[resource]} tombent ! +${xpAmount} XP`;
+                `🌳 L'arbre tremble ! ${names} tombent au sol ! +${xpAmount} XP`;
         }
     }
 }
-
 // ======================================================
 // FORÊT : AFFICHER LES CHAMPIGNONS 🍄
 // ======================================================
-
 function renderForestMushrooms() {
     const container =
         document.getElementById(
             "forest-mushrooms"
         );
-
     if (!container) {
         return;
     }
-
     const buttons =
         container.querySelectorAll(
             "button"
         );
-
     buttons.forEach(
         (button, index) => {
             if (
@@ -1203,10 +1132,8 @@ function renderForestMushrooms() {
             ) {
                 button.style.display =
                     "block";
-
                 button.disabled =
                     false;
-
                 button.textContent =
                     "🍄";
             } else {
@@ -1216,82 +1143,72 @@ function renderForestMushrooms() {
         }
     );
 }
-
 // ======================================================
 // FORÊT : CUEILLIR UN CHAMPIGNON 🍄
 // ======================================================
-
 function pickMushroom(index) {
     if (
         !forestMushrooms[index]
     ) {
         return;
     }
-
     forestMushrooms[index] =
         false;
-
     addResource(
         "mushroom",
         1
     );
-
     const xpAmount = 2;
-
     addPlayerXP(
         xpAmount
     );
-
     renderForestMushrooms();
-
     const message =
         document.getElementById(
             "forest-game-message"
         );
-
     if (message) {
         message.textContent =
             `🍄 Tu ramasses un champignon ! +1 🍄 • +${xpAmount} XP`;
     }
-
+    if (
+        forestMushroomTimers[index]
+    ) {
+        clearTimeout(
+            forestMushroomTimers[index]
+        );
+    }
     forestMushroomTimers[index] =
         setTimeout(
             () => {
                 forestMushrooms[index] =
                     true;
-
                 renderForestMushrooms();
-
                 const respawnMessage =
                     document.getElementById(
                         "forest-game-message"
                     );
-
                 if (
                     respawnMessage &&
                     currentGatheringGame ===
                         "forest"
                 ) {
                     respawnMessage.textContent =
-                        `🍄 Un champignon a repoussé !`;
+                        "🍄 Un champignon a repoussé !";
                 }
             },
             60000
         );
 }
-
 // ======================================================
 // PLAINES : DÉMARRAGE 🌾
 // ======================================================
-
 function startPlainsGame() {
     updatePlainsDisplay();
-
     const message =
         document.getElementById(
             "watering-message"
         );
-
     if (message) {
         if (plainsReady) {
             message.textContent =
@@ -1305,11 +1222,9 @@ function startPlainsGame() {
         }
     }
 }
-
 // ======================================================
 // PLAINES : ARROSER 💧
 // ======================================================
-
 function waterPlants() {
     if (
         plainsGrowing ||
@@ -1317,87 +1232,74 @@ function waterPlants() {
     ) {
         return;
     }
-
     plainsWatered = true;
     plainsGrowing = true;
-
     const button =
         document.getElementById(
             "watering-button"
         );
-
     if (button) {
         button.disabled =
             true;
-
         button.textContent =
             "💧 Plantation arrosée";
     }
-
     const message =
         document.getElementById(
             "watering-message"
         );
-
     if (message) {
         message.textContent =
             "💧 C'est arrosé ! Les plantes vont pousser pendant 1 minute.";
     }
-
     const growthMessage =
         document.getElementById(
             "plants-growth-message"
         );
-
     if (growthMessage) {
         growthMessage.textContent =
             "🌱 Croissance en cours... 1 minute restante.";
     }
-
+    if (plainsGrowthTimer) {
+        clearTimeout(
+            plainsGrowthTimer
+        );
+    }
     plainsGrowthTimer =
         setTimeout(
             () => {
                 plainsGrowing =
                     false;
-
                 plainsReady =
                     true;
-
                 plainsWatered =
                     true;
-
                 updatePlainsDisplay();
-
                 const readyMessage =
                     document.getElementById(
                         "plants-growth-message"
                     );
-
                 if (readyMessage) {
                     readyMessage.textContent =
-                        "🌾 Les plantes ont poussé ! Tu peux maintenant les récolter.";
+                        "🌾 Les plantes ont poussé ! Maintiens ton doigt sur une plante pour la faucher.";
                 }
             },
             60000
         );
 }
-
 // ======================================================
 // PLAINES : AFFICHAGE 🌾
 // ======================================================
-
 function updatePlainsDisplay() {
     const plantsGrid =
         document.getElementById(
             "plants-grid"
         );
-
     if (plantsGrid) {
         const buttons =
             plantsGrid.querySelectorAll(
                 "button"
             );
-
         buttons.forEach(
             (button, index) => {
                 if (
@@ -1405,37 +1307,36 @@ function updatePlainsDisplay() {
                 ) {
                     button.style.display =
                         "none";
-
                     return;
                 }
-
                 button.style.display =
                     "block";
-
-                button.disabled =
-                    !plainsReady;
-
-                if (plainsReady) {
-                    button.textContent =
-                        "🌾 Récolter";
-                } else {
+                if (!plainsReady) {
+                    button.disabled =
+                        true;
                     button.textContent =
                         "🌱";
+                    return;
                 }
+                button.disabled =
+                    false;
+                button.textContent =
+                    "🌾";
+                setupPlantHoldButton(
+                    button,
+                    index
+                );
             }
         );
     }
-
     const wateringButton =
         document.getElementById(
             "watering-button"
         );
-
     if (wateringButton) {
         wateringButton.disabled =
             plainsGrowing ||
             plainsReady;
-
         if (plainsReady) {
             wateringButton.textContent =
                 "🌾 Prêt !";
@@ -1450,11 +1351,85 @@ function updatePlainsDisplay() {
         }
     }
 }
-
+// ======================================================
+// PLAINES : MAINTENIR LE DOIGT POUR FAUCHER 🌾
+// ======================================================
+function setupPlantHoldButton(
+    button,
+    index
+) {
+    if (
+        button.dataset.holdReady ===
+        "true"
+    ) {
+        return;
+    }
+    button.dataset.holdReady =
+        "true";
+    button.onclick =
+        function(event) {
+            event.preventDefault();
+        };
+    button.onpointerdown =
+        function(event) {
+            event.preventDefault();
+            if (
+                !plainsReady ||
+                !plainsPlants[index]
+            ) {
+                return;
+            }
+            plainsHoldingPlant =
+                true;
+            button.classList.add(
+                "plant-being-cut"
+            );
+            plainsHoldTimer =
+                setTimeout(
+                    () => {
+                        if (
+                            plainsHoldingPlant
+                        ) {
+                            plainsHoldingPlant =
+                                false;
+                            button.classList.remove(
+                                "plant-being-cut"
+                            );
+                            harvestPlant(
+                                index
+                            );
+                        }
+                    },
+                    700
+                );
+        };
+    const stopHold =
+        function() {
+            plainsHoldingPlant =
+                false;
+            if (
+                plainsHoldTimer
+            ) {
+                clearTimeout(
+                    plainsHoldTimer
+                );
+                plainsHoldTimer =
+                    null;
+            }
+            button.classList.remove(
+                "plant-being-cut"
+            );
+        };
+    button.onpointerup =
+        stopHold;
+    button.onpointercancel =
+        stopHold;
+    button.onpointerleave =
+        stopHold;
+}
 // ======================================================
 // PLAINES : RÉCOLTER 🌾
 // ======================================================
-
 function harvestPlant(index) {
     if (
         !plainsReady ||
@@ -1462,17 +1437,14 @@ function harvestPlant(index) {
     ) {
         return;
     }
-
     plainsPlants[index] =
         false;
-
     const possibleResources = [
         "vegetable",
         "herb",
         "berry",
         "apple"
     ];
-
     const resource =
         possibleResources[
             Math.floor(
@@ -1480,31 +1452,24 @@ function harvestPlant(index) {
                 possibleResources.length
             )
         ];
-
     const amount =
         Math.floor(
             Math.random() * 2
         ) + 1;
-
     addResource(
         resource,
         amount
     );
-
     const xpAmount = 3;
-
     const levelUp =
         addPlayerXP(
             xpAmount
         );
-
     updatePlainsDisplay();
-
     const message =
         document.getElementById(
             "plains-game-message"
         );
-
     if (message) {
         if (levelUp) {
             message.textContent =
@@ -1514,12 +1479,10 @@ function harvestPlant(index) {
                 `🌾 Récolte réussie ! ${amount} × ${resourceNames[resource]} ! +${xpAmount} XP`;
         }
     }
-
     const allHarvested =
         plainsPlants.every(
             plant => !plant
         );
-
     if (allHarvested) {
         setTimeout(
             () => {
@@ -1529,30 +1492,23 @@ function harvestPlant(index) {
                     true,
                     true
                 ];
-
                 plainsWatered =
                     false;
-
                 plainsReady =
                     false;
-
                 updatePlainsDisplay();
-
                 const wateringMessage =
                     document.getElementById(
                         "watering-message"
                     );
-
                 if (wateringMessage) {
                     wateringMessage.textContent =
                         "🌱 Les nouvelles plantations sont prêtes à être arrosées.";
                 }
-
                 const growthMessage =
                     document.getElementById(
                         "plants-growth-message"
                     );
-
                 if (growthMessage) {
                     growthMessage.textContent =
                         "";
@@ -1562,198 +1518,154 @@ function harvestPlant(index) {
         );
     }
 }
-
 // ======================================================
 // PÊCHE : DÉMARRAGE 🎣
 // ======================================================
-
 function startFishingGame() {
     stopFishingGame();
-
     fishingActive = true;
-
     fishingArrowPosition = 0;
     fishingArrowDirection = 1;
-
     fishingGreenStart =
         Math.floor(
             Math.random() * 55
         ) + 20;
-
     fishingGreenWidth =
         Math.floor(
             Math.random() * 16
         ) + 20;
-
     const status =
         document.getElementById(
             "fishing-status"
         );
-
     if (status) {
         status.textContent =
             "🎣 Attends le bon moment puis appuie sur Attraper !";
     }
-
     updateFishingBar();
-
     fishingInterval =
         setInterval(
             moveFishingArrow,
             30
         );
 }
-
 // ======================================================
 // PÊCHE : ARRÊTER 🎣
 // ======================================================
-
 function stopFishingGame() {
     fishingActive = false;
-
     if (fishingInterval) {
         clearInterval(
             fishingInterval
         );
-
         fishingInterval =
             null;
     }
 }
-
 // ======================================================
 // PÊCHE : DÉPLACER LA FLÈCHE 🎣
 // ======================================================
-
 function moveFishingArrow() {
     if (!fishingActive) {
         return;
     }
-
     fishingArrowPosition +=
         fishingArrowDirection *
         1.2;
-
     if (
         fishingArrowPosition >=
         100
     ) {
         fishingArrowPosition =
             100;
-
         fishingArrowDirection =
             -1;
     }
-
     if (
         fishingArrowPosition <=
         0
     ) {
         fishingArrowPosition =
             0;
-
         fishingArrowDirection =
             1;
     }
-
     updateFishingBar();
 }
-
 // ======================================================
 // PÊCHE : AFFICHAGE DE LA BARRE 🎣
 // ======================================================
-
 function updateFishingBar() {
     const arrow =
         document.getElementById(
             "fishing-arrow"
         );
-
     const greenZone =
         document.getElementById(
             "fishing-green-zone"
         );
-
     if (arrow) {
         arrow.style.left =
             `${fishingArrowPosition}%`;
     }
-
     if (greenZone) {
         greenZone.style.left =
             `${fishingGreenStart}%`;
-
         greenZone.style.width =
             `${fishingGreenWidth}%`;
     }
 }
-
 // ======================================================
 // PÊCHE : ATTRAPER LE POISSON 🎣
 // ======================================================
-
 function catchFish() {
     if (!fishingActive) {
         return;
     }
-
     const success =
         fishingArrowPosition >=
             fishingGreenStart &&
         fishingArrowPosition <=
             fishingGreenStart +
                 fishingGreenWidth;
-
     stopFishingGame();
-
     const status =
         document.getElementById(
             "fishing-status"
         );
-
     const message =
         document.getElementById(
             "fishing-game-message"
         );
-
     if (!success) {
         addPlayerXP(1);
-
         if (status) {
             status.textContent =
                 "💨 Trop tard ! Le poisson s'échappe !";
         }
-
         if (message) {
             message.textContent =
                 "🐟 Le poisson a filé ! +1 XP";
         }
-
         return;
     }
-
     const amount =
         Math.floor(
             Math.random() * 3
         ) + 1;
-
     addResource(
         "fish",
         amount
     );
-
     const xpAmount = 3;
-
     const levelUp =
         addPlayerXP(
             xpAmount
         );
-
     if (status) {
         status.textContent =
             "🎉 Parfait ! Tu as attrapé le poisson !";
     }
-
     if (message) {
         if (levelUp) {
             message.textContent =
@@ -1763,7 +1675,6 @@ function catchFish() {
                 `🎣 Super pêche ! ${amount} × 🐟 Poisson ! +${xpAmount} XP`;
         }
     }
-
     setTimeout(
         () => {
             if (
@@ -1776,77 +1687,60 @@ function catchFish() {
         1200
     );
 }
-
 // ======================================================
 // CHASSE : DÉMARRAGE 🏹
 // ======================================================
-
 function startHuntingGame() {
     stopHuntingGame();
-
     huntingDuckVisible =
         false;
-
     const duck =
         document.getElementById(
             "hunting-duck"
         );
-
     if (duck) {
         duck.style.display =
             "none";
     }
-
     const status =
         document.getElementById(
             "hunting-status"
         );
-
     if (status) {
         status.textContent =
             "🏹 Attends qu'un canard apparaisse...";
     }
-
     huntingInterval =
         setInterval(
             huntingDuckAttempt,
             10000
         );
-
     huntingDuckAttempt();
 }
-
 // ======================================================
 // CHASSE : ARRÊTER 🏹
 // ======================================================
-
 function stopHuntingGame() {
     if (huntingInterval) {
         clearInterval(
             huntingInterval
         );
-
         huntingInterval =
             null;
     }
-
     if (huntingDuckTimeout) {
         clearTimeout(
             huntingDuckTimeout
         );
-
         huntingDuckTimeout =
             null;
     }
-
     huntingDuckVisible =
         false;
 }
-
 // ======================================================
 // CHASSE : APPARITION DU CANARD 🦆
 // ======================================================
-
 function huntingDuckAttempt() {
     if (
         currentGatheringGame !==
@@ -1854,76 +1748,59 @@ function huntingDuckAttempt() {
     ) {
         return;
     }
-
     if (huntingDuckVisible) {
         return;
     }
-
     const appears =
         Math.random() < 0.20;
-
     if (!appears) {
         const status =
             document.getElementById(
                 "hunting-status"
             );
-
         if (status) {
             status.textContent =
                 "🏹 Rien pour le moment... Observe bien !";
         }
-
         return;
     }
-
     const duck =
         document.getElementById(
             "hunting-duck"
         );
-
     const field =
         document.getElementById(
             "hunting-field"
         );
-
     if (!duck || !field) {
         return;
     }
-
     huntingDuckVisible =
         true;
-
     duck.style.display =
         "block";
-
     const maxLeft =
         Math.max(
             10,
             field.clientWidth - 70
         );
-
     const maxTop =
         Math.max(
             10,
             field.clientHeight - 70
         );
-
     duck.style.left =
         `${Math.floor(Math.random() * maxLeft)}px`;
-
     duck.style.top =
         `${Math.floor(Math.random() * maxTop)}px`;
-
     const status =
         document.getElementById(
             "hunting-status"
         );
-
     if (status) {
         status.textContent =
             "🦆 UN CANARD ! Vite, tire avec ton arc !";
     }
-
     huntingDuckTimeout =
         setTimeout(
             () => {
@@ -1932,10 +1809,8 @@ function huntingDuckAttempt() {
                 ) {
                     huntingDuckVisible =
                         false;
-
                     duck.style.display =
                         "none";
-
                     if (status) {
                         status.textContent =
                             "💨 Le canard s'est échappé !";
@@ -1945,11 +1820,9 @@ function huntingDuckAttempt() {
             3500
         );
 }
-
 // ======================================================
 // CHASSE : TIRER 🏹
 // ======================================================
-
 function shootDuck() {
     if (
         !huntingDuckVisible
@@ -1958,92 +1831,71 @@ function shootDuck() {
             document.getElementById(
                 "hunting-game-message"
             );
-
         if (message) {
             message.textContent =
                 "🏹 Pas de canard en vue !";
         }
-
         return;
     }
-
     const duck =
         document.getElementById(
             "hunting-duck"
         );
-
     huntingDuckVisible =
         false;
-
     if (huntingDuckTimeout) {
         clearTimeout(
             huntingDuckTimeout
         );
-
         huntingDuckTimeout =
             null;
     }
-
     if (duck) {
         duck.style.display =
             "none";
     }
-
     const hitChance =
         0.65;
-
     const hit =
         Math.random() <
         hitChance;
-
     const status =
         document.getElementById(
             "hunting-status"
         );
-
     const message =
         document.getElementById(
             "hunting-game-message"
         );
-
     if (!hit) {
         addPlayerXP(1);
-
         if (status) {
             status.textContent =
                 "💨 Raté ! Le canard s'enfuit.";
         }
-
         if (message) {
             message.textContent =
                 "🏹 Raté ! +1 XP";
         }
-
         return;
     }
-
     const amount =
         Math.floor(
             Math.random() * 3
         ) + 1;
-
     addResource(
         "meat",
         amount
     );
-
     const xpAmount = 3;
-
     const levelUp =
         addPlayerXP(
             xpAmount
         );
-
     if (status) {
         status.textContent =
             "🎯 Touché !";
     }
-
     if (message) {
         if (levelUp) {
             message.textContent =
@@ -2054,11 +1906,9 @@ function shootDuck() {
         }
     }
 }
-
 // ======================================================
 // ANCIEN SYSTÈME DE RÉCOLTE
 // ======================================================
-
 function gatherResources(location) {
     const resourcePools = {
         forest: [
@@ -2074,18 +1924,14 @@ function gatherResources(location) {
             "apple"
         ]
     };
-
     const pool =
         resourcePools[location];
-
     if (!pool) {
         console.log(
             `Zone inconnue : ${location}`
         );
-
         return;
     }
-
     const resource =
         pool[
             Math.floor(
@@ -2093,28 +1939,22 @@ function gatherResources(location) {
                 pool.length
             )
         ];
-
     const amount =
         Math.floor(
             Math.random() * 2
         ) + 1;
-
     addResource(
         resource,
         amount
     );
-
     const xpAmount = 2;
-
     const levelUp =
         addPlayerXP(
             xpAmount
         );
-
     const resourceName =
         resourceNames[resource] ||
         resource;
-
     if (levelUp) {
         showGatheringMessage(
             `✨ Tu trouves ${amount} × ${resourceName} ! +${xpAmount} XP • Niveau ${player.level} !`
@@ -2125,55 +1965,44 @@ function gatherResources(location) {
         );
     }
 }
-
 // ======================================================
-// ANCIENNE PÊCHE
+// PÊCHE
 // ======================================================
-
 function goFishing() {
     openGatheringGame(
         "fishing"
     );
 }
-
 // ======================================================
-// ANCIENNE CHASSE
+// CHASSE
 // ======================================================
-
 function goHunting() {
     openGatheringGame(
         "hunting"
     );
 }
-
 // ======================================================
 // BARRE D'XP DU JOUEUR
 // ======================================================
-
 function updateXPBar() {
     const xpFill =
         document.getElementById(
             "xp-fill"
         );
-
     if (!xpFill) {
         return;
     }
-
     const percentage =
         Math.min(
             player.xp,
             100
         );
-
     xpFill.style.width =
         `${percentage}%`;
 }
-
 // ======================================================
 // VÉRIFIER LES INGRÉDIENTS D'UNE RECETTE
 // ======================================================
-
 function canCraftRecipe(recipe) {
     return Object.entries(
         recipe.ingredients
@@ -2182,11 +2011,9 @@ function canCraftRecipe(recipe) {
             inventory[resource] >= amount
     );
 }
-
 // ======================================================
 // INGRÉDIENTS MANQUANTS
 // ======================================================
-
 function getMissingIngredients(recipe) {
     return Object.entries(
         recipe.ingredients
@@ -2199,16 +2026,13 @@ function getMissingIngredients(recipe) {
             ([resource, amount]) => {
                 const current =
                     inventory[resource] || 0;
-
                 return `${resourceNames[resource]} ${current}/${amount}`;
             }
         );
 }
-
 // ======================================================
 // TEXTE DES INGRÉDIENTS
 // ======================================================
-
 function getRecipeIngredientsText(recipe) {
     return Object.entries(
         recipe.ingredients
@@ -2219,11 +2043,9 @@ function getRecipeIngredientsText(recipe) {
         )
         .join(" • ");
 }
-
 // ======================================================
 // CUISINER UNE RECETTE 🍲
 // ======================================================
-
 function cookRecipe(recipeId) {
     const recipe =
         recipes.find(
@@ -2231,11 +2053,9 @@ function cookRecipe(recipeId) {
                 currentRecipe.id ===
                 recipeId
         );
-
     if (!recipe) {
         return;
     }
-
     if (
         !canCraftRecipe(recipe)
     ) {
@@ -2243,14 +2063,11 @@ function cookRecipe(recipeId) {
             getMissingIngredients(
                 recipe
             );
-
         showCookingMessage(
             `❌ Il te manque : ${missing.join(" • ")}`
         );
-
         return;
     }
-
     Object.entries(
         recipe.ingredients
     )
@@ -2259,23 +2076,17 @@ function cookRecipe(recipeId) {
                 inventory[resource] -= amount;
             }
         );
-
     preparedMeals[recipe.id] =
         (preparedMeals[recipe.id] || 0) + 1;
-
     saveInventory();
     savePreparedMeals();
-
     const xpAmount = 4;
-
     const levelUp =
         addPlayerXP(
             xpAmount
         );
-
     updateInventoryDisplay();
     updatePlayerDisplay();
-
     if (levelUp) {
         showCookingMessage(
             `✨ ${recipe.icon} ${recipe.name} est prêt ! +${xpAmount} XP • Niveau ${player.level} !`
@@ -2286,72 +2097,56 @@ function cookRecipe(recipeId) {
         );
     }
 }
-
 // ======================================================
 // AFFICHAGE DES RECETTES 🍲
 // ======================================================
-
 function renderRecipes() {
     const list =
         document.getElementById(
             "recipes-list"
         );
-
     if (!list) {
         return;
     }
-
     list.innerHTML = "";
-
     recipes.forEach(recipe => {
         const card =
             document.createElement(
                 "div"
             );
-
         card.className =
             "inventory-item";
-
         const canCraft =
             canCraftRecipe(
                 recipe
             );
-
         const mealCount =
             preparedMeals[recipe.id] || 0;
-
         const ingredientsText =
             getRecipeIngredientsText(
                 recipe
             );
-
         const buttonText =
             canCraft
                 ? "🍲 Cuisiner"
                 : "🥕 Voir les ingrédients";
-
         card.innerHTML = `
             <div class="inventory-item-icon">
                 ${recipe.icon}
             </div>
-
             <div class="inventory-item-info">
                 <h4>
                     ${recipe.name}
                 </h4>
-
                 <p>
                     ${recipe.description}
                 </p>
-
                 <p>
                     🐉 Dragons ${recipe.element}
                 </p>
-
                 <p>
                     🥕 ${ingredientsText}
                 </p>
-
                 <button
                     class="gather-button"
                     onclick="cookRecipe('${recipe.id}')"
@@ -2359,76 +2154,62 @@ function renderRecipes() {
                     ${buttonText}
                 </button>
             </div>
-
             <b class="inventory-item-count">
                 ${mealCount}
             </b>
         `;
-
         list.appendChild(card);
     });
 }
-
 // ======================================================
 // DRAGONS DÉCOUVERTS
 // ======================================================
-
 function getDiscoveredDragons() {
     const saved =
         localStorage.getItem(
             "draconiaDiscoveredDragons"
         );
-
     if (!saved) {
         return [];
     }
-
     try {
         return JSON.parse(saved);
     } catch (error) {
         return [];
     }
 }
-
 function saveDiscoveredDragons(list) {
     localStorage.setItem(
         "draconiaDiscoveredDragons",
         JSON.stringify(list)
     );
 }
-
 // ======================================================
 // DRAGONS POSSÉDÉS
 // ======================================================
-
 function getOwnedDragons() {
     const saved =
         localStorage.getItem(
             "draconiaOwnedDragons"
         );
-
     if (!saved) {
         return [];
     }
-
     try {
         return JSON.parse(saved);
     } catch (error) {
         return [];
     }
 }
-
 function saveOwnedDragons(list) {
     localStorage.setItem(
         "draconiaOwnedDragons",
         JSON.stringify(list)
     );
 }
-
 // ======================================================
 // CRÉATION D'UN DRAGON POSSÉDÉ
 // ======================================================
-
 function createOwnedDragon(dragon) {
     return {
         id: dragon.id,
@@ -2443,33 +2224,26 @@ function createOwnedDragon(dragon) {
         cleanliness: 90
     };
 }
-
 // ======================================================
 // RÉCUPÉRER UN DRAGON
 // ======================================================
-
 function getOwnedDragon(dragonId) {
     const ownedDragons =
         getOwnedDragons();
-
     return ownedDragons.find(
         dragon =>
             dragon.id === dragonId
     );
 }
-
 // ======================================================
 // XP D'UN DRAGON
 // ======================================================
-
 function addDragonXP(
     dragon,
     amount
 ) {
     dragon.xp += amount;
-
     let levelUp = false;
-
     while (
         dragon.xp >= 100
     ) {
@@ -2477,69 +2251,52 @@ function addDragonXP(
         dragon.level += 1;
         levelUp = true;
     }
-
     return levelUp;
 }
-
 // ======================================================
 // CHANCE DE RARETÉ
 // ======================================================
-
 function chooseRarity() {
     const random =
         Math.random() * 100;
-
     if (random < 55) {
         return "Commun";
     }
-
     if (random < 80) {
         return "Peu commun";
     }
-
     if (random < 93) {
         return "Rare";
     }
-
     if (random < 99) {
         return "Épique";
     }
-
     return "Légendaire";
 }
-
 // ======================================================
 // RECHERCHE D'UN DRAGON 🐉
 // ======================================================
-
 function findEgg() {
     const discovered =
         getDiscoveredDragons();
-
     const owned =
         getOwnedDragons();
-
     const eggChance =
         Math.random();
-
     if (eggChance >= 0.60) {
         showEggMessage(
             "🌿 Tu explores les environs... mais tu ne trouves rien cette fois."
         );
-
         return;
     }
-
     const rarity =
         chooseRarity();
-
     let possibleDragons =
         dragons.filter(
             dragon =>
                 dragon.rarity ===
                 rarity
         );
-
     if (
         possibleDragons.length ===
         0
@@ -2547,13 +2304,10 @@ function findEgg() {
         possibleDragons =
             dragons;
     }
-
     const bonus =
         getWeatherBonus();
-
     let boostedDragons =
         possibleDragons;
-
     if (bonus) {
         const bonusMap = {
             fire: ["Feu"],
@@ -2565,7 +2319,6 @@ function findEgg() {
             shadow: ["Ombre"],
             sun: ["Lumière"]
         };
-
         if (bonusMap[bonus]) {
             const matching =
                 possibleDragons.filter(
@@ -2574,7 +2327,6 @@ function findEgg() {
                             dragon.element
                         )
                 );
-
             if (
                 matching.length > 0
             ) {
@@ -2585,7 +2337,6 @@ function findEgg() {
             }
         }
     }
-
     const dragon =
         boostedDragons[
             Math.floor(
@@ -2593,15 +2344,12 @@ function findEgg() {
                 boostedDragons.length
             )
         ];
-
     if (!dragon) {
         showEggMessage(
             "🌿 Tu explores Draconia... mais aucun dragon n'est apparu."
         );
-
         return;
     }
-
     if (
         !discovered.includes(
             dragon.id
@@ -2610,30 +2358,23 @@ function findEgg() {
         discovered.push(
             dragon.id
         );
-
         saveDiscoveredDragons(
             discovered
         );
-
         const newDragon =
             createOwnedDragon(
                 dragon
             );
-
         owned.push(
             newDragon
         );
-
         saveOwnedDragons(
             owned
         );
-
         player.xp += 10;
-
         if (player.xp >= 100) {
             player.level += 1;
             player.xp -= 100;
-
             showEggMessage(
                 `🎉 ${dragon.name} rejoint ton refuge ! Tu passes niveau ${player.level} !`
             );
@@ -2649,20 +2390,16 @@ function findEgg() {
                     currentDragon.id ===
                     dragon.id
             );
-
         if (ownedDragon) {
             const levelUp =
                 addDragonXP(
                     ownedDragon,
                     5
                 );
-
             saveOwnedDragons(
                 owned
             );
-
             player.xp += 5;
-
             if (levelUp) {
                 showEggMessage(
                     `🔁 Doublon ! ${dragon.name} gagne 5 XP et passe niveau ${ownedDragon.level} !`
@@ -2674,17 +2411,14 @@ function findEgg() {
             }
         }
     }
-
     updatePlayerDisplay();
     renderOwnedDragons();
     updateDragonDex();
     savePlayer();
 }
-
 // ======================================================
 // MESSAGE APRÈS EXPLORATION
 // ======================================================
-
 function showEggMessage(message) {
     const elements = [
         document.getElementById(
@@ -2694,7 +2428,6 @@ function showEggMessage(message) {
             "egg-message-page"
         )
     ];
-
     elements.forEach(element => {
         if (element) {
             element.textContent =
@@ -2702,126 +2435,101 @@ function showEggMessage(message) {
         }
     });
 }
-
 // ======================================================
 // AFFICHAGE DES DRAGONS POSSÉDÉS
 // ======================================================
-
 function renderOwnedDragons() {
     const list =
         document.getElementById(
             "owned-dragons-list"
         );
-
     const emptyMessage =
         document.getElementById(
             "no-dragons"
         );
-
     const counter =
         document.getElementById(
             "owned-dragons-count"
         );
-
     if (!list) {
         return;
     }
-
     const owned =
         getOwnedDragons();
-
     if (counter) {
         counter.textContent =
             owned.length;
     }
-
     list.innerHTML = "";
-
     if (owned.length === 0) {
         if (emptyMessage) {
             emptyMessage.style.display =
                 "block";
         }
-
         return;
     }
-
     if (emptyMessage) {
         emptyMessage.style.display =
             "none";
     }
-
     owned.forEach(dragon => {
         const card =
             document.createElement(
                 "article"
             );
-
         card.className =
             "owned-dragon-card";
-
         const xpPercentage =
             Math.min(
                 dragon.xp,
                 100
             );
-
         const compatibleRecipe =
             recipes.find(
                 recipe =>
                     recipe.element ===
                     dragon.element
             );
-
         const compatibleMealCount =
             compatibleRecipe
                 ? preparedMeals[
                     compatibleRecipe.id
                 ] || 0
                 : 0;
-
         card.innerHTML = `
             <div class="owned-dragon-top">
                 <div class="owned-dragon-icon">
                     ${dragon.icon}
                 </div>
-
                 <div class="owned-dragon-info">
                     <p class="rarity">
                         ${dragon.rarity.toUpperCase()}
                     </p>
-
                     <h3>
                         ${dragon.name}
                     </h3>
-
                     <p>
                         ${dragon.element}
                     </p>
                 </div>
-
                 <div class="dragon-level">
                     <span>
                         Niveau
                     </span>
-
                     <strong>
                         ${dragon.level}
                     </strong>
                 </div>
             </div>
-
             <div class="dragon-xp-section">
                 <div class="dragon-xp-info">
                     <span>
                         ⭐ XP
                     </span>
-
                     <span>
                         ${dragon.xp} / 100
                     </span>
                 </div>
-
                 <div class="dragon-xp-bar">
                     <div
                         class="dragon-xp-fill"
@@ -2829,51 +2537,41 @@ function renderOwnedDragons() {
                     ></div>
                 </div>
             </div>
-
             <div class="dragon-care-stats">
                 <div class="dragon-care-stat">
                     <span>
                         🍖
                     </span>
-
                     <small>
                         Faim
                     </small>
-
                     <strong>
                         ${dragon.hunger}%
                     </strong>
                 </div>
-
                 <div class="dragon-care-stat">
                     <span>
                         😊
                     </span>
-
                     <small>
                         Bonheur
                     </small>
-
                     <strong>
                         ${dragon.happiness}%
                     </strong>
                 </div>
-
                 <div class="dragon-care-stat">
                     <span>
                         🧼
                     </span>
-
                     <small>
                         Propreté
                     </small>
-
                     <strong>
                         ${dragon.cleanliness}%
                     </strong>
                 </div>
             </div>
-
             <div class="dragon-care-actions">
                 <button
                     onclick="feedDragon('${dragon.id}')"
@@ -2881,13 +2579,11 @@ function renderOwnedDragons() {
                 >
                     🍲 Nourrir
                 </button>
-
                 <button
                     onclick="washDragon('${dragon.id}')"
                 >
                     🧼 Laver
                 </button>
-
                 <button
                     onclick="playDragon('${dragon.id}')"
                 >
@@ -2895,65 +2591,51 @@ function renderOwnedDragons() {
                 </button>
             </div>
         `;
-
         list.appendChild(card);
     });
 }
-
 // ======================================================
 // DRAGONDEX 📖
 // ======================================================
-
 function updateDragonDex() {
     const list =
         document.getElementById(
             "dragon-list"
         );
-
     const counter =
         document.getElementById(
             "dex-count"
         );
-
     if (!list) {
         return;
     }
-
     const discovered =
         getDiscoveredDragons();
-
     if (counter) {
         counter.textContent =
             discovered.length;
     }
-
     list.innerHTML = "";
-
     dragons.forEach(dragon => {
         const isDiscovered =
             discovered.includes(
                 dragon.id
             );
-
         const item =
             document.createElement(
                 "div"
             );
-
         item.className =
             "dragon-dex-item";
-
         if (!isDiscovered) {
             item.innerHTML = `
                 <div class="dex-dragon-icon">
                     ❓
                 </div>
-
                 <div>
                     <strong>
                         Dragon inconnu
                     </strong>
-
                     <p>
                         ???
                     </p>
@@ -2964,27 +2646,22 @@ function updateDragonDex() {
                 <div class="dex-dragon-icon">
                     ${dragon.icon}
                 </div>
-
                 <div>
                     <strong>
                         ${dragon.name}
                     </strong>
-
                     <p>
                         ${dragon.element} • ${dragon.rarity}
                     </p>
                 </div>
             `;
         }
-
         list.appendChild(item);
     });
 }
-
 // ======================================================
 // NAVIGATION
 // ======================================================
-
 function showPage(page) {
     const pages = [
         "home",
@@ -2994,25 +2671,21 @@ function showPage(page) {
         "cooking",
         "profile"
     ];
-
     pages.forEach(pageName => {
         const pageElement =
             document.getElementById(
                 `${pageName}-page`
             );
-
         if (pageElement) {
             pageElement.style.display =
                 pageName === page
                     ? "block"
                     : "none";
         }
-
         const navElement =
             document.getElementById(
                 `nav-${pageName}`
             );
-
         if (navElement) {
             navElement.classList.toggle(
                 "active",
@@ -3020,99 +2693,77 @@ function showPage(page) {
             );
         }
     });
-
     if (page === "dex") {
         updateDragonDex();
     }
-
     if (page === "dragons") {
         renderOwnedDragons();
     }
-
     if (page === "inventory") {
         updateInventoryDisplay();
     }
-
     if (page === "cooking") {
         renderRecipes();
     }
 }
-
 // ======================================================
 // NOURRIR UN DRAGON 🍲
 // ======================================================
-
 function feedDragon(dragonId) {
     const owned =
         getOwnedDragons();
-
     const dragon =
         owned.find(
             currentDragon =>
                 currentDragon.id ===
                 dragonId
         );
-
     if (!dragon) {
         return;
     }
-
     const recipe =
         recipes.find(
             currentRecipe =>
                 currentRecipe.element ===
                 dragon.element
         );
-
     if (!recipe) {
         alert(
             "🍲 Aucun plat adapté à ce dragon."
         );
-
         return;
     }
-
     const mealCount =
         preparedMeals[recipe.id] || 0;
-
     if (mealCount <= 0) {
         alert(
             `🍲 ${dragon.name} a besoin de « ${recipe.name} » ! Va dans 🍲 Marmite pour préparer ce plat.`
         );
-
         return;
     }
-
     preparedMeals[recipe.id] -= 1;
-
     dragon.hunger =
         Math.min(
             100,
             dragon.hunger + 25
         );
-
     dragon.happiness =
         Math.min(
             100,
             dragon.happiness + 10
         );
-
     const levelUp =
         addDragonXP(
             dragon,
             8
         );
-
     savePreparedMeals();
-
     saveOwnedDragons(
         owned
     );
-
     updateInventoryDisplay();
     updatePlayerDisplay();
     renderOwnedDragons();
-
     if (levelUp) {
         alert(
             `🍲 ${dragon.name} adore son ${recipe.name} ! ⭐ Il passe niveau ${dragon.level} !`
@@ -3123,114 +2774,90 @@ function feedDragon(dragonId) {
         );
     }
 }
-
 // ======================================================
 // LAVER UN DRAGON
 // ======================================================
-
 function washDragon(dragonId) {
     const owned =
         getOwnedDragons();
-
     const dragon =
         owned.find(
             currentDragon =>
                 currentDragon.id ===
                 dragonId
         );
-
     if (!dragon) {
         return;
     }
-
     dragon.cleanliness =
         Math.min(
             100,
             dragon.cleanliness + 20
         );
-
     dragon.happiness =
         Math.min(
             100,
             dragon.happiness + 5
         );
-
     saveOwnedDragons(
         owned
     );
-
     renderOwnedDragons();
 }
-
 // ======================================================
 // JOUER AVEC UN DRAGON
 // ======================================================
-
 function playDragon(dragonId) {
     const owned =
         getOwnedDragons();
-
     const dragon =
         owned.find(
             currentDragon =>
                 currentDragon.id ===
                 dragonId
         );
-
     if (!dragon) {
         return;
     }
-
     dragon.happiness =
         Math.min(
             100,
             dragon.happiness + 15
         );
-
     dragon.hunger =
         Math.max(
             0,
             dragon.hunger - 5
         );
-
     saveOwnedDragons(
         owned
     );
-
     renderOwnedDragons();
 }
-
 // ======================================================
 // INITIALISATION
 // ======================================================
-
 function initGame() {
     loadPlayer();
     loadInventory();
     loadPreparedMeals();
-
     generateDailyWeather();
-
     updateWeatherDisplay();
     updatePlayerDisplay();
     updateInventoryDisplay();
     updateDragonDex();
     renderOwnedDragons();
 }
-
 // ======================================================
 // MISE À JOUR DE LA MÉTÉO
 // ======================================================
-
 setInterval(
     updateWeatherDisplay,
     30000
 );
-
 // ======================================================
 // LANCEMENT DU JEU
 // ======================================================
-
 document.addEventListener(
     "DOMContentLoaded",
     initGame
