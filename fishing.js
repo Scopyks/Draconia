@@ -211,7 +211,13 @@ injectFishingUpgradeStyles();
     loadScriptOnce("hunting.js?v=2", "draconiaHunting");
     loadScriptOnce("cooking.js?v=1", "draconiaCooking");
     loadScriptOnce("missions.js?v=2", "draconiaMissions");
-    loadScriptOnce("exploration.js?v=1", "draconiaExploration");
+    loadScriptOnce(
+        "eggs.js?v=1",
+        "draconiaEggs",
+        function() {
+            loadScriptOnce("exploration.js?v=2", "draconiaExploration");
+        }
+    );
 
     loadScriptOnce(
         "dragoncare.js?v=1",
