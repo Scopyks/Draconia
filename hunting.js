@@ -167,21 +167,3 @@ function stopHuntingGame() {
     const duck = document.getElementById("hunting-duck");
     if (duck) duck.style.display = "none";
 }
-
-(function loadDragonProgression() {
-    if (document.querySelector('script[data-draconia-progression="true"]')) return;
-
-    const script = document.createElement("script");
-    script.src = "progression.js?v=1";
-    script.dataset.draconiaProgression = "true";
-    document.body.appendChild(script);
-})();
-
-(function loadDraconiaMarket() {
-    if (document.querySelector('script[data-draconia-market="true"]')) return;
-
-    const script = document.createElement("script");
-    script.src = "market.js?v=2";
-    script.dataset.draconiaMarket = "true";
-    document.body.appendChild(script);
-})();
