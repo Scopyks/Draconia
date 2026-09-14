@@ -147,6 +147,11 @@ function startFishingGame() {
     );
 
     loadScriptOnce(
+        "missions.js?v=1",
+        "draconiaMissions"
+    );
+
+    loadScriptOnce(
         "dragoncare.js?v=1",
         "draconiaDragonCare",
         function() {
