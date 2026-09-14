@@ -998,529 +998,142 @@ let fishingGreenWidth = 25;
 // PLAINES 🌾
 // ======================================================
 
-let plainsWatered = false;
-let plainsGrowing = false;
-let plainsReady = false;
-let plainsGrowthTimer = null;
+const PLAINS_GROWTH_TIME = 60000;
+
+let plainsSelectedTool = null;
 
 let plainsPlants = [
-    true,
-    true,
-    true,
-    true
+    {
+        watered: false,
+        ready: false
+    },
+    {
+        watered: false,
+        ready: false
+    },
+    {
+        watered: false,
+        ready: false
+    },
+    {
+        watered: false,
+        ready: false
+    }
 ];
 
-let plainsHoldTimer = null;
-let plainsHoldingPlant = false;
+let plainsGrowthStartTime = null;
+let plainsGrowthInterval = null;
 
 
 // ======================================================
 // CHASSE 🏹
 // ======================================================
 
-let huntingInterval = null;
 let huntingDuckVisible = false;
-let huntingDuckTimeout = null;
+let huntingDuckTimer = null;
+let huntingDuckHideTimer = null;
 
 
 // ======================================================
 // OUVRIR UN MINI-JEU
 // ======================================================
 
-function openGatheringGame(game) {
-    closeGatheringGame();
-
-    currentGatheringGame = game;
-
-    const gameContainer =
+function openGatheringGame(gameName) {
+    const gameWindow =
         document.getElementById(
             "gathering-game"
         );
 
-    const gameElement =
+    if (!gameWindow) {
+        return;
+    }
+
+    currentGatheringGame =
+        gameName;
+
+    gameWindow.style.display =
+        "block";
+
+    const miniGames =
+        document.querySelectorAll(
+            ".mini-game"
+        );
+
+    miniGames.forEach(
+        game => {
+            game.style.display =
+                "none";
+        }
+    );
+
+    const selectedGame =
         document.getElementById(
-            `${game}-game`
+            `${gameName}-game`
         );
 
-    if (!gameContainer) {
-        console.log(
-            "Conteneur des mini-jeux introuvable."
-        );
-
-        return;
+    if (selectedGame) {
+        selectedGame.style.display =
+            "block";
     }
 
-    if (!gameElement) {
-        console.log(
-            `Mini-jeu introuvable : ${game}`
-        );
+    document.body.style.overflow =
+        "hidden";
 
-        return;
+    if (gameName === "forest") {
+        renderForestMushrooms();
     }
 
-    gameContainer.style.display =
-        "block";
-
-    gameElement.style.display =
-        "block";
-
-    if (game === "forest") {
-        startForestGame();
-    }
-
-    if (game === "plains") {
+    if (gameName === "plains") {
         startPlainsGame();
     }
 
-    if (game === "fishing") {
+    if (gameName === "fishing") {
         startFishingGame();
     }
 
-    if (game === "hunting") {
+    if (gameName === "hunting") {
         startHuntingGame();
     }
 }
 
 
 // ======================================================
-// FERMER UN MINI-JEU
+// FERMER LE MINI-JEU
 // ======================================================
 
 function closeGatheringGame() {
-    const games = [
-        "forest",
-        "plains",
-        "fishing",
-        "hunting"
-    ];
-
-    games.forEach(game => {
-        const element =
-            document.getElementById(
-                `${game}-game`
-            );
-
-        if (element) {
-            element.style.display =
-                "none";
-        }
-    });
-
-    const gameContainer =
+    const gameWindow =
         document.getElementById(
             "gathering-game"
         );
 
-    if (gameContainer) {
-        gameContainer.style.display =
+    if (gameWindow) {
+        gameWindow.style.display =
             "none";
     }
 
-    stopFishingGame();
-    stopHuntingGame();
+    document.body.style.overflow =
+        "";
 
-    if (plainsHoldTimer) {
-        clearTimeout(
-            plainsHoldTimer
-        );
-
-        plainsHoldTimer = null;
+    if (
+        currentGatheringGame ===
+        "fishing"
+    ) {
+        stopFishingGame();
     }
 
-    plainsHoldingPlant = false;
-
-    /*
-     * On enlève les ressources tombées
-     * lorsque l'on quitte la forêt.
-     * Elles doivent être ramassées
-     * avant de fermer la fenêtre.
-     */
-    const forestDrops =
-        document.getElementById(
-            "forest-resource-drops"
-        );
-
-    if (forestDrops) {
-        forestDrops.innerHTML = "";
+    if (
+        currentGatheringGame ===
+        "hunting"
+    ) {
+        stopHuntingGame();
     }
+
+    clearForestDrops();
 
     currentGatheringGame = null;
 }
 
-
-// ======================================================
-// FORÊT : DÉMARRAGE 🌲
-// ======================================================
-
-function startForestGame() {
-    renderForestMushrooms();
-
-    createForestDropArea();
-
-    const forestGame =
-        document.getElementById(
-            "forest-game"
-        );
-
-    /*
-     * Le mini-jeu devient le repère
-     * de la zone de chute.
-     */
-    if (forestGame) {
-        forestGame.style.position =
-            "relative";
-    }
-
-    const message =
-        document.getElementById(
-            "forest-tree-message"
-        );
-
-    if (message) {
-        message.textContent =
-            "🌲 Secoue l'arbre... parfois il ne tombe rien !";
-    }
-
-    const gameMessage =
-        document.getElementById(
-            "forest-game-message"
-        );
-
-    if (gameMessage) {
-        gameMessage.textContent =
-            "🍄 7 champignons sont cachés dans le sol.";
-    }
-}
-
-
-// ======================================================
-// FORÊT : ZONE DU SOL 🌱
-// ======================================================
-
-function createForestDropArea() {
-    const forestGame =
-        document.getElementById(
-            "forest-game"
-        );
-
-    if (!forestGame) {
-        return null;
-    }
-
-    let dropArea =
-        document.getElementById(
-            "forest-resource-drops"
-        );
-
-    if (!dropArea) {
-        dropArea =
-            document.createElement(
-                "div"
-            );
-
-        dropArea.id =
-            "forest-resource-drops";
-
-        dropArea.className =
-            "forest-resource-drops";
-
-        forestGame.appendChild(
-            dropArea
-        );
-    }
-
-    /*
-     * Cette zone est volontairement placée
-     * dans le bas du mini-jeu.
-     * Les ressources vont donc tomber
-     * sur le sol de l'herbe et non dehors.
-     */
-    dropArea.style.position =
-        "absolute";
-
-    dropArea.style.left =
-        "8%";
-
-    dropArea.style.width =
-        "84%";
-
-    dropArea.style.bottom =
-        "12%";
-
-    dropArea.style.height =
-        "42%";
-
-    dropArea.style.overflow =
-        "hidden";
-
-    dropArea.style.pointerEvents =
-        "none";
-
-    dropArea.style.zIndex =
-        "20";
-
-    return dropArea;
-}
-
-
-// ======================================================
-// FORÊT : ICÔNE D'UNE RESSOURCE
-// ======================================================
-
-function getForestResourceIcon(resource) {
-    const icons = {
-        apple: "🍎",
-        berry: "🍓",
-        herb: "🌿",
-        insect: "🐛"
-    };
-
-    return icons[resource] || "🌿";
-}
-
-
-// ======================================================
-// FORÊT : FAIRE TOMBER UNE RESSOURCE
-// ======================================================
-
-function createFallingForestResource(
-    resource
-) {
-    const dropArea =
-        createForestDropArea();
-
-    if (!dropArea) {
-        return;
-    }
-
-    forestDropCounter += 1;
-
-    const item =
-        document.createElement(
-            "button"
-        );
-
-    item.type = "button";
-
-    item.className =
-        "forest-resource-drop";
-
-    item.dataset.dropId =
-        forestDropCounter;
-
-    item.dataset.resource =
-        resource;
-
-    item.textContent =
-        getForestResourceIcon(
-            resource
-        );
-
-    /*
-     * Position de départ :
-     * proche de la partie haute
-     * de la zone de sol.
-     */
-    const startLeft =
-        Math.floor(
-            Math.random() * 60
-        ) + 20;
-
-    /*
-     * Position d'arrivée :
-     * toujours à l'intérieur de la zone
-     * de sol.
-     */
-    const endLeft =
-        Math.floor(
-            Math.random() * 70
-        ) + 10;
-
-    const endBottom =
-        Math.floor(
-            Math.random() * 20
-        ) + 8;
-
-    const rotation =
-        Math.floor(
-            Math.random() * 50
-        ) - 25;
-
-    item.style.position =
-        "absolute";
-
-    item.style.left =
-        `${startLeft}%`;
-
-    item.style.top =
-        "5%";
-
-    item.style.bottom =
-        "auto";
-
-    item.style.border =
-        "0";
-
-    item.style.background =
-        "transparent";
-
-    item.style.padding =
-        "4px";
-
-    item.style.margin =
-        "0";
-
-    item.style.fontSize =
-        "32px";
-
-    item.style.lineHeight =
-        "1";
-
-    item.style.cursor =
-        "pointer";
-
-    item.style.pointerEvents =
-        "auto";
-
-    item.style.zIndex =
-        "30";
-
-    /*
-     * Petit effet de chute avec
-     * Web Animations API.
-     * La ressource reste ensuite
-     * au sol et attend que le joueur
-     * appuie dessus.
-     */
-    const animation =
-        item.animate(
-            [
-                {
-                    transform:
-                        "translateY(0) rotate(0deg)",
-                    opacity: 0
-                },
-                {
-                    transform:
-                        `translateY(65px) rotate(${rotation}deg)`,
-                    opacity: 1,
-                    offset: 0.25
-                },
-                {
-                    left:
-                        `${endLeft}%`,
-                    top:
-                        `${65 + Math.random() * 20}%`,
-                    transform:
-                        `translateY(0) rotate(${rotation}deg)`,
-                    opacity: 1
-                }
-            ],
-            {
-                duration:
-                    1100 +
-                    Math.random() *
-                        500,
-                easing:
-                    "cubic-bezier(0.2, 0.7, 0.3, 1)",
-                fill:
-                    "forwards"
-            }
-        );
-
-    /*
-     * Quand la ressource est arrivée,
-     * on la place précisément sur le sol.
-     */
-    animation.onfinish =
-        function() {
-            item.style.left =
-                `${endLeft}%`;
-
-            item.style.top =
-                "auto";
-
-            item.style.bottom =
-                `${endBottom}%`;
-
-            item.style.transform =
-                `rotate(${rotation}deg)`;
-
-            item.style.opacity =
-                "1";
-
-            item.style.animation =
-                "none";
-        };
-
-    /*
-     * IMPORTANT :
-     * la ressource n'est donnée au joueur
-     * QUE lorsqu'il appuie dessus.
-     */
-    item.addEventListener(
-        "click",
-        function() {
-            if (
-                !item.parentNode
-            ) {
-                return;
-            }
-
-            addResource(
-                resource,
-                1
-            );
-
-            addPlayerXP(1);
-
-            const message =
-                document.getElementById(
-                    "forest-tree-message"
-                );
-
-            if (message) {
-                message.textContent =
-                    `🌿 Tu ramasses ${resourceNames[resource]} ! +1`;
-            }
-
-            item.style.pointerEvents =
-                "none";
-
-            item.animate(
-                [
-                    {
-                        transform:
-                            "scale(1)",
-                        opacity: 1
-                    },
-                    {
-                        transform:
-                            "scale(1.4)",
-                        opacity: 0
-                    }
-                ],
-                {
-                    duration: 250,
-                    easing:
-                        "ease-out"
-                }
-            ).onfinish =
-                function() {
-                    item.remove();
-                };
-        }
-    );
-
-    dropArea.appendChild(
-        item
-    );
-}
-
-
-// ======================================================
-// FORÊT : SECOUER L'ARBRE 🌲
-// ======================================================
 
 // ======================================================
 // FORÊT : SECOUER L'ARBRE 🌲
@@ -1542,22 +1155,19 @@ function shakeTree() {
 
     forestTreeShakeCooldown = true;
 
+    setTimeout(
+        function() {
+            forestTreeShakeCooldown = false;
+        },
+        1000
+    );
+
     const treeButton =
         document.getElementById(
             "forest-tree-button"
         );
 
     if (treeButton) {
-        treeButton.disabled = true;
-
-        setTimeout(
-            function() {
-                forestTreeShakeCooldown = false;
-                treeButton.disabled = false;
-            },
-            1000
-        );
-
         treeButton.classList.remove(
             "shake-tree"
         );
@@ -1569,12 +1179,6 @@ function shakeTree() {
         );
     }
 
-    /*
-     * À chaque secousse, le nombre de ressources
-     * est choisi aléatoirement entre 0, 1 et 2.
-     * Il est donc impossible d'en obtenir plus de 2
-     * en une seule secousse.
-     */
     const amount =
         Math.floor(
             Math.random() * 3
@@ -1662,40 +1266,202 @@ function shakeTree() {
 
 
 // ======================================================
-// FORÊT : AFFICHER LES CHAMPIGNONS 🍄
+// FORÊT : CRÉER UNE RESSOURCE AU SOL
 // ======================================================
 
-function renderForestMushrooms() {
+function createFallingForestResource(
+    resource
+) {
     const container =
         document.getElementById(
-            "forest-mushrooms"
+            "forest-dropped-resources"
         );
 
     if (!container) {
         return;
     }
 
-    const buttons =
-        container.querySelectorAll(
+    const resourceIcons = {
+        apple: "🍎",
+        berry: "🍓",
+        herb: "🌿",
+        insect: "🐛"
+    };
+
+    forestDropCounter += 1;
+
+    const drop =
+        document.createElement(
             "button"
         );
 
-    buttons.forEach(
-        (button, index) => {
+    drop.type = "button";
+    drop.className =
+        "forest-resource-drop falling";
+
+    drop.textContent =
+        resourceIcons[resource] || "✨";
+
+    drop.setAttribute(
+        "aria-label",
+        `Ramasser ${resourceNames[resource]}`
+    );
+
+    const left =
+        12 +
+        Math.random() * 76;
+
+    const top =
+        68 +
+        Math.random() * 22;
+
+    drop.style.left =
+        `${left}%`;
+
+    drop.style.top =
+        `${top}%`;
+
+    drop.dataset.resource =
+        resource;
+
+    drop.dataset.dropId =
+        forestDropCounter;
+
+    drop.addEventListener(
+        "click",
+        function() {
+            collectForestResource(
+                drop
+            );
+        }
+    );
+
+    container.appendChild(
+        drop
+    );
+
+    setTimeout(
+        function() {
+            drop.classList.remove(
+                "falling"
+            );
+        },
+        700
+    );
+}
+
+
+// ======================================================
+// FORÊT : RAMASSER UNE RESSOURCE
+// ======================================================
+
+function collectForestResource(
+    dropElement
+) {
+    if (!dropElement) {
+        return;
+    }
+
+    const resource =
+        dropElement.dataset.resource;
+
+    if (!resource) {
+        return;
+    }
+
+    if (
+        dropElement.dataset.collected ===
+        "true"
+    ) {
+        return;
+    }
+
+    dropElement.dataset.collected =
+        "true";
+
+    addResource(
+        resource,
+        1
+    );
+
+    dropElement.classList.add(
+        "collected"
+    );
+
+    const message =
+        document.getElementById(
+            "forest-game-message"
+        );
+
+    if (message) {
+        message.textContent =
+            `🎒 ${resourceNames[resource]} ajouté au sac !`;
+    }
+
+    setTimeout(
+        function() {
+            if (
+                dropElement &&
+                dropElement.parentNode
+            ) {
+                dropElement.remove();
+            }
+        },
+        250
+    );
+}
+
+
+// ======================================================
+// FORÊT : VIDER LES RESSOURCES AU SOL
+// ======================================================
+
+function clearForestDrops() {
+    const container =
+        document.getElementById(
+            "forest-dropped-resources"
+        );
+
+    if (container) {
+        container.innerHTML = "";
+    }
+}
+
+
+// ======================================================
+// FORÊT : AFFICHER LES CHAMPIGNONS
+// ======================================================
+
+function renderForestMushrooms() {
+    const mushroomButtons =
+        document.querySelectorAll(
+            ".forest-mushroom"
+        );
+
+    mushroomButtons.forEach(
+        button => {
+            const index =
+                Number(
+                    button.dataset
+                        .mushroomIndex
+                );
+
             if (
                 forestMushrooms[index]
             ) {
-                button.style.display =
-                    "block";
+                button.classList.remove(
+                    "picked"
+                );
 
                 button.disabled =
                     false;
-
-                button.textContent =
-                    "🍄";
             } else {
-                button.style.display =
-                    "none";
+                button.classList.add(
+                    "picked"
+                );
+
+                button.disabled =
+                    true;
             }
         }
     );
@@ -1703,10 +1469,17 @@ function renderForestMushrooms() {
 
 
 // ======================================================
-// FORÊT : CUEILLIR UN CHAMPIGNON 🍄
+// FORÊT : RAMASSER UN CHAMPIGNON
 // ======================================================
 
 function pickMushroom(index) {
+    if (
+        currentGatheringGame !==
+        "forest"
+    ) {
+        return;
+    }
+
     if (
         !forestMushrooms[index]
     ) {
@@ -1721,11 +1494,7 @@ function pickMushroom(index) {
         1
     );
 
-    const xpAmount = 2;
-
-    addPlayerXP(
-        xpAmount
-    );
+    addPlayerXP(1);
 
     renderForestMushrooms();
 
@@ -1736,37 +1505,46 @@ function pickMushroom(index) {
 
     if (message) {
         message.textContent =
-            `🍄 Tu ramasses un champignon ! +1 🍄 • +${xpAmount} XP`;
+            "🍄 Champignon ramassé ! Il repoussera dans 1 minute.";
     }
 
     if (
         forestMushroomTimers[index]
     ) {
         clearTimeout(
-            forestMushroomTimers[index]
+            forestMushroomTimers[
+                index
+            ]
         );
     }
 
     forestMushroomTimers[index] =
         setTimeout(
-            () => {
+            function() {
                 forestMushrooms[index] =
                     true;
 
+                forestMushroomTimers[
+                    index
+                ] = null;
+
                 renderForestMushrooms();
 
-                const respawnMessage =
-                    document.getElementById(
-                        "forest-game-message"
-                    );
-
                 if (
-                    respawnMessage &&
                     currentGatheringGame ===
-                        "forest"
+                    "forest"
                 ) {
-                    respawnMessage.textContent =
-                        "🍄 Un champignon a repoussé !";
+                    const respawnMessage =
+                        document.getElementById(
+                            "forest-game-message"
+                        );
+
+                    if (
+                        respawnMessage
+                    ) {
+                        respawnMessage.textContent =
+                            "🍄 Un champignon vient de repousser !";
+                    }
                 }
             },
             60000
@@ -1781,63 +1559,175 @@ function pickMushroom(index) {
 function startPlainsGame() {
     updatePlainsDisplay();
 
-    const message =
-        document.getElementById(
-            "watering-message"
-        );
-
-    if (message) {
-        if (plainsReady) {
-            message.textContent =
-                "🌾 Les plantations sont prêtes à être récoltées !";
-        } else if (plainsGrowing) {
-            message.textContent =
-                "🌱 Les plantations poussent... encore un peu de patience !";
-        } else {
-            message.textContent =
-                "💧 Arrose les plantations pour commencer leur croissance.";
-        }
+    if (
+        plainsGrowthStartTime &&
+        !plainsPlants.every(
+            plant => plant.ready
+        )
+    ) {
+        startPlainsGrowthTimer();
     }
 }
 
 
 // ======================================================
-// PLAINES : ARROSER 💧
+// PLAINES : CHOISIR UN OUTIL
 // ======================================================
 
-function waterPlants() {
+function selectPlainsTool(tool) {
     if (
-        plainsGrowing ||
-        plainsReady
+        tool !== "watering" &&
+        tool !== "scythe"
     ) {
         return;
     }
 
-    plainsWatered = true;
-    plainsGrowing = true;
+    plainsSelectedTool = tool;
 
-    const button =
+    updatePlainsDisplay();
+
+    const message =
         document.getElementById(
-            "watering-button"
+            "plains-tool-message"
         );
 
-    if (button) {
-        button.disabled =
-            true;
+    if (!message) {
+        return;
+    }
 
-        button.textContent =
-            "💧 Plantation arrosée";
+    if (tool === "watering") {
+        message.textContent =
+            "🚿 Arrosoir en main. Touche les plantations pour les arroser.";
+    } else {
+        message.textContent =
+            "🌾 Faux en main. Touche les plantations prêtes pour les récolter.";
+    }
+}
+
+
+// ======================================================
+// PLAINES : TOUCHER UNE PLANTATION
+// ======================================================
+
+function interactWithPlant(index) {
+    if (
+        currentGatheringGame !==
+        "plains"
+    ) {
+        return;
+    }
+
+    const plant =
+        plainsPlants[index];
+
+    if (!plant) {
+        return;
+    }
+
+    if (
+        plainsSelectedTool ===
+        "watering"
+    ) {
+        waterPlant(index);
+        return;
+    }
+
+    if (
+        plainsSelectedTool ===
+        "scythe"
+    ) {
+        harvestPlant(index);
+        return;
     }
 
     const message =
         document.getElementById(
-            "watering-message"
+            "plains-tool-message"
         );
 
     if (message) {
         message.textContent =
-            "💧 C'est arrosé ! Les plantes vont pousser pendant 1 minute.";
+            "👆 Choisis d'abord l'arrosoir ou la faux.";
     }
+}
+
+
+// ======================================================
+// PLAINES : ARROSER UNE PLANTATION
+// ======================================================
+
+function waterPlant(index) {
+    const plant =
+        plainsPlants[index];
+
+    if (!plant) {
+        return;
+    }
+
+    if (plant.ready) {
+        const message =
+            document.getElementById(
+                "plains-tool-message"
+            );
+
+        if (message) {
+            message.textContent =
+                "🌾 Cette plantation est déjà prête. Utilise la faux.";
+        }
+
+        return;
+    }
+
+    if (plant.watered) {
+        const message =
+            document.getElementById(
+                "plains-tool-message"
+            );
+
+        if (message) {
+            message.textContent =
+                "💧 Cette plantation est déjà arrosée.";
+        }
+
+        return;
+    }
+
+    plant.watered = true;
+
+    const message =
+        document.getElementById(
+            "plains-tool-message"
+        );
+
+    if (message) {
+        message.textContent =
+            "💧 Plantation arrosée !";
+    }
+
+    updatePlainsDisplay();
+
+    const allWatered =
+        plainsPlants.every(
+            currentPlant =>
+                currentPlant.watered
+        );
+
+    if (
+        allWatered &&
+        !plainsGrowthStartTime
+    ) {
+        beginPlainsGrowth();
+    }
+}
+
+
+// ======================================================
+// PLAINES : COMMENCER LA POUSSE
+// ======================================================
+
+function beginPlainsGrowth() {
+    plainsGrowthStartTime =
+        Date.now();
 
     const growthMessage =
         document.getElementById(
@@ -1846,239 +1736,160 @@ function waterPlants() {
 
     if (growthMessage) {
         growthMessage.textContent =
-            "🌱 Croissance en cours... 1 minute restante.";
+            "🌱 Toutes les plantations sont arrosées. Elles commencent à pousser !";
     }
 
-    if (plainsGrowthTimer) {
-        clearTimeout(
-            plainsGrowthTimer
+    startPlainsGrowthTimer();
+    updatePlainsDisplay();
+}
+
+
+// ======================================================
+// PLAINES : MINUTEUR DE POUSSE
+// ======================================================
+
+function startPlainsGrowthTimer() {
+    if (plainsGrowthInterval) {
+        clearInterval(
+            plainsGrowthInterval
         );
     }
 
-    plainsGrowthTimer =
-        setTimeout(
-            () => {
-                plainsGrowing =
-                    false;
+    updatePlainsGrowthProgress();
 
-                plainsReady =
-                    true;
-
-                plainsWatered =
-                    true;
-
-                updatePlainsDisplay();
-
-                const readyMessage =
-                    document.getElementById(
-                        "plants-growth-message"
-                    );
-
-                if (readyMessage) {
-                    readyMessage.textContent =
-                        "🌾 Les plantes ont poussé ! Maintiens ton doigt sur une plante pour la faucher.";
-                }
-            },
-            60000
+    plainsGrowthInterval =
+        setInterval(
+            updatePlainsGrowthProgress,
+            250
         );
 }
 
 
 // ======================================================
-// PLAINES : AFFICHAGE 🌾
+// PLAINES : METTRE À JOUR LA BARRE
 // ======================================================
 
-function updatePlainsDisplay() {
-    const plantsGrid =
-        document.getElementById(
-            "plants-grid"
-        );
-
-    if (plantsGrid) {
-        const buttons =
-            plantsGrid.querySelectorAll(
-                "button"
-            );
-
-        buttons.forEach(
-            (button, index) => {
-                if (
-                    !plainsPlants[index]
-                ) {
-                    button.style.display =
-                        "none";
-
-                    return;
-                }
-
-                button.style.display =
-                    "block";
-
-                if (!plainsReady) {
-                    button.disabled =
-                        true;
-
-                    button.textContent =
-                        "🌱";
-
-                    return;
-                }
-
-                button.disabled =
-                    false;
-
-                button.textContent =
-                    "🌾";
-
-                setupPlantHoldButton(
-                    button,
-                    index
-                );
-            }
-        );
-    }
-
-    const wateringButton =
-        document.getElementById(
-            "watering-button"
-        );
-
-    if (wateringButton) {
-        wateringButton.disabled =
-            plainsGrowing ||
-            plainsReady;
-
-        if (plainsReady) {
-            wateringButton.textContent =
-                "🌾 Prêt !";
-        } else if (
-            plainsGrowing
-        ) {
-            wateringButton.textContent =
-                "🌱 Ça pousse...";
-        } else {
-            wateringButton.textContent =
-                "💧 Arroser";
-        }
-    }
-}
-
-
-// ======================================================
-// PLAINES : MAINTENIR LE DOIGT POUR FAUCHER 🌾
-// ======================================================
-
-function setupPlantHoldButton(
-    button,
-    index
-) {
-    if (
-        button.dataset.holdReady ===
-        "true"
-    ) {
+function updatePlainsGrowthProgress() {
+    if (!plainsGrowthStartTime) {
+        updatePlainsDisplay();
         return;
     }
 
-    button.dataset.holdReady =
-        "true";
+    const elapsed =
+        Date.now() -
+        plainsGrowthStartTime;
 
-    button.onclick =
-        function(event) {
-            event.preventDefault();
-        };
+    const progress =
+        Math.min(
+            elapsed /
+            PLAINS_GROWTH_TIME,
+            1
+        );
 
-    button.onpointerdown =
-        function(event) {
-            event.preventDefault();
+    const remainingMs =
+        Math.max(
+            PLAINS_GROWTH_TIME -
+            elapsed,
+            0
+        );
 
-            if (
-                !plainsReady ||
-                !plainsPlants[index]
-            ) {
-                return;
-            }
+    const remainingSeconds =
+        Math.ceil(
+            remainingMs / 1000
+        );
 
-            plainsHoldingPlant =
-                true;
+    const fill =
+        document.getElementById(
+            "plains-growth-fill"
+        );
 
-            button.classList.add(
-                "plant-being-cut"
+    const timer =
+        document.getElementById(
+            "plains-growth-timer"
+        );
+
+    if (fill) {
+        fill.style.width =
+            `${progress * 100}%`;
+    }
+
+    if (timer) {
+        timer.textContent =
+            progress >= 1
+                ? "Prêt !"
+                : `${remainingSeconds}s`;
+    }
+
+    if (progress >= 1) {
+        if (plainsGrowthInterval) {
+            clearInterval(
+                plainsGrowthInterval
             );
 
-            plainsHoldTimer =
-                setTimeout(
-                    () => {
-                        if (
-                            plainsHoldingPlant
-                        ) {
-                            plainsHoldingPlant =
-                                false;
+            plainsGrowthInterval =
+                null;
+        }
 
-                            button.classList.remove(
-                                "plant-being-cut"
-                            );
-
-                            harvestPlant(
-                                index
-                            );
-                        }
-                    },
-                    700
-                );
-        };
-
-    const stopHold =
-        function() {
-            plainsHoldingPlant =
-                false;
-
-            if (
-                plainsHoldTimer
-            ) {
-                clearTimeout(
-                    plainsHoldTimer
-                );
-
-                plainsHoldTimer =
-                    null;
-            }
-
-            button.classList.remove(
-                "plant-being-cut"
+        plainsPlants =
+            plainsPlants.map(
+                plant => ({
+                    ...plant,
+                    ready: true
+                })
             );
-        };
 
-    button.onpointerup =
-        stopHold;
+        plainsGrowthStartTime =
+            null;
 
-    button.onpointercancel =
-        stopHold;
+        const growthMessage =
+            document.getElementById(
+                "plants-growth-message"
+            );
 
-    button.onpointerleave =
-        stopHold;
+        if (growthMessage) {
+            growthMessage.textContent =
+                "🌾 Les plantations sont prêtes ! Prends la faux et récolte-les.";
+        }
+
+        updatePlainsDisplay();
+    }
 }
 
 
 // ======================================================
-// PLAINES : RÉCOLTER 🌾
+// PLAINES : RÉCOLTER UNE PLANTATION
 // ======================================================
 
 function harvestPlant(index) {
-    if (
-        !plainsReady ||
-        !plainsPlants[index]
-    ) {
+    const plant =
+        plainsPlants[index];
+
+    if (!plant) {
         return;
     }
 
-    plainsPlants[index] =
-        false;
+    if (!plant.ready) {
+        const message =
+            document.getElementById(
+                "plains-tool-message"
+            );
+
+        if (message) {
+            if (!plant.watered) {
+                message.textContent =
+                    "🌱 Cette plantation doit d'abord être arrosée.";
+            } else {
+                message.textContent =
+                    "⏳ Cette plantation n'est pas encore prête.";
+            }
+        }
+
+        return;
+    }
 
     const possibleResources = [
         "vegetable",
-        "herb",
-        "berry",
-        "apple"
+        "herb"
     ];
 
     const resource =
@@ -2090,23 +1901,21 @@ function harvestPlant(index) {
         ];
 
     const amount =
-        Math.floor(
-            Math.random() * 2
-        ) + 1;
+        Math.random() < 0.75
+            ? 1
+            : 2;
 
     addResource(
         resource,
         amount
     );
 
-    const xpAmount = 3;
+    addPlayerXP(2);
 
-    const levelUp =
-        addPlayerXP(
-            xpAmount
-        );
-
-    updatePlainsDisplay();
+    plainsPlants[index] = {
+        watered: false,
+        ready: false
+    };
 
     const message =
         document.getElementById(
@@ -2114,60 +1923,171 @@ function harvestPlant(index) {
         );
 
     if (message) {
-        if (levelUp) {
-            message.textContent =
-                `🌾 Récolte réussie ! ${amount} × ${resourceNames[resource]} ! +${xpAmount} XP • Niveau ${player.level} !`;
-        } else {
-            message.textContent =
-                `🌾 Récolte réussie ! ${amount} × ${resourceNames[resource]} ! +${xpAmount} XP`;
-        }
+        message.textContent =
+            `🌾 Récolte réussie : +${amount} ${resourceNames[resource]} !`;
     }
+
+    updatePlainsDisplay();
 
     const allHarvested =
         plainsPlants.every(
-            plant => !plant
+            plant =>
+                !plant.watered &&
+                !plant.ready
         );
 
     if (allHarvested) {
-        setTimeout(
-            () => {
-                plainsPlants = [
-                    true,
-                    true,
-                    true,
-                    true
-                ];
+        plainsSelectedTool =
+            null;
 
-                plainsWatered =
-                    false;
+        const toolMessage =
+            document.getElementById(
+                "plains-tool-message"
+            );
 
-                plainsReady =
-                    false;
+        if (toolMessage) {
+            toolMessage.textContent =
+                "🌱 Une nouvelle culture est prête à être arrosée.";
+        }
 
-                updatePlainsDisplay();
+        const growthMessage =
+            document.getElementById(
+                "plants-growth-message"
+            );
 
-                const wateringMessage =
-                    document.getElementById(
-                        "watering-message"
-                    );
+        if (growthMessage) {
+            growthMessage.textContent =
+                "Choisis l'arrosoir puis touche chaque plantation.";
+        }
 
-                if (wateringMessage) {
-                    wateringMessage.textContent =
-                        "🌱 Les nouvelles plantations sont prêtes à être arrosées.";
-                }
+        updatePlainsDisplay();
+    }
+}
 
-                const growthMessage =
-                    document.getElementById(
-                        "plants-growth-message"
-                    );
 
-                if (growthMessage) {
-                    growthMessage.textContent =
-                        "";
-                }
-            },
-            1000
+// ======================================================
+// PLAINES : AFFICHAGE
+// ======================================================
+
+function updatePlainsDisplay() {
+    const wateringButton =
+        document.getElementById(
+            "plains-watering-tool"
         );
+
+    const scytheButton =
+        document.getElementById(
+            "plains-scythe-tool"
+        );
+
+    if (wateringButton) {
+        wateringButton.classList.toggle(
+            "selected",
+            plainsSelectedTool ===
+            "watering"
+        );
+    }
+
+    if (scytheButton) {
+        scytheButton.classList.toggle(
+            "selected",
+            plainsSelectedTool ===
+            "scythe"
+        );
+    }
+
+    const plantButtons =
+        document.querySelectorAll(
+            ".plant-button"
+        );
+
+    plantButtons.forEach(
+        (button, index) => {
+            const plant =
+                plainsPlants[index];
+
+            if (!plant) {
+                return;
+            }
+
+            button.classList.remove(
+                "watered",
+                "growing",
+                "ready"
+            );
+
+            if (plant.ready) {
+                button.classList.add(
+                    "ready"
+                );
+
+                button.textContent =
+                    "🌾";
+
+                return;
+            }
+
+            if (
+                plant.watered &&
+                plainsGrowthStartTime
+            ) {
+                button.classList.add(
+                    "growing"
+                );
+
+                button.textContent =
+                    "🌿";
+
+                return;
+            }
+
+            if (plant.watered) {
+                button.classList.add(
+                    "watered"
+                );
+
+                button.textContent =
+                    "💧🌱";
+
+                return;
+            }
+
+            button.textContent =
+                "🌱";
+        }
+    );
+
+    const fill =
+        document.getElementById(
+            "plains-growth-fill"
+        );
+
+    const timer =
+        document.getElementById(
+            "plains-growth-timer"
+        );
+
+    if (
+        !plainsGrowthStartTime
+    ) {
+        const allReady =
+            plainsPlants.every(
+                plant => plant.ready
+            );
+
+        if (fill) {
+            fill.style.width =
+                allReady
+                    ? "100%"
+                    : "0%";
+        }
+
+        if (timer) {
+            timer.textContent =
+                allReady
+                    ? "Prêt !"
+                    : "60s";
+        }
     }
 }
 
@@ -2179,117 +2099,27 @@ function harvestPlant(index) {
 function startFishingGame() {
     stopFishingGame();
 
-    fishingActive = true;
+    fishingArrowPosition =
+        0;
 
-    fishingArrowPosition = 0;
-    fishingArrowDirection = 1;
+    fishingArrowDirection =
+        1;
+
+    fishingActive =
+        true;
 
     fishingGreenStart =
-        Math.floor(
-            Math.random() * 55
-        ) + 20;
+        20 +
+        Math.random() * 45;
 
     fishingGreenWidth =
-        Math.floor(
-            Math.random() * 16
-        ) + 20;
-
-    const status =
-        document.getElementById(
-            "fishing-status"
-        );
-
-    if (status) {
-        status.textContent =
-            "🎣 Attends le bon moment puis appuie sur Attraper !";
-    }
-
-    updateFishingBar();
-
-    fishingInterval =
-        setInterval(
-            moveFishingArrow,
-            30
-        );
-}
-
-
-// ======================================================
-// PÊCHE : ARRÊTER 🎣
-// ======================================================
-
-function stopFishingGame() {
-    fishingActive = false;
-
-    if (fishingInterval) {
-        clearInterval(
-            fishingInterval
-        );
-
-        fishingInterval =
-            null;
-    }
-}
-
-
-// ======================================================
-// PÊCHE : DÉPLACER LA FLÈCHE 🎣
-// ======================================================
-
-function moveFishingArrow() {
-    if (!fishingActive) {
-        return;
-    }
-
-    fishingArrowPosition +=
-        fishingArrowDirection *
-        1.2;
-
-    if (
-        fishingArrowPosition >=
-        100
-    ) {
-        fishingArrowPosition =
-            100;
-
-        fishingArrowDirection =
-            -1;
-    }
-
-    if (
-        fishingArrowPosition <=
-        0
-    ) {
-        fishingArrowPosition =
-            0;
-
-        fishingArrowDirection =
-            1;
-    }
-
-    updateFishingBar();
-}
-
-
-// ======================================================
-// PÊCHE : AFFICHAGE DE LA BARRE 🎣
-// ======================================================
-
-function updateFishingBar() {
-    const arrow =
-        document.getElementById(
-            "fishing-arrow"
-        );
+        18 +
+        Math.random() * 15;
 
     const greenZone =
         document.getElementById(
             "fishing-green-zone"
         );
-
-    if (arrow) {
-        arrow.style.left =
-            `${fishingArrowPosition}%`;
-    }
 
     if (greenZone) {
         greenZone.style.left =
@@ -2298,87 +2128,145 @@ function updateFishingBar() {
         greenZone.style.width =
             `${fishingGreenWidth}%`;
     }
-}
 
+    updateFishingArrow();
 
-// ======================================================
-// PÊCHE : ATTRAPER LE POISSON 🎣
-// ======================================================
+    fishingInterval =
+        setInterval(
+            function() {
+                fishingArrowPosition +=
+                    1.8 *
+                    fishingArrowDirection;
 
-function catchFish() {
-    if (!fishingActive) {
-        return;
-    }
+                if (
+                    fishingArrowPosition >=
+                    100
+                ) {
+                    fishingArrowPosition =
+                        100;
 
-    const success =
-        fishingArrowPosition >=
-            fishingGreenStart &&
-        fishingArrowPosition <=
-            fishingGreenStart +
-                fishingGreenWidth;
+                    fishingArrowDirection =
+                        -1;
+                }
 
-    stopFishingGame();
+                if (
+                    fishingArrowPosition <=
+                    0
+                ) {
+                    fishingArrowPosition =
+                        0;
+
+                    fishingArrowDirection =
+                        1;
+                }
+
+                updateFishingArrow();
+            },
+            20
+        );
 
     const status =
         document.getElementById(
             "fishing-status"
         );
 
+    if (status) {
+        status.textContent =
+            "🎣 Appuie sur Attraper quand la flèche est dans la zone verte !";
+    }
+
     const message =
         document.getElementById(
             "fishing-game-message"
         );
 
-    if (!success) {
-        addPlayerXP(1);
+    if (message) {
+        message.textContent =
+            "";
+    }
+}
 
-        if (status) {
-            status.textContent =
-                "💨 Trop tard ! Le poisson s'échappe !";
-        }
 
-        if (message) {
-            message.textContent =
-                "🐟 Le poisson a filé ! +1 XP";
-        }
+// ======================================================
+// PÊCHE : AFFICHER LA FLÈCHE
+// ======================================================
 
+function updateFishingArrow() {
+    const arrow =
+        document.getElementById(
+            "fishing-arrow"
+        );
+
+    if (arrow) {
+        arrow.style.left =
+            `${fishingArrowPosition}%`;
+    }
+}
+
+
+// ======================================================
+// PÊCHE : ATTRAPER
+// ======================================================
+
+function catchFish() {
+    if (!fishingActive) {
+        startFishingGame();
         return;
     }
 
-    const amount =
-        Math.floor(
-            Math.random() * 3
-        ) + 1;
+    const greenEnd =
+        fishingGreenStart +
+        fishingGreenWidth;
 
-    addResource(
-        "fish",
-        amount
-    );
+    const success =
+        fishingArrowPosition >=
+            fishingGreenStart &&
+        fishingArrowPosition <=
+            greenEnd;
 
-    const xpAmount = 3;
-
-    const levelUp =
-        addPlayerXP(
-            xpAmount
+    const message =
+        document.getElementById(
+            "fishing-game-message"
         );
 
-    if (status) {
-        status.textContent =
-            "🎉 Parfait ! Tu as attrapé le poisson !";
-    }
+    if (success) {
+        const amountRoll =
+            Math.random();
 
-    if (message) {
-        if (levelUp) {
+        let amount = 1;
+
+        if (amountRoll > 0.85) {
+            amount = 3;
+        } else if (
+            amountRoll > 0.45
+        ) {
+            amount = 2;
+        }
+
+        addResource(
+            "fish",
+            amount
+        );
+
+        addPlayerXP(
+            2 + amount
+        );
+
+        if (message) {
             message.textContent =
-                `🎣 Super pêche ! ${amount} × 🐟 Poisson ! +${xpAmount} XP • Niveau ${player.level} !`;
-        } else {
+                `🐟 Bravo ! Tu attrapes ${amount} poisson${amount > 1 ? "s" : ""}.`;
+        }
+    } else {
+        if (message) {
             message.textContent =
-                `🎣 Super pêche ! ${amount} × 🐟 Poisson ! +${xpAmount} XP`;
+                "💨 Trop tôt ou trop tard... le poisson s'est échappé.";
         }
     }
 
+    stopFishingGame();
+
     setTimeout(
-        () => {
+        function() {
             if (
                 currentGatheringGame ===
                 "fishing"
@@ -2392,6 +2280,25 @@ function catchFish() {
 
 
 // ======================================================
+// PÊCHE : ARRÊTER
+// ======================================================
+
+function stopFishingGame() {
+    fishingActive =
+        false;
+
+    if (fishingInterval) {
+        clearInterval(
+            fishingInterval
+        );
+
+        fishingInterval =
+            null;
+    }
+}
+
+
+// ======================================================
 // CHASSE : DÉMARRAGE 🏹
 // ======================================================
 
@@ -2401,15 +2308,7 @@ function startHuntingGame() {
     huntingDuckVisible =
         false;
 
-    const duck =
-        document.getElementById(
-            "hunting-duck"
-        );
-
-    if (duck) {
-        duck.style.display =
-            "none";
-    }
+    hideHuntingDuck();
 
     const status =
         document.getElementById(
@@ -2418,52 +2317,18 @@ function startHuntingGame() {
 
     if (status) {
         status.textContent =
-            "🏹 Attends qu'un canard apparaisse...";
+            "🌲 Observe bien... un canard peut apparaître à tout moment.";
     }
 
-    huntingInterval =
-        setInterval(
-            huntingDuckAttempt,
-            10000
-        );
-
-    huntingDuckAttempt();
+    scheduleNextDuckCheck();
 }
 
 
 // ======================================================
-// CHASSE : ARRÊTER 🏹
+// CHASSE : PROCHAINE APPARITION
 // ======================================================
 
-function stopHuntingGame() {
-    if (huntingInterval) {
-        clearInterval(
-            huntingInterval
-        );
-
-        huntingInterval =
-            null;
-    }
-
-    if (huntingDuckTimeout) {
-        clearTimeout(
-            huntingDuckTimeout
-        );
-
-        huntingDuckTimeout =
-            null;
-    }
-
-    huntingDuckVisible =
-        false;
-}
-
-
-// ======================================================
-// CHASSE : APPARITION DU CANARD 🦆
-// ======================================================
-
-function huntingDuckAttempt() {
+function scheduleNextDuckCheck() {
     if (
         currentGatheringGame !==
         "hunting"
@@ -2471,27 +2336,35 @@ function huntingDuckAttempt() {
         return;
     }
 
-    if (huntingDuckVisible) {
-        return;
-    }
+    huntingDuckTimer =
+        setTimeout(
+            function() {
+                if (
+                    currentGatheringGame !==
+                    "hunting"
+                ) {
+                    return;
+                }
 
-    const appears =
-        Math.random() < 0.20;
+                if (
+                    !huntingDuckVisible &&
+                    Math.random() < 0.2
+                ) {
+                    showHuntingDuck();
+                }
 
-    if (!appears) {
-        const status =
-            document.getElementById(
-                "hunting-status"
-            );
+                scheduleNextDuckCheck();
+            },
+            10000
+        );
+}
 
-        if (status) {
-            status.textContent =
-                "🏹 Rien pour le moment... Observe bien !";
-        }
 
-        return;
-    }
+// ======================================================
+// CHASSE : AFFICHER LE CANARD
+// ======================================================
 
+function showHuntingDuck() {
     const duck =
         document.getElementById(
             "hunting-duck"
@@ -2502,7 +2375,10 @@ function huntingDuckAttempt() {
             "hunting-field"
         );
 
-    if (!duck || !field) {
+    if (
+        !duck ||
+        !field
+    ) {
         return;
     }
 
@@ -2512,29 +2388,39 @@ function huntingDuckAttempt() {
     duck.style.display =
         "block";
 
-    const maxLeft =
+    const maxX =
         Math.max(
-            10,
-            field.clientWidth - 70
+            field.clientWidth - 80,
+            20
         );
 
-    const maxTop =
+    const maxY =
         Math.max(
-            10,
-            field.clientHeight - 70
+            field.clientHeight - 160,
+            60
+        );
+
+    const x =
+        10 +
+        Math.random() *
+        Math.max(
+            maxX - 20,
+            20
+        );
+
+    const y =
+        30 +
+        Math.random() *
+        Math.max(
+            maxY - 40,
+            30
         );
 
     duck.style.left =
-        `${Math.floor(
-            Math.random() *
-            maxLeft
-        )}px`;
+        `${x}px`;
 
     duck.style.top =
-        `${Math.floor(
-            Math.random() *
-            maxTop
-        )}px`;
+        `${y}px`;
 
     const status =
         document.getElementById(
@@ -2543,53 +2429,46 @@ function huntingDuckAttempt() {
 
     if (status) {
         status.textContent =
-            "🦆 UN CANARD ! Vite, tire avec ton arc !";
+            "🦆 Un canard ! Utilise ton arc !";
     }
 
-    huntingDuckTimeout =
+    if (huntingDuckHideTimer) {
+        clearTimeout(
+            huntingDuckHideTimer
+        );
+    }
+
+    huntingDuckHideTimer =
         setTimeout(
-            () => {
+            function() {
                 if (
                     huntingDuckVisible
                 ) {
-                    huntingDuckVisible =
-                        false;
+                    hideHuntingDuck();
 
-                    duck.style.display =
-                        "none";
+                    const escapedStatus =
+                        document.getElementById(
+                            "hunting-status"
+                        );
 
-                    if (status) {
-                        status.textContent =
-                            "💨 Le canard s'est échappé !";
+                    if (
+                        escapedStatus
+                    ) {
+                        escapedStatus.textContent =
+                            "💨 Le canard s'est envolé...";
                     }
                 }
             },
-            3500
+            4000
         );
 }
 
 
 // ======================================================
-// CHASSE : TIRER 🏹
+// CHASSE : CACHER LE CANARD
 // ======================================================
 
-function shootDuck() {
-    if (
-        !huntingDuckVisible
-    ) {
-        const message =
-            document.getElementById(
-                "hunting-game-message"
-            );
-
-        if (message) {
-            message.textContent =
-                "🏹 Pas de canard en vue !";
-        }
-
-        return;
-    }
-
+function hideHuntingDuck() {
     const duck =
         document.getElementById(
             "hunting-duck"
@@ -2598,330 +2477,823 @@ function shootDuck() {
     huntingDuckVisible =
         false;
 
-    if (huntingDuckTimeout) {
-        clearTimeout(
-            huntingDuckTimeout
-        );
-
-        huntingDuckTimeout =
-            null;
-    }
-
     if (duck) {
         duck.style.display =
             "none";
     }
 
-    const hitChance =
-        0.65;
+    if (
+        huntingDuckHideTimer
+    ) {
+        clearTimeout(
+            huntingDuckHideTimer
+        );
 
-    const hit =
+        huntingDuckHideTimer =
+            null;
+    }
+}
+
+
+// ======================================================
+// CHASSE : TIRER
+// ======================================================
+
+function shootDuck() {
+    const message =
+        document.getElementById(
+            "hunting-game-message"
+        );
+
+    if (
+        !huntingDuckVisible
+    ) {
+        if (message) {
+            message.textContent =
+                "🏹 Aucun animal à viser pour le moment.";
+        }
+
+        return;
+    }
+
+    const hitChance =
+        0.75;
+
+    const success =
         Math.random() <
         hitChance;
+
+    if (success) {
+        const amount =
+            Math.random() < 0.75
+                ? 1
+                : 2;
+
+        addResource(
+            "meat",
+            amount
+        );
+
+        addPlayerXP(
+            3
+        );
+
+        if (message) {
+            message.textContent =
+                `🎯 Réussi ! +${amount} ${resourceNames.meat}.`;
+        }
+    } else {
+        if (message) {
+            message.textContent =
+                "💨 Raté ! Le canard s'enfuit.";
+        }
+    }
+
+    hideHuntingDuck();
 
     const status =
         document.getElementById(
             "hunting-status"
         );
 
-    const message =
-        document.getElementById(
-            "hunting-game-message"
+    if (status) {
+        status.textContent =
+            "🌲 Attends le prochain animal...";
+    }
+}
+
+
+// ======================================================
+// CHASSE : ARRÊTER
+// ======================================================
+
+function stopHuntingGame() {
+    if (
+        huntingDuckTimer
+    ) {
+        clearTimeout(
+            huntingDuckTimer
         );
 
-    if (!hit) {
-        addPlayerXP(1);
+        huntingDuckTimer =
+            null;
+    }
 
-        if (status) {
-            status.textContent =
-                "💨 Raté ! Le canard s'enfuit.";
-        }
+    if (
+        huntingDuckHideTimer
+    ) {
+        clearTimeout(
+            huntingDuckHideTimer
+        );
 
-        if (message) {
-            message.textContent =
-                "🏹 Raté ! +1 XP";
-        }
+        huntingDuckHideTimer =
+            null;
+    }
 
+    hideHuntingDuck();
+}
+
+
+// ======================================================
+// DRAGONS DÉCOUVERTS
+// ======================================================
+
+let discoveredDragons = [];
+
+
+// ======================================================
+// DRAGONS POSSÉDÉS
+// ======================================================
+
+let ownedDragons = [];
+
+
+// ======================================================
+// CHARGER LES DRAGONS DÉCOUVERTS
+// ======================================================
+
+function loadDiscoveredDragons() {
+    const saved =
+        localStorage.getItem(
+            "draconiaDiscoveredDragons"
+        );
+
+    if (!saved) {
+        discoveredDragons = [];
         return;
     }
 
-    const amount =
-        Math.floor(
-            Math.random() * 3
-        ) + 1;
+    try {
+        discoveredDragons =
+            JSON.parse(saved);
+    } catch (error) {
+        discoveredDragons = [];
+    }
+}
 
-    addResource(
-        "meat",
-        amount
+
+// ======================================================
+// SAUVEGARDER LES DRAGONS DÉCOUVERTS
+// ======================================================
+
+function saveDiscoveredDragons() {
+    localStorage.setItem(
+        "draconiaDiscoveredDragons",
+        JSON.stringify(
+            discoveredDragons
+        )
     );
+}
 
-    const xpAmount = 3;
 
-    const levelUp =
-        addPlayerXP(
-            xpAmount
+// ======================================================
+// CHARGER LES DRAGONS POSSÉDÉS
+// ======================================================
+
+function loadOwnedDragons() {
+    const saved =
+        localStorage.getItem(
+            "draconiaOwnedDragons"
         );
 
-    if (status) {
-        status.textContent =
-            "🎯 Touché !";
+    if (!saved) {
+        ownedDragons = [];
+        return;
+    }
+
+    try {
+        ownedDragons =
+            JSON.parse(saved);
+    } catch (error) {
+        ownedDragons = [];
+    }
+}
+
+
+// ======================================================
+// SAUVEGARDER LES DRAGONS POSSÉDÉS
+// ======================================================
+
+function saveOwnedDragons() {
+    localStorage.setItem(
+        "draconiaOwnedDragons",
+        JSON.stringify(
+            ownedDragons
+        )
+    );
+}
+
+
+// ======================================================
+// TROUVER UN DRAGON
+// ======================================================
+
+function findEgg() {
+    const button =
+        document.getElementById(
+            "egg-button"
+        );
+
+    const message =
+        document.getElementById(
+            "egg-message"
+        );
+
+    if (button) {
+        button.disabled =
+            true;
     }
 
     if (message) {
-        if (levelUp) {
-            message.textContent =
-                `🏹 Chasse réussie ! ${amount} × 🍖 Viande ! +${xpAmount} XP • Niveau ${player.level} !`;
-        } else {
-            message.textContent =
-                `🏹 Chasse réussie ! ${amount} × 🍖 Viande ! +${xpAmount} XP`;
-        }
-    }
-}
-
-
-// ======================================================
-// ANCIEN SYSTÈME DE RÉCOLTE
-// ======================================================
-
-function gatherResources(location) {
-    const resourcePools = {
-        forest: [
-            "apple",
-            "berry",
-            "herb",
-            "insect"
-        ],
-
-        plains: [
-            "vegetable",
-            "herb",
-            "berry",
-            "apple"
-        ]
-    };
-
-    const pool =
-        resourcePools[location];
-
-    if (!pool) {
-        console.log(
-            `Zone inconnue : ${location}`
-        );
-
-        return;
+        message.textContent =
+            "🔍 Exploration en cours...";
     }
 
-    const resource =
-        pool[
-            Math.floor(
-                Math.random() *
-                pool.length
-            )
-        ];
+    setTimeout(
+        function() {
+            const success =
+                Math.random() <
+                0.45;
 
-    const amount =
-        Math.floor(
-            Math.random() * 2
-        ) + 1;
+            if (!success) {
+                if (message) {
+                    message.textContent =
+                        "🌿 Tu explores les environs, mais aucun dragon ne se montre cette fois.";
+                }
 
-    addResource(
-        resource,
-        amount
-    );
+                if (button) {
+                    button.disabled =
+                        false;
+                }
 
-    const xpAmount = 2;
+                addPlayerXP(2);
 
-    const levelUp =
-        addPlayerXP(
-            xpAmount
-        );
-
-    const resourceName =
-        resourceNames[resource] ||
-        resource;
-
-    if (levelUp) {
-        showGatheringMessage(
-            `✨ Tu trouves ${amount} × ${resourceName} ! +${xpAmount} XP • Niveau ${player.level} !`
-        );
-    } else {
-        showGatheringMessage(
-            `🌿 Tu trouves ${amount} × ${resourceName} ! +${xpAmount} XP`
-        );
-    }
-}
-
-
-// ======================================================
-// PÊCHE
-// ======================================================
-
-function goFishing() {
-    openGatheringGame(
-        "fishing"
-    );
-}
-
-
-// ======================================================
-// CHASSE
-// ======================================================
-
-function goHunting() {
-    openGatheringGame(
-        "hunting"
-    );
-}
-
-
-// ======================================================
-// BARRE D'XP DU JOUEUR
-// ======================================================
-
-function updateXPBar() {
-    const xpFill =
-        document.getElementById(
-            "xp-fill"
-        );
-
-    if (!xpFill) {
-        return;
-    }
-
-    const percentage =
-        Math.min(
-            player.xp,
-            100
-        );
-
-    xpFill.style.width =
-        `${percentage}%`;
-}
-
-
-// ======================================================
-// VÉRIFIER LES INGRÉDIENTS D'UNE RECETTE
-// ======================================================
-
-function canCraftRecipe(recipe) {
-    return Object.entries(
-        recipe.ingredients
-    ).every(
-        ([resource, amount]) =>
-            inventory[resource] >= amount
-    );
-}
-
-
-// ======================================================
-// INGRÉDIENTS MANQUANTS
-// ======================================================
-
-function getMissingIngredients(recipe) {
-    return Object.entries(
-        recipe.ingredients
-    )
-        .filter(
-            ([resource, amount]) =>
-                (inventory[resource] || 0) < amount
-        )
-        .map(
-            ([resource, amount]) => {
-                const current =
-                    inventory[resource] || 0;
-
-                return `${resourceNames[resource]} ${current}/${amount}`;
+                return;
             }
-        );
+
+            const selectedDragon =
+                selectRandomDragon();
+
+            discoverDragon(
+                selectedDragon
+            );
+
+            if (message) {
+                message.textContent =
+                    `🥚 Incroyable ! Tu découvres ${selectedDragon.icon} ${selectedDragon.name}, dragon ${selectedDragon.element} !`;
+            }
+
+            if (button) {
+                button.disabled =
+                    false;
+            }
+
+            addPlayerXP(5);
+
+            renderDragonDex();
+            renderOwnedDragons();
+        },
+        900
+    );
 }
 
 
 // ======================================================
-// TEXTE DES INGRÉDIENTS
+// CHOISIR UN DRAGON
 // ======================================================
 
-function getRecipeIngredientsText(recipe) {
-    return Object.entries(
-        recipe.ingredients
-    )
-        .map(
-            ([resource, amount]) =>
-                `${amount} × ${resourceNames[resource]}`
+function selectRandomDragon() {
+    const rarityRoll =
+        Math.random();
+
+    let allowedRarities = [
+        "Commun"
+    ];
+
+    if (rarityRoll > 0.97) {
+        allowedRarities = [
+            "Légendaire"
+        ];
+    } else if (
+        rarityRoll > 0.88
+    ) {
+        allowedRarities = [
+            "Épique"
+        ];
+    } else if (
+        rarityRoll > 0.65
+    ) {
+        allowedRarities = [
+            "Rare"
+        ];
+    } else if (
+        rarityRoll > 0.35
+    ) {
+        allowedRarities = [
+            "Peu commun"
+        ];
+    }
+
+    const possible =
+        dragons.filter(
+            dragon =>
+                allowedRarities.includes(
+                    dragon.rarity
+                )
+        );
+
+    return possible[
+        Math.floor(
+            Math.random() *
+            possible.length
         )
-        .join(" • ");
+    ];
 }
 
 
 // ======================================================
-// CUISINER UNE RECETTE 🍲
+// DÉCOUVRIR UN DRAGON
 // ======================================================
 
-function cookRecipe(recipeId) {
-    const recipe =
-        recipes.find(
-            currentRecipe =>
-                currentRecipe.id ===
-                recipeId
-        );
-
-    if (!recipe) {
+function discoverDragon(dragon) {
+    if (!dragon) {
         return;
     }
 
     if (
-        !canCraftRecipe(recipe)
+        !discoveredDragons.includes(
+            dragon.id
+        )
     ) {
-        const missing =
-            getMissingIngredients(
-                recipe
-            );
-
-        showCookingMessage(
-            `❌ Il te manque : ${missing.join(" • ")}`
+        discoveredDragons.push(
+            dragon.id
         );
 
-        return;
+        saveDiscoveredDragons();
     }
 
-    Object.entries(
-        recipe.ingredients
-    )
-        .forEach(
-            ([resource, amount]) => {
-                inventory[resource] -= amount;
-            }
+    const alreadyOwned =
+        ownedDragons.find(
+            owned =>
+                owned.id ===
+                dragon.id
         );
 
-    preparedMeals[recipe.id] =
-        (preparedMeals[recipe.id] || 0) + 1;
+    if (!alreadyOwned) {
+        ownedDragons.push({
+            id: dragon.id,
+            level: 1,
+            xp: 0,
+            hunger: 100,
+            happiness: 100,
+            energy: 100
+        });
 
-    saveInventory();
-    savePreparedMeals();
-
-    const xpAmount = 4;
-
-    const levelUp =
-        addPlayerXP(
-            xpAmount
-        );
-
-    updateInventoryDisplay();
-    updatePlayerDisplay();
-
-    if (levelUp) {
-        showCookingMessage(
-            `✨ ${recipe.icon} ${recipe.name} est prêt ! +${xpAmount} XP • Niveau ${player.level} !`
-        );
-    } else {
-        showCookingMessage(
-            `🍲 ${recipe.icon} ${recipe.name} est prêt ! +${xpAmount} XP`
-        );
+        saveOwnedDragons();
     }
 }
 
 
 // ======================================================
-// AFFICHAGE DES RECETTES 🍲
+// DRAGONDEX
+// ======================================================
+
+function renderDragonDex() {
+    const list =
+        document.getElementById(
+            "dragon-list"
+        );
+
+    const count =
+        document.getElementById(
+            "dex-count"
+        );
+
+    if (count) {
+        count.textContent =
+            discoveredDragons.length;
+    }
+
+    if (!list) {
+        return;
+    }
+
+    list.innerHTML = "";
+
+    dragons.forEach(
+        dragon => {
+            const discovered =
+                discoveredDragons.includes(
+                    dragon.id
+                );
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+            item.className =
+                "dex-dragon";
+
+            item.innerHTML = `
+                <div class="dex-dragon-image">
+                    ${
+                        discovered
+                            ? dragon.icon
+                            : "❓"
+                    }
+                </div>
+
+                <div class="dex-dragon-info">
+                    <h3>
+                        ${
+                            discovered
+                                ? dragon.name
+                                : "Dragon inconnu"
+                        }
+                    </h3>
+
+                    <p>
+                        ${
+                            discovered
+                                ? `Élément : ${dragon.element}`
+                                : "Continue à explorer Draconia."
+                        }
+                    </p>
+
+                    <span>
+                        ${
+                            discovered
+                                ? dragon.rarity
+                                : "???"
+                        }
+                    </span>
+                </div>
+
+                <div class="dex-check">
+                    ${
+                        discovered
+                            ? "✅"
+                            : "🔒"
+                    }
+                </div>
+            `;
+
+            list.appendChild(
+                item
+            );
+        }
+    );
+}
+
+
+// ======================================================
+// DRAGONS POSSÉDÉS
+// ======================================================
+
+function renderOwnedDragons() {
+    const list =
+        document.getElementById(
+            "owned-dragons-list"
+        );
+
+    const empty =
+        document.getElementById(
+            "no-dragons"
+        );
+
+    const count =
+        document.getElementById(
+            "owned-dragons-count"
+        );
+
+    if (count) {
+        count.textContent =
+            ownedDragons.length;
+    }
+
+    if (!list) {
+        return;
+    }
+
+    list.innerHTML = "";
+
+    if (
+        ownedDragons.length === 0
+    ) {
+        if (empty) {
+            empty.style.display =
+                "block";
+        }
+
+        return;
+    }
+
+    if (empty) {
+        empty.style.display =
+            "none";
+    }
+
+    ownedDragons.forEach(
+        ownedDragon => {
+            const dragon =
+                dragons.find(
+                    item =>
+                        item.id ===
+                        ownedDragon.id
+                );
+
+            if (!dragon) {
+                return;
+            }
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "owned-dragon-card";
+
+            card.innerHTML = `
+                <div class="owned-dragon-top">
+
+                    <div class="owned-dragon-icon">
+                        ${dragon.icon}
+                    </div>
+
+                    <div class="owned-dragon-info">
+
+                        <p class="rarity">
+                            ${dragon.rarity}
+                        </p>
+
+                        <h3>
+                            ${dragon.name}
+                        </h3>
+
+                        <p>
+                            Élément : ${dragon.element}
+                        </p>
+
+                        <span class="dragon-level">
+                            Niveau ${ownedDragon.level}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="dragon-xp-section">
+
+                    <div class="dragon-xp-info">
+                        <span>XP</span>
+                        <b>
+                            ${ownedDragon.xp} / 100
+                        </b>
+                    </div>
+
+                    <div class="dragon-xp-bar">
+                        <div
+                            class="dragon-xp-fill"
+                            style="width: ${ownedDragon.xp}%"
+                        ></div>
+                    </div>
+
+                </div>
+
+                <div class="dragon-care-stats">
+
+                    <div class="dragon-care-stat">
+                        <span>🍖</span>
+                        <small>Faim</small>
+                        <b>${ownedDragon.hunger}</b>
+                    </div>
+
+                    <div class="dragon-care-stat">
+                        <span>❤️</span>
+                        <small>Bonheur</small>
+                        <b>${ownedDragon.happiness}</b>
+                    </div>
+
+                    <div class="dragon-care-stat">
+                        <span>⚡</span>
+                        <small>Énergie</small>
+                        <b>${ownedDragon.energy}</b>
+                    </div>
+
+                </div>
+
+                <div class="dragon-care-actions">
+
+                    <button
+                        onclick="feedDragon('${dragon.id}')"
+                    >
+                        🍲 Nourrir
+                    </button>
+
+                    <button
+                        onclick="playWithDragon('${dragon.id}')"
+                    >
+                        🎾 Jouer
+                    </button>
+
+                    <button
+                        onclick="restDragon('${dragon.id}')"
+                    >
+                        💤 Repos
+                    </button>
+
+                </div>
+            `;
+
+            list.appendChild(
+                card
+            );
+        }
+    );
+}
+
+
+// ======================================================
+// NOURRIR UN DRAGON
+// ======================================================
+
+function feedDragon(dragonId) {
+    const owned =
+        ownedDragons.find(
+            dragon =>
+                dragon.id ===
+                dragonId
+        );
+
+    const dragon =
+        dragons.find(
+            item =>
+                item.id ===
+                dragonId
+        );
+
+    if (
+        !owned ||
+        !dragon
+    ) {
+        return;
+    }
+
+    const matchingRecipe =
+        recipes.find(
+            recipe =>
+                recipe.element ===
+                dragon.element
+        );
+
+    if (!matchingRecipe) {
+        alert(
+            "Aucun plat adapté à ce dragon."
+        );
+
+        return;
+    }
+
+    if (
+        !preparedMeals[
+            matchingRecipe.id
+        ] ||
+        preparedMeals[
+            matchingRecipe.id
+        ] <= 0
+    ) {
+        alert(
+            `Il te faut ${matchingRecipe.icon} ${matchingRecipe.name} pour nourrir ${dragon.name}.`
+        );
+
+        return;
+    }
+
+    preparedMeals[
+        matchingRecipe.id
+    ] -= 1;
+
+    owned.hunger =
+        Math.min(
+            100,
+            owned.hunger + 25
+        );
+
+    addDragonXP(
+        owned,
+        10
+    );
+
+    savePreparedMeals();
+    saveOwnedDragons();
+
+    updatePlayerDisplay();
+    renderOwnedDragons();
+}
+
+
+// ======================================================
+// JOUER AVEC UN DRAGON
+// ======================================================
+
+function playWithDragon(
+    dragonId
+) {
+    const owned =
+        ownedDragons.find(
+            dragon =>
+                dragon.id ===
+                dragonId
+        );
+
+    if (!owned) {
+        return;
+    }
+
+    if (
+        owned.energy < 10
+    ) {
+        alert(
+            "Ce dragon est trop fatigué."
+        );
+
+        return;
+    }
+
+    owned.energy =
+        Math.max(
+            0,
+            owned.energy - 10
+        );
+
+    owned.happiness =
+        Math.min(
+            100,
+            owned.happiness + 15
+        );
+
+    addDragonXP(
+        owned,
+        5
+    );
+
+    saveOwnedDragons();
+    renderOwnedDragons();
+}
+
+
+// ======================================================
+// REPOS DU DRAGON
+// ======================================================
+
+function restDragon(
+    dragonId
+) {
+    const owned =
+        ownedDragons.find(
+            dragon =>
+                dragon.id ===
+                dragonId
+        );
+
+    if (!owned) {
+        return;
+    }
+
+    owned.energy =
+        Math.min(
+            100,
+            owned.energy + 25
+        );
+
+    saveOwnedDragons();
+    renderOwnedDragons();
+}
+
+
+// ======================================================
+// XP DU DRAGON
+// ======================================================
+
+function addDragonXP(
+    dragon,
+    amount
+) {
+    dragon.xp += amount;
+
+    while (
+        dragon.xp >= 100
+    ) {
+        dragon.xp -= 100;
+        dragon.level += 1;
+    }
+}
+
+
+// ======================================================
+// RECETTES
 // ======================================================
 
 function renderRecipes() {
@@ -2936,694 +3308,164 @@ function renderRecipes() {
 
     list.innerHTML = "";
 
-    recipes.forEach(recipe => {
-        const card =
-            document.createElement(
-                "div"
-            );
-
-        card.className =
-            "inventory-item";
-
-        const canCraft =
-            canCraftRecipe(
-                recipe
-            );
-
-        const mealCount =
-            preparedMeals[recipe.id] || 0;
-
-        const ingredientsText =
-            getRecipeIngredientsText(
-                recipe
-            );
-
-        const buttonText =
-            canCraft
-                ? "🍲 Cuisiner"
-                : "🥕 Voir les ingrédients";
-
-        card.innerHTML = `
-            <div class="inventory-item-icon">
-                ${recipe.icon}
-            </div>
-
-            <div class="inventory-item-info">
-                <h4>
-                    ${recipe.name}
-                </h4>
-
-                <p>
-                    ${recipe.description}
-                </p>
-
-                <p>
-                    🐉 Dragons ${recipe.element}
-                </p>
-
-                <p>
-                    🥕 ${ingredientsText}
-                </p>
-
-                <button
-                    class="gather-button"
-                    onclick="cookRecipe('${recipe.id}')"
-                >
-                    ${buttonText}
-                </button>
-            </div>
-
-            <b class="inventory-item-count">
-                ${mealCount}
-            </b>
-        `;
-
-        list.appendChild(card);
-    });
-}
-
-
-// ======================================================
-// DRAGONS DÉCOUVERTS
-// ======================================================
-
-function getDiscoveredDragons() {
-    const saved =
-        localStorage.getItem(
-            "draconiaDiscoveredDragons"
-        );
-
-    if (!saved) {
-        return [];
-    }
-
-    try {
-        return JSON.parse(saved);
-    } catch (error) {
-        return [];
-    }
-}
-
-
-function saveDiscoveredDragons(list) {
-    localStorage.setItem(
-        "draconiaDiscoveredDragons",
-        JSON.stringify(list)
-    );
-}
-
-
-// ======================================================
-// DRAGONS POSSÉDÉS
-// ======================================================
-
-function getOwnedDragons() {
-    const saved =
-        localStorage.getItem(
-            "draconiaOwnedDragons"
-        );
-
-    if (!saved) {
-        return [];
-    }
-
-    try {
-        return JSON.parse(saved);
-    } catch (error) {
-        return [];
-    }
-}
-
-
-function saveOwnedDragons(list) {
-    localStorage.setItem(
-        "draconiaOwnedDragons",
-        JSON.stringify(list)
-    );
-}
-
-
-// ======================================================
-// CRÉATION D'UN DRAGON POSSÉDÉ
-// ======================================================
-
-function createOwnedDragon(dragon) {
-    return {
-        id: dragon.id,
-        name: dragon.name,
-        element: dragon.element,
-        rarity: dragon.rarity,
-        icon: dragon.icon,
-        level: 1,
-        xp: 0,
-        hunger: 80,
-        happiness: 70,
-        cleanliness: 90
-    };
-}
-
-
-// ======================================================
-// RÉCUPÉRER UN DRAGON
-// ======================================================
-
-function getOwnedDragon(dragonId) {
-    const ownedDragons =
-        getOwnedDragons();
-
-    return ownedDragons.find(
-        dragon =>
-            dragon.id === dragonId
-    );
-}
-
-
-// ======================================================
-// XP D'UN DRAGON
-// ======================================================
-
-function addDragonXP(
-    dragon,
-    amount
-) {
-    dragon.xp += amount;
-
-    let levelUp = false;
-
-    while (
-        dragon.xp >= 100
-    ) {
-        dragon.xp -= 100;
-        dragon.level += 1;
-        levelUp = true;
-    }
-
-    return levelUp;
-}
-
-
-// ======================================================
-// CHANCE DE RARETÉ
-// ======================================================
-
-function chooseRarity() {
-    const random =
-        Math.random() * 100;
-
-    if (random < 55) {
-        return "Commun";
-    }
-
-    if (random < 80) {
-        return "Peu commun";
-    }
-
-    if (random < 93) {
-        return "Rare";
-    }
-
-    if (random < 99) {
-        return "Épique";
-    }
-
-    return "Légendaire";
-}
-
-
-// ======================================================
-// RECHERCHE D'UN DRAGON 🐉
-// ======================================================
-
-function findEgg() {
-    const discovered =
-        getDiscoveredDragons();
-
-    const owned =
-        getOwnedDragons();
-
-    const eggChance =
-        Math.random();
-
-    if (eggChance >= 0.60) {
-        showEggMessage(
-            "🌿 Tu explores les environs... mais tu ne trouves rien cette fois."
-        );
-
-        return;
-    }
-
-    const rarity =
-        chooseRarity();
-
-    let possibleDragons =
-        dragons.filter(
-            dragon =>
-                dragon.rarity ===
-                rarity
-        );
-
-    if (
-        possibleDragons.length ===
-        0
-    ) {
-        possibleDragons =
-            dragons;
-    }
-
-    const bonus =
-        getWeatherBonus();
-
-    let boostedDragons =
-        possibleDragons;
-
-    if (bonus) {
-        const bonusMap = {
-            fire: ["Feu"],
-            water: ["Eau"],
-            nature: ["Nature"],
-            air: ["Air"],
-            lightning: ["Foudre"],
-            ice: ["Glace"],
-            shadow: ["Ombre"],
-            sun: ["Lumière"]
-        };
-
-        if (bonusMap[bonus]) {
-            const matching =
-                possibleDragons.filter(
-                    dragon =>
-                        bonusMap[bonus].includes(
-                            dragon.element
-                        )
+    recipes.forEach(
+        recipe => {
+            const card =
+                document.createElement(
+                    "div"
                 );
 
-            if (
-                matching.length > 0
-            ) {
-                boostedDragons =
-                    Math.random() < 0.65
-                        ? matching
-                        : possibleDragons;
-            }
-        }
-    }
+            card.className =
+                "recipe-card";
 
-    const dragon =
-        boostedDragons[
-            Math.floor(
-                Math.random() *
-                boostedDragons.length
-            )
-        ];
+            const ingredientsText =
+                Object.entries(
+                    recipe.ingredients
+                )
+                    .map(
+                        ([resource, amount]) =>
+                            `${resourceNames[resource]} x${amount}`
+                    )
+                    .join(" • ");
 
-    if (!dragon) {
-        showEggMessage(
-            "🌿 Tu explores Draconia... mais aucun dragon n'est apparu."
-        );
+            const canCook =
+                Object.entries(
+                    recipe.ingredients
+                )
+                    .every(
+                        ([resource, amount]) =>
+                            inventory[resource] >=
+                            amount
+                    );
 
-        return;
-    }
-
-    if (
-        !discovered.includes(
-            dragon.id
-        )
-    ) {
-        discovered.push(
-            dragon.id
-        );
-
-        saveDiscoveredDragons(
-            discovered
-        );
-
-        const newDragon =
-            createOwnedDragon(
-                dragon
-            );
-
-        owned.push(
-            newDragon
-        );
-
-        saveOwnedDragons(
-            owned
-        );
-
-        player.xp += 10;
-
-        if (player.xp >= 100) {
-            player.level += 1;
-            player.xp -= 100;
-
-            showEggMessage(
-                `🎉 ${dragon.name} rejoint ton refuge ! Tu passes niveau ${player.level} !`
-            );
-        } else {
-            showEggMessage(
-                `🎉 Un œuf ! Tu découvres ${dragon.name} ! +10 XP`
-            );
-        }
-    } else {
-        const ownedDragon =
-            owned.find(
-                currentDragon =>
-                    currentDragon.id ===
-                    dragon.id
-            );
-
-        if (ownedDragon) {
-            const levelUp =
-                addDragonXP(
-                    ownedDragon,
-                    5
-                );
-
-            saveOwnedDragons(
-                owned
-            );
-
-            player.xp += 5;
-
-            if (levelUp) {
-                showEggMessage(
-                    `🔁 Doublon ! ${dragon.name} gagne 5 XP et passe niveau ${ownedDragon.level} !`
-                );
-            } else {
-                showEggMessage(
-                    `🔁 Tu trouves un œuf... c'est ${dragon.name} ! +5 XP pour ton dragon.`
-                );
-            }
-        }
-    }
-
-    updatePlayerDisplay();
-    renderOwnedDragons();
-    updateDragonDex();
-    savePlayer();
-}
-
-
-// ======================================================
-// MESSAGE APRÈS EXPLORATION
-// ======================================================
-
-function showEggMessage(message) {
-    const elements = [
-        document.getElementById(
-            "egg-message"
-        ),
-        document.getElementById(
-            "egg-message-page"
-        )
-    ];
-
-    elements.forEach(element => {
-        if (element) {
-            element.textContent =
-                message;
-        }
-    });
-}
-
-
-// ======================================================
-// AFFICHAGE DES DRAGONS POSSÉDÉS
-// ======================================================
-
-function renderOwnedDragons() {
-    const list =
-        document.getElementById(
-            "owned-dragons-list"
-        );
-
-    const emptyMessage =
-        document.getElementById(
-            "no-dragons"
-        );
-
-    const counter =
-        document.getElementById(
-            "owned-dragons-count"
-        );
-
-    if (!list) {
-        return;
-    }
-
-    const owned =
-        getOwnedDragons();
-
-    if (counter) {
-        counter.textContent =
-            owned.length;
-    }
-
-    list.innerHTML = "";
-
-    if (owned.length === 0) {
-        if (emptyMessage) {
-            emptyMessage.style.display =
-                "block";
-        }
-
-        return;
-    }
-
-    if (emptyMessage) {
-        emptyMessage.style.display =
-            "none";
-    }
-
-    owned.forEach(dragon => {
-        const card =
-            document.createElement(
-                "article"
-            );
-
-        card.className =
-            "owned-dragon-card";
-
-        const xpPercentage =
-            Math.min(
-                dragon.xp,
-                100
-            );
-
-        const compatibleRecipe =
-            recipes.find(
-                recipe =>
-                    recipe.element ===
-                    dragon.element
-            );
-
-        const compatibleMealCount =
-            compatibleRecipe
-                ? preparedMeals[
-                    compatibleRecipe.id
-                ] || 0
-                : 0;
-
-        card.innerHTML = `
-            <div class="owned-dragon-top">
-                <div class="owned-dragon-icon">
-                    ${dragon.icon}
+            card.innerHTML = `
+                <div class="recipe-icon">
+                    ${recipe.icon}
                 </div>
 
-                <div class="owned-dragon-info">
-                    <p class="rarity">
-                        ${dragon.rarity.toUpperCase()}
-                    </p>
+                <div class="recipe-info">
 
                     <h3>
-                        ${dragon.name}
+                        ${recipe.name}
                     </h3>
 
                     <p>
-                        ${dragon.element}
+                        ${recipe.description}
                     </p>
-                </div>
-
-                <div class="dragon-level">
-                    <span>
-                        Niveau
-                    </span>
-
-                    <strong>
-                        ${dragon.level}
-                    </strong>
-                </div>
-            </div>
-
-            <div class="dragon-xp-section">
-                <div class="dragon-xp-info">
-                    <span>
-                        ⭐ XP
-                    </span>
-
-                    <span>
-                        ${dragon.xp} / 100
-                    </span>
-                </div>
-
-                <div class="dragon-xp-bar">
-                    <div
-                        class="dragon-xp-fill"
-                        style="width: ${xpPercentage}%"
-                    ></div>
-                </div>
-            </div>
-
-            <div class="dragon-care-stats">
-                <div class="dragon-care-stat">
-                    <span>
-                        🍖
-                    </span>
 
                     <small>
-                        Faim
+                        ${ingredientsText}
                     </small>
 
-                    <strong>
-                        ${dragon.hunger}%
-                    </strong>
                 </div>
 
-                <div class="dragon-care-stat">
-                    <span>
-                        😊
-                    </span>
-
-                    <small>
-                        Bonheur
-                    </small>
-
-                    <strong>
-                        ${dragon.happiness}%
-                    </strong>
-                </div>
-
-                <div class="dragon-care-stat">
-                    <span>
-                        🧼
-                    </span>
-
-                    <small>
-                        Propreté
-                    </small>
-
-                    <strong>
-                        ${dragon.cleanliness}%
-                    </strong>
-                </div>
-            </div>
-
-            <div class="dragon-care-actions">
                 <button
-                    onclick="feedDragon('${dragon.id}')"
-                    ${compatibleMealCount > 0 ? "" : "disabled"}
+                    ${
+                        canCook
+                            ? ""
+                            : "disabled"
+                    }
+                    onclick="cookRecipe('${recipe.id}')"
                 >
-                    🍲 Nourrir
+                    🍲 Cuisiner
                 </button>
+            `;
 
-                <button
-                    onclick="washDragon('${dragon.id}')"
-                >
-                    🧼 Laver
-                </button>
-
-                <button
-                    onclick="playDragon('${dragon.id}')"
-                >
-                    🎮 Jouer
-                </button>
-            </div>
-        `;
-
-        list.appendChild(card);
-    });
+            list.appendChild(
+                card
+            );
+        }
+    );
 }
 
 
 // ======================================================
-// DRAGONDEX 📖
+// CUISINER
 // ======================================================
 
-function updateDragonDex() {
-    const list =
-        document.getElementById(
-            "dragon-list"
+function cookRecipe(
+    recipeId
+) {
+    const recipe =
+        recipes.find(
+            item =>
+                item.id ===
+                recipeId
         );
 
-    const counter =
-        document.getElementById(
-            "dex-count"
-        );
-
-    if (!list) {
+    if (!recipe) {
         return;
     }
 
-    const discovered =
-        getDiscoveredDragons();
+    const canCook =
+        Object.entries(
+            recipe.ingredients
+        )
+            .every(
+                ([resource, amount]) =>
+                    inventory[resource] >=
+                    amount
+            );
 
-    if (counter) {
-        counter.textContent =
-            discovered.length;
+    if (!canCook) {
+        showCookingMessage(
+            "❌ Il te manque des ingrédients."
+        );
+
+        return;
     }
 
-    list.innerHTML = "";
+    Object.entries(
+        recipe.ingredients
+    )
+        .forEach(
+            ([resource, amount]) => {
+                inventory[
+                    resource
+                ] -= amount;
+            }
+        );
 
-    dragons.forEach(dragon => {
-        const isDiscovered =
-            discovered.includes(
-                dragon.id
-            );
+    preparedMeals[
+        recipe.id
+    ] += 1;
 
-        const item =
-            document.createElement(
-                "div"
-            );
+    saveInventory();
+    savePreparedMeals();
 
-        item.className =
-            "dragon-dex-item";
+    updateInventoryDisplay();
+    updatePlayerDisplay();
 
-        if (!isDiscovered) {
-            item.innerHTML = `
-                <div class="dex-dragon-icon">
-                    ❓
-                </div>
+    showCookingMessage(
+        `${recipe.icon} ${recipe.name} préparé !`
+    );
+}
 
-                <div>
-                    <strong>
-                        Dragon inconnu
-                    </strong>
 
-                    <p>
-                        ???
-                    </p>
-                </div>
-            `;
-        } else {
-            item.innerHTML = `
-                <div class="dex-dragon-icon">
-                    ${dragon.icon}
-                </div>
+// ======================================================
+// BARRE XP JOUEUR
+// ======================================================
 
-                <div>
-                    <strong>
-                        ${dragon.name}
-                    </strong>
+function updateXPBar() {
+    const fill =
+        document.getElementById(
+            "xp-fill"
+        );
 
-                    <p>
-                        ${dragon.element} • ${dragon.rarity}
-                    </p>
-                </div>
-            `;
-        }
+    if (fill) {
+        fill.style.width =
+            `${player.xp}%`;
+    }
 
-        list.appendChild(item);
-    });
+    const levelInfo =
+        document.querySelector(
+            ".level-info span:first-child"
+        );
+
+    if (levelInfo) {
+        levelInfo.textContent =
+            `Niveau ${player.level}`;
+    }
 }
 
 
@@ -3631,222 +3473,85 @@ function updateDragonDex() {
 // NAVIGATION
 // ======================================================
 
-function showPage(page) {
-    const pages = [
-        "home",
-        "dragons",
-        "dex",
-        "inventory",
-        "cooking",
-        "profile"
-    ];
+function showPage(pageName) {
+    const pages =
+        document.querySelectorAll(
+            ".page"
+        );
 
-    pages.forEach(pageName => {
-        const pageElement =
-            document.getElementById(
-                `${pageName}-page`
-            );
+    pages.forEach(
+        page => {
+            page.style.display =
+                "none";
 
-        if (pageElement) {
-            pageElement.style.display =
-                pageName === page
-                    ? "block"
-                    : "none";
-        }
-
-        const navElement =
-            document.getElementById(
-                `nav-${pageName}`
-            );
-
-        if (navElement) {
-            navElement.classList.toggle(
-                "active",
-                pageName === page
+            page.classList.remove(
+                "active-page"
             );
         }
-    });
+    );
 
-    if (page === "dex") {
-        updateDragonDex();
+    const selectedPage =
+        document.getElementById(
+            `${pageName}-page`
+        );
+
+    if (selectedPage) {
+        selectedPage.style.display =
+            "block";
+
+        selectedPage.classList.add(
+            "active-page"
+        );
     }
 
-    if (page === "dragons") {
+    const navButtons =
+        document.querySelectorAll(
+            ".bottom-nav button"
+        );
+
+    navButtons.forEach(
+        button => {
+            button.classList.remove(
+                "active"
+            );
+        }
+    );
+
+    const activeButton =
+        document.querySelector(
+            `.bottom-nav button[data-page="${pageName}"]`
+        );
+
+    if (activeButton) {
+        activeButton.classList.add(
+            "active"
+        );
+    }
+
+    if (pageName === "dragons") {
         renderOwnedDragons();
     }
 
-    if (page === "inventory") {
+    if (pageName === "dex") {
+        renderDragonDex();
+    }
+
+    if (
+        pageName === "inventory"
+    ) {
         updateInventoryDisplay();
     }
 
-    if (page === "cooking") {
+    if (
+        pageName === "cooking"
+    ) {
         renderRecipes();
     }
-}
 
-
-// ======================================================
-// NOURRIR UN DRAGON 🍲
-// ======================================================
-
-function feedDragon(dragonId) {
-    const owned =
-        getOwnedDragons();
-
-    const dragon =
-        owned.find(
-            currentDragon =>
-                currentDragon.id ===
-                dragonId
-        );
-
-    if (!dragon) {
-        return;
-    }
-
-    const recipe =
-        recipes.find(
-            currentRecipe =>
-                currentRecipe.element ===
-                dragon.element
-        );
-
-    if (!recipe) {
-        alert(
-            "🍲 Aucun plat adapté à ce dragon."
-        );
-
-        return;
-    }
-
-    const mealCount =
-        preparedMeals[recipe.id] || 0;
-
-    if (mealCount <= 0) {
-        alert(
-            `🍲 ${dragon.name} a besoin de « ${recipe.name} » ! Va dans 🍲 Marmite pour préparer ce plat.`
-        );
-
-        return;
-    }
-
-    preparedMeals[recipe.id] -= 1;
-
-    dragon.hunger =
-        Math.min(
-            100,
-            dragon.hunger + 25
-        );
-
-    dragon.happiness =
-        Math.min(
-            100,
-            dragon.happiness + 10
-        );
-
-    const levelUp =
-        addDragonXP(
-            dragon,
-            8
-        );
-
-    savePreparedMeals();
-
-    saveOwnedDragons(
-        owned
+    window.scrollTo(
+        0,
+        0
     );
-
-    updateInventoryDisplay();
-    updatePlayerDisplay();
-    renderOwnedDragons();
-
-    if (levelUp) {
-        alert(
-            `🍲 ${dragon.name} adore son ${recipe.name} ! ⭐ Il passe niveau ${dragon.level} !`
-        );
-    } else {
-        alert(
-            `🍲 ${dragon.name} mange son ${recipe.name} avec plaisir ! ❤️`
-        );
-    }
-}
-
-
-// ======================================================
-// LAVER UN DRAGON
-// ======================================================
-
-function washDragon(dragonId) {
-    const owned =
-        getOwnedDragons();
-
-    const dragon =
-        owned.find(
-            currentDragon =>
-                currentDragon.id ===
-                dragonId
-        );
-
-    if (!dragon) {
-        return;
-    }
-
-    dragon.cleanliness =
-        Math.min(
-            100,
-            dragon.cleanliness + 20
-        );
-
-    dragon.happiness =
-        Math.min(
-            100,
-            dragon.happiness + 5
-        );
-
-    saveOwnedDragons(
-        owned
-    );
-
-    renderOwnedDragons();
-}
-
-
-// ======================================================
-// JOUER AVEC UN DRAGON
-// ======================================================
-
-function playDragon(dragonId) {
-    const owned =
-        getOwnedDragons();
-
-    const dragon =
-        owned.find(
-            currentDragon =>
-                currentDragon.id ===
-                dragonId
-        );
-
-    if (!dragon) {
-        return;
-    }
-
-    dragon.happiness =
-        Math.min(
-            100,
-            dragon.happiness + 15
-        );
-
-    dragon.hunger =
-        Math.max(
-            0,
-            dragon.hunger - 5
-        );
-
-    saveOwnedDragons(
-        owned
-    );
-
-    renderOwnedDragons();
 }
 
 
@@ -3854,36 +3559,28 @@ function playDragon(dragonId) {
 // INITIALISATION
 // ======================================================
 
-function initGame() {
-    loadPlayer();
-    loadInventory();
-    loadPreparedMeals();
-
-    generateDailyWeather();
-
-    updateWeatherDisplay();
-    updatePlayerDisplay();
-    updateInventoryDisplay();
-    updateDragonDex();
-    renderOwnedDragons();
-}
-
-
-// ======================================================
-// MISE À JOUR DE LA MÉTÉO
-// ======================================================
-
-setInterval(
-    updateWeatherDisplay,
-    30000
-);
-
-
-// ======================================================
-// LANCEMENT DU JEU
-// ======================================================
-
 document.addEventListener(
     "DOMContentLoaded",
-    initGame
+    function() {
+        loadPlayer();
+        loadInventory();
+        loadPreparedMeals();
+        loadDiscoveredDragons();
+        loadOwnedDragons();
+
+        generateDailyWeather();
+
+        updateWeatherDisplay();
+        updatePlayerDisplay();
+        updateInventoryDisplay();
+        renderDragonDex();
+        renderOwnedDragons();
+        renderRecipes();
+        updatePlainsDisplay();
+
+        setInterval(
+            updateWeatherDisplay,
+            60000
+        );
+    }
 );
