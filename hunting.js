@@ -176,3 +176,12 @@ function stopHuntingGame() {
     script.dataset.draconiaProgression = "true";
     document.body.appendChild(script);
 })();
+
+(function loadDraconiaMarket() {
+    if (document.querySelector('script[data-draconia-market="true"]')) return;
+
+    const script = document.createElement("script");
+    script.src = "market.js?v=1";
+    script.dataset.draconiaMarket = "true";
+    document.body.appendChild(script);
+})();
