@@ -565,24 +565,54 @@
         🌾 Fais pousser les cultures
     </h2>
 
-    <p>
-        Arrose les plantes puis attends
-        leur croissance.
+    <p class="plains-intro">
+        Choisis un outil, puis touche directement
+        les plantations.
     </p>
 
 
-    <button
-        id="watering-button"
-        class="mini-game-main-button"
-        onclick="waterPlants()"
+    <div class="plains-tools">
+
+        <button
+            id="plains-watering-tool"
+            class="plains-tool-button"
+            onclick="selectPlainsTool('watering')"
+            aria-label="Prendre l'arrosoir"
+        >
+            <span class="plains-tool-icon">
+                🚿
+            </span>
+
+            <span>
+                Arrosoir
+            </span>
+        </button>
+
+
+        <button
+            id="plains-scythe-tool"
+            class="plains-tool-button"
+            onclick="selectPlainsTool('scythe')"
+            aria-label="Prendre la faux"
+        >
+            <span class="plains-tool-icon">
+                🌾✂️
+            </span>
+
+            <span>
+                Faux
+            </span>
+        </button>
+
+    </div>
+
+
+    <p
+        id="watering-message"
+        class="plains-tool-message"
     >
-        💧 Arroser
-    </button>
-
-
-    <p id="watering-message"></p>
-
-    <p id="plants-growth-message"></p>
+        🚿 Prends l'arrosoir pour commencer.
+    </p>
 
 
     <div
@@ -592,33 +622,73 @@
 
         <button
             class="plant-button"
-            onclick="harvestPlant(0)"
+            onclick="interactWithPlant(0)"
+            aria-label="Plantation 1"
         >
             🌱
         </button>
 
         <button
             class="plant-button"
-            onclick="harvestPlant(1)"
+            onclick="interactWithPlant(1)"
+            aria-label="Plantation 2"
         >
             🌱
         </button>
 
         <button
             class="plant-button"
-            onclick="harvestPlant(2)"
+            onclick="interactWithPlant(2)"
+            aria-label="Plantation 3"
         >
             🌱
         </button>
 
         <button
             class="plant-button"
-            onclick="harvestPlant(3)"
+            onclick="interactWithPlant(3)"
+            aria-label="Plantation 4"
         >
             🌱
         </button>
 
     </div>
+
+
+    <div
+        id="plains-growth-area"
+        class="plains-growth-area"
+    >
+
+        <div class="plains-growth-info">
+
+            <span>
+                🌱 Croissance
+            </span>
+
+            <strong id="plains-growth-time">
+                0:00
+            </strong>
+
+        </div>
+
+
+        <div class="plains-growth-bar">
+
+            <div
+                id="plains-growth-fill"
+                class="plains-growth-fill"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <p
+        id="plants-growth-message"
+        class="plains-growth-message"
+    ></p>
 
 
     <p id="plains-game-message"></p>
