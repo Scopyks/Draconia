@@ -159,7 +159,6 @@
         if (bonus) bonus.addEventListener("click", claimBonus);
     }
 
-    // Récoltes : compte toutes les ressources obtenues et distingue le poisson.
     const originalAddResource = window.addResource;
     if (typeof originalAddResource === "function") {
         window.addResource = function(resource, amount = 1) {
@@ -174,7 +173,6 @@
         };
     }
 
-    // Cuisine.
     const originalCookRecipe = window.cookRecipe;
     if (typeof originalCookRecipe === "function") {
         window.cookRecipe = function(recipeId) {
@@ -185,12 +183,17 @@
         };
     }
 
-    // Ces événements sont appelés par les extensions de soin des dragons.
     window.draconiaMissionProgress = record;
     window.renderDailyMissions = render;
 
-    document.addEventListener("DOMContentLoaded", function() {
+    function startMissions() {
         load();
         render();
-    });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", startMissions, { once: true });
+    } else {
+        startMissions();
+    }
 })();
