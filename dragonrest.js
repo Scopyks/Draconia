@@ -2,7 +2,8 @@
 // DRACONIA - REPOS DES DRAGONS 💤
 // ======================================================
 
-const DRAGON_REST_DURATION = 10 * 60 * 1000;
+const DRAGON_MAX_REST_DURATION = 10 * 60 * 1000;
+const DRAGON_TIRED_THRESHOLD = 25;
 const dragonRestIntervals = new Map();
 
 function isDragonResting(ownedDragon) {
@@ -10,6 +11,27 @@ function isDragonResting(ownedDragon) {
         ownedDragon &&
         ownedDragon.restUntil &&
         ownedDragon.restUntil > Date.now()
+    );
+}
+
+function isDragonTooTired(ownedDragon) {
+    return Boolean(
+        ownedDragon &&
+        ownedDragon.energy < DRAGON_TIRED_THRESHOLD
+    );
+}
+
+function getDragonRestDurationFromEnergy(energy) {
+    const safeEnergy = Math.max(
+        0,
+        Math.min(100, Number(energy) || 0)
+    );
+
+    const missingEnergy = 100 - safeEnergy;
+
+    return Math.round(
+        DRAGON_MAX_REST_DURATION *
+        (missingEnergy / 100)
     );
 }
 
@@ -111,6 +133,28 @@ function blockIfDragonResting(dragonId) {
     return true;
 }
 
+function blockIfDragonTooTired(dragonId, actionLabel) {
+    const ownedDragon =
+        ownedDragons.find(
+            dragon => dragon.id === dragonId
+        );
+
+    if (!isDragonTooTired(ownedDragon)) {
+        return false;
+    }
+
+    const dragon =
+        dragons.find(
+            item => item.id === dragonId
+        );
+
+    alert(
+        `${dragon ? dragon.name : "Ce dragon"} est trop fatigué pour ${actionLabel}. Il lui faut au moins ${DRAGON_TIRED_THRESHOLD} % d'énergie.`
+    );
+
+    return true;
+}
+
 function injectDragonRestStyles() {
     if (
         document.getElementById(
@@ -163,9 +207,17 @@ function injectDragonRestStyles() {
             opacity: .92;
         }
 
-        .dragon-resting-card .dragon-care-actions button:disabled {
+        .dragon-resting-card .dragon-care-actions button:disabled,
+        .dragon-too-tired-card .dragon-care-actions button:disabled {
             opacity: .45;
             cursor: not-allowed;
+        }
+
+        .dragon-tired-warning {
+            margin-top: 10px;
+            color: #f0c98b;
+            font-size: 12px;
+            text-align: center;
         }
     `;
 
@@ -221,13 +273,26 @@ function decorateDragonRestCards() {
                 ".dragon-rest-panel"
             );
 
+        let tiredWarning =
+            card.querySelector(
+                ".dragon-tired-warning"
+            );
+
         if (!isDragonResting(ownedDragon)) {
             card.classList.remove(
                 "dragon-resting-card"
             );
 
-            washButton.disabled = false;
-            playButton.disabled = false;
+            const tooTired =
+                isDragonTooTired(ownedDragon);
+
+            card.classList.toggle(
+                "dragon-too-tired-card",
+                tooTired
+            );
+
+            washButton.disabled = tooTired;
+            playButton.disabled = tooTired;
             restButton.disabled = false;
             restButton.textContent =
                 "💤 Repos";
@@ -237,6 +302,26 @@ function decorateDragonRestCards() {
             }
 
             panel?.remove();
+
+            if (tooTired) {
+                if (!tiredWarning) {
+                    tiredWarning =
+                        document.createElement(
+                            "p"
+                        );
+                    tiredWarning.className =
+                        "dragon-tired-warning";
+                    card.appendChild(
+                        tiredWarning
+                    );
+                }
+
+                tiredWarning.textContent =
+                    `😴 Trop fatigué : lavage et jeux disponibles à partir de ${DRAGON_TIRED_THRESHOLD} % d'énergie.`;
+            } else {
+                tiredWarning?.remove();
+            }
+
             return;
         }
 
@@ -247,6 +332,10 @@ function decorateDragonRestCards() {
         card.classList.add(
             "dragon-resting-card"
         );
+        card.classList.remove(
+            "dragon-too-tired-card"
+        );
+        tiredWarning?.remove();
 
         feedButton.disabled = true;
         washButton.disabled = true;
@@ -379,6 +468,10 @@ openWashDragon = function(dragonId) {
     if (
         blockIfDragonResting(
             dragonId
+        ) ||
+        blockIfDragonTooTired(
+            dragonId,
+            "être lavé"
         )
     ) {
         return;
@@ -396,6 +489,10 @@ playWithDragon = function(dragonId) {
     if (
         blockIfDragonResting(
             dragonId
+        ) ||
+        blockIfDragonTooTired(
+            dragonId,
+            "jouer"
         )
     ) {
         return;
@@ -441,12 +538,17 @@ restDragon = function(dragonId) {
         return;
     }
 
+    const restDuration =
+        getDragonRestDurationFromEnergy(
+            ownedDragon.energy
+        );
+
     ownedDragon.restStart =
         Date.now();
 
     ownedDragon.restUntil =
         ownedDragon.restStart +
-        DRAGON_REST_DURATION;
+        restDuration;
 
     ownedDragon.restStartEnergy =
         ownedDragon.energy;
