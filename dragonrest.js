@@ -498,6 +498,23 @@ playWithDragon = function(dragonId) {
         return;
     }
 
+    const ownedDragon =
+        ownedDragons.find(
+            dragon => dragon.id === dragonId
+        );
+
+    if (!ownedDragon) {
+        return;
+    }
+
+    ownedDragon.hunger = Math.max(
+        0,
+        ownedDragon.hunger - 5
+    );
+
+    saveOwnedDragons();
+    renderOwnedDragons();
+
     return originalPlayWithDragonForRest(
         dragonId
     );
