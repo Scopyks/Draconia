@@ -3,7 +3,7 @@
 // ======================================================
 
 (function initDailyMissionsSystem() {
-    const STORAGE_KEY = "draconiaDailyMissionsV1";
+    const STORAGE_KEY = DraconiaConfig.storage.dailyMissions;
     const DAILY_COUNT = 3;
     const ALL_BONUS = 30;
 
@@ -40,12 +40,12 @@
     }
 
     function save() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        DraconiaStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     function load() {
         try {
-            state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            state = JSON.parse(DraconiaStorage.getItem(STORAGE_KEY));
         } catch (error) {
             state = null;
         }

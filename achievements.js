@@ -1,5 +1,5 @@
 (function(){
-const KEY="draconiaAchievementsV1";
+const KEY=DraconiaConfig.storage.achievements;
 const list=[
 {id:"d1",icon:"🥚",title:"Première éclosion",text:"Possède ton premier dragon",reward:25,type:"owned",target:1},
 {id:"d3",icon:"🐉",title:"Petit refuge",text:"Possède 3 dragons",reward:40,type:"owned",target:3},
@@ -12,7 +12,7 @@ const list=[
 {id:"coin250",icon:"💰",title:"Trésorier",text:"Possède 250 pièces",reward:50,type:"coins",target:250}
 ];
 let state={unlocked:{}};
-try{state=JSON.parse(localStorage.getItem(KEY))||state}catch(e){}
+try{state=JSON.parse(DraconiaStorage.getItem(KEY))||state}catch(e){}
 if(!state.unlocked)state.unlocked={};
 
 function sum(o){return o?Object.values(o).reduce((a,v)=>a+(Number(v)||0),0):0}
@@ -35,7 +35,7 @@ function toast(a){styles();let t=document.getElementById("achievement-toast");if
 function panel(){const p=document.getElementById("profile-page");if(!p)return null;let x=document.getElementById("achievements");if(!x){x=document.createElement("section");x.id="achievements";x.className="achievements";p.appendChild(x)}return x}
 function render(){styles();const p=panel();if(!p)return;const done=list.filter(a=>state.unlocked[a.id]).length;p.innerHTML=`<p class="small-title">PROGRESSION PERMANENTE</p><h2>🏆 Succès <small>${done}/${list.length}</small></h2>`+list.map(a=>{const raw=progress(a),v=Math.min(a.target,raw),ok=!!state.unlocked[a.id],pc=ok?100:Math.round(v/a.target*100);return `<div class="achievement ${ok?"done":""}"><div class="achievement-top"><div class="achievement-icon">${a.icon}</div><div class="achievement-info"><strong>${a.title}</strong><small>${a.text}</small></div><div class="achievement-reward">${ok?"✅":`💰 ${a.reward}`}</div></div><div class="achievement-bar"><div class="achievement-fill" style="width:${pc}%"></div></div><div class="achievement-bottom"><span>${ok?"Terminé":`${v} / ${a.target}`}</span><span>${ok?"Récompense reçue":"En progression"}</span></div></div>`}).join("")}
 function reward(a){const p=getPlayer();if(!p)return false;p.coins=(Number(p.coins)||0)+a.reward;if(typeof savePlayer==="function")savePlayer();if(typeof updatePlayerDisplay==="function")updatePlayerDisplay();return true}
-function check(){let delay=0,changed=false;list.forEach(a=>{if(state.unlocked[a.id]||progress(a)<a.target)return;if(!reward(a))return;state.unlocked[a.id]=Date.now();changed=true;setTimeout(()=>toast(a),delay);delay+=3700});if(changed)localStorage.setItem(KEY,JSON.stringify(state));render()}
+function check(){let delay=0,changed=false;list.forEach(a=>{if(state.unlocked[a.id]||progress(a)<a.target)return;if(!reward(a))return;state.unlocked[a.id]=Date.now();changed=true;setTimeout(()=>toast(a),delay);delay+=3700});if(changed)DraconiaStorage.setItem(KEY,JSON.stringify(state));render()}
 function start(){render();setTimeout(check,500);setInterval(check,2000);window.renderAchievements=render;window.checkDraconiaAchievements=check}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();

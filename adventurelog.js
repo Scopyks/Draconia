@@ -1,9 +1,9 @@
 // DRACONIA - JOURNAL D'AVENTURE 📜
 (function(){
-const KEY="draconiaAdventureLogV1";
+const KEY=DraconiaConfig.storage.adventureLog;
 const MAX=25;
-function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(x)?x:[]}catch(e){return[]}}
-function save(items){localStorage.setItem(KEY,JSON.stringify(items.slice(0,MAX)))}
+function load(){try{const x=JSON.parse(DraconiaStorage.getItem(KEY)||"[]");return Array.isArray(x)?x:[]}catch(e){return[]}}
+function save(items){DraconiaStorage.setItem(KEY,JSON.stringify(items.slice(0,MAX)))}
 function stamp(){return new Date().toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}
 function add(text,icon="📜",type="general"){
  if(!text)return;

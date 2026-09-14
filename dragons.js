@@ -23,8 +23,8 @@ let ownedDragons = [];
 
 function loadDiscoveredDragons() {
     const saved =
-        localStorage.getItem(
-            "draconiaDiscoveredDragons"
+        DraconiaStorage.getItem(
+            DraconiaConfig.storage.discoveredDragons
         );
 
     if (!saved) {
@@ -46,8 +46,8 @@ function loadDiscoveredDragons() {
 // ======================================================
 
 function saveDiscoveredDragons() {
-    localStorage.setItem(
-        "draconiaDiscoveredDragons",
+    DraconiaStorage.setItem(
+        DraconiaConfig.storage.discoveredDragons,
         JSON.stringify(
             discoveredDragons
         )
@@ -61,8 +61,8 @@ function saveDiscoveredDragons() {
 
 function loadOwnedDragons() {
     const saved =
-        localStorage.getItem(
-            "draconiaOwnedDragons"
+        DraconiaStorage.getItem(
+            DraconiaConfig.storage.ownedDragons
         );
 
     if (!saved) {
@@ -84,8 +84,8 @@ function loadOwnedDragons() {
 // ======================================================
 
 function saveOwnedDragons() {
-    localStorage.setItem(
-        "draconiaOwnedDragons",
+    DraconiaStorage.setItem(
+        DraconiaConfig.storage.ownedDragons,
         JSON.stringify(
             ownedDragons
         )

@@ -53,7 +53,7 @@ let fishingGreenWidth = 25;
 // PLAINES 🌾
 // ======================================================
 
-const PLAINS_GROWTH_TIME = 60000;
+const PLAINS_GROWTH_TIME = DraconiaConfig.timings.plainsGrowth;
 
 let plainsSelectedTool = null;
 
