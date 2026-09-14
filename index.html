@@ -1534,8 +1534,32 @@
 <!-- SCRIPT -->
 <!-- ================================================== -->
 
-<script src="script.js?v=6"></script>
-<script src="fishing.js?v=1"></script>
+<!-- Cœur du jeu : l'ordre est important car ces scripts partagent l'état global. -->
+<script src="core.js?v=1"></script>
+<script src="gathering.js?v=1"></script>
+<script src="forest.js?v=1"></script>
+<script src="plains.js?v=1"></script>
+<script src="fishing-core.js?v=1"></script>
+<script src="hunting-core.js?v=1"></script>
+<script src="dragons.js?v=1"></script>
+<script src="cooking-core.js?v=1"></script>
+<script src="ui.js?v=1"></script>
+
+<!-- Extensions : chargement explicite, stable et lisible. -->
+<script src="fishing.js?v=2"></script>
+<script src="hunting.js?v=2"></script>
+<script src="cooking.js?v=1"></script>
+<script src="missions.js?v=2"></script>
+<script src="achievements.js?v=2"></script>
+<script src="playerprogression.js?v=2"></script>
+<script src="dragondex.js?v=2"></script>
+<script src="dailyrewards.js?v=1"></script>
+<script src="dragonpersonality.js?v=1"></script>
+<script src="adventurelog.js?v=1"></script>
+<script src="eggs.js?v=2"></script>
+<script src="exploration.js?v=3"></script>
+<script src="dragoncare.js?v=1"></script>
+<script src="dragonrest.js?v=1"></script>
 
 </body>
 </html>
