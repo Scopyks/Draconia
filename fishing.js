@@ -103,23 +103,35 @@ function startFishingGame() {
 
 
 // ======================================================
-// CHARGEMENT DU MINI-JEU DE CHASSE 🏹
+// CHARGEMENT DES EXTENSIONS DE MINI-JEUX
 // ======================================================
 
-(function loadHuntingGame() {
-    if (
-        document.querySelector(
-            'script[data-draconia-hunting="true"]'
-        )
-    ) {
-        return;
-    }
+(function loadDraconiaMiniGames() {
+    const files = [
+        {
+            src: "hunting.js?v=1",
+            key: "draconiaHunting"
+        },
+        {
+            src: "dragoncare.js?v=1",
+            key: "draconiaDragonCare"
+        }
+    ];
 
-    const script =
-        document.createElement("script");
+    files.forEach(file => {
+        const selector =
+            `script[data-${file.key.replace(/([A-Z])/g, "-$1").toLowerCase()}="true"]`;
 
-    script.src = "hunting.js?v=1";
-    script.dataset.draconiaHunting = "true";
+        if (document.querySelector(selector)) {
+            return;
+        }
 
-    document.body.appendChild(script);
+        const script =
+            document.createElement("script");
+
+        script.src = file.src;
+        script.dataset[file.key] = "true";
+
+        document.body.appendChild(script);
+    });
 })();
