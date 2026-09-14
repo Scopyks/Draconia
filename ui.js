@@ -141,7 +141,7 @@ document.addEventListener(
 
         setInterval(
             updateWeatherDisplay,
-            60000
+            DraconiaConfig.timings.weatherRefresh
         );
     }
 );

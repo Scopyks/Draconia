@@ -115,7 +115,7 @@ let inventory = {
 };
 
 const INVENTORY_STORAGE_KEY =
-    "draconiaInventory";
+    DraconiaConfig.storage.inventory;
 
 
 // ======================================================
@@ -136,7 +136,7 @@ let preparedMeals = {
 };
 
 const MEALS_STORAGE_KEY =
-    "draconiaPreparedMeals";
+    DraconiaConfig.storage.preparedMeals;
 
 
 // ======================================================
@@ -293,7 +293,7 @@ const resourceNames = {
 // ======================================================
 
 const WEATHER_STORAGE_KEY =
-    "draconiaDailyWeatherV2";
+    DraconiaConfig.storage.weather;
 
 const weatherTypes = [
     {
@@ -437,7 +437,7 @@ function generateDailyWeather() {
     const today = getTodayDate();
 
     const savedWeather =
-        localStorage.getItem(
+        DraconiaStorage.getItem(
             WEATHER_STORAGE_KEY
         );
 
@@ -494,7 +494,7 @@ function generateDailyWeather() {
         temperature
     };
 
-    localStorage.setItem(
+    DraconiaStorage.setItem(
         WEATHER_STORAGE_KEY,
         JSON.stringify({
             date: today,
@@ -599,8 +599,8 @@ function getWeatherBonus() {
 // ======================================================
 
 function savePlayer() {
-    localStorage.setItem(
-        "draconiaPlayer",
+    DraconiaStorage.setItem(
+        DraconiaConfig.storage.player,
         JSON.stringify(player)
     );
 }
@@ -612,8 +612,8 @@ function savePlayer() {
 
 function loadPlayer() {
     const savedPlayer =
-        localStorage.getItem(
-            "draconiaPlayer"
+        DraconiaStorage.getItem(
+            DraconiaConfig.storage.player
         );
 
     if (!savedPlayer) {
@@ -641,7 +641,7 @@ function loadPlayer() {
 // ======================================================
 
 function saveInventory() {
-    localStorage.setItem(
+    DraconiaStorage.setItem(
         INVENTORY_STORAGE_KEY,
         JSON.stringify(inventory)
     );
@@ -654,7 +654,7 @@ function saveInventory() {
 
 function loadInventory() {
     const savedInventory =
-        localStorage.getItem(
+        DraconiaStorage.getItem(
             INVENTORY_STORAGE_KEY
         );
 
@@ -684,7 +684,7 @@ function loadInventory() {
 // ======================================================
 
 function savePreparedMeals() {
-    localStorage.setItem(
+    DraconiaStorage.setItem(
         MEALS_STORAGE_KEY,
         JSON.stringify(preparedMeals)
     );
@@ -697,7 +697,7 @@ function savePreparedMeals() {
 
 function loadPreparedMeals() {
     const savedMeals =
-        localStorage.getItem(
+        DraconiaStorage.getItem(
             MEALS_STORAGE_KEY
         );
 

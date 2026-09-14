@@ -2,10 +2,10 @@
 // DRACONIA - OEUFS ET ECLOSION 🥚✨
 // ======================================================
 (function initDragonEggs(){
-const STORAGE_KEY="draconiaActiveEggV1";
+const STORAGE_KEY=DraconiaConfig.storage.activeEgg;
 const hatchTimes={"Commun":30000,"Peu commun":45000,"Rare":60000,"Épique":90000,"Légendaire":120000};let timer=null;
-function loadEgg(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))}catch(e){return null}}
-function saveEgg(e){if(!e)localStorage.removeItem(STORAGE_KEY);else localStorage.setItem(STORAGE_KEY,JSON.stringify(e))}
+function loadEgg(){try{return JSON.parse(DraconiaStorage.getItem(STORAGE_KEY))}catch(e){return null}}
+function saveEgg(e){if(!e)DraconiaStorage.removeItem(STORAGE_KEY);else DraconiaStorage.setItem(STORAGE_KEY,JSON.stringify(e))}
 function formatTime(ms){const t=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(t/60)}:${String(t%60).padStart(2,"0")}`}
 function getDragon(id){return typeof dragons!=="undefined"?dragons.find(d=>d.id===id)||null:null}
 function injectStyles(){if(document.getElementById("draconia-eggs-style"))return;const s=document.createElement("style");s.id="draconia-eggs-style";s.textContent=`.dragon-egg-panel{margin:14px 0;padding:14px;border-radius:18px;background:linear-gradient(145deg,rgba(250,204,21,.11),rgba(168,85,247,.09));border:1px solid rgba(168,85,247,.18);text-align:center}.dragon-egg-panel.empty{opacity:.76}.dragon-egg-big{font-size:54px;line-height:1;margin-bottom:8px}.dragon-egg-panel h3{margin:4px 0 6px}.dragon-egg-panel p{margin:4px 0;font-size:12px;line-height:1.45}.dragon-egg-progress{height:10px;margin:10px 0;border-radius:999px;background:rgba(0,0,0,.09);overflow:hidden}.dragon-egg-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#a855f7,#f59e0b);transition:width .8s linear}.dragon-egg-hatch{margin-top:10px;border:0;border-radius:12px;padding:10px 14px;background:#7c3aed;color:white;font-weight:900}.dragon-egg-hatch:disabled{opacity:.45}.dragon-egg-ready{font-weight:900;color:#7c3aed}`;document.head.appendChild(s)}

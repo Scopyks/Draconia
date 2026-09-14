@@ -1,6 +1,6 @@
 // DRACONIA - EXPLORATION ENRICHIE 🗺️🐉
 (function(){
-const KEY="draconiaExplorationZone";
+const KEY=DraconiaConfig.storage.explorationZone;
 const zones={
     forest:{name:"Forêt ancienne",icon:"🌲",description:"Nature, Air et Terre sont plus fréquents.",elements:["Nature","Air","Terre"]},
     lake:{name:"Lac brumeux",icon:"🌊",description:"Eau, Glace et Air sont plus fréquents.",elements:["Eau","Glace","Air"]},
@@ -8,7 +8,7 @@ const zones={
     ruins:{name:"Ruines célestes",icon:"🏛️",description:"Ombre, Lumière et Cosmique y apparaissent plus souvent.",elements:["Ombre","Lumière","Cosmique"]}
 };
 
-let selectedZone=localStorage.getItem(KEY);
+let selectedZone=DraconiaStorage.getItem(KEY);
 if(!zones[selectedZone])selectedZone="forest";
 let activeEvent=false;
 
@@ -131,7 +131,7 @@ function renderZones(){
     c.querySelectorAll("[data-zone]").forEach(b=>b.onclick=()=>{
         if(activeEvent)return;
         selectedZone=b.dataset.zone;
-        localStorage.setItem(KEY,selectedZone);
+        DraconiaStorage.setItem(KEY,selectedZone);
         renderZones();
     });
 }
