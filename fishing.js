@@ -142,6 +142,11 @@ function startFishingGame() {
     );
 
     loadScriptOnce(
+        "cooking.js?v=1",
+        "draconiaCooking"
+    );
+
+    loadScriptOnce(
         "dragoncare.js?v=1",
         "draconiaDragonCare",
         function() {
