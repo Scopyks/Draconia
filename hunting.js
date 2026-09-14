@@ -181,7 +181,7 @@ function stopHuntingGame() {
     if (document.querySelector('script[data-draconia-market="true"]')) return;
 
     const script = document.createElement("script");
-    script.src = "market.js?v=1";
+    script.src = "market.js?v=2";
     script.dataset.draconiaMarket = "true";
     document.body.appendChild(script);
 })();
