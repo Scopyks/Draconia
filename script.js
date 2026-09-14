@@ -979,6 +979,7 @@ let forestMushroomTimers = [
 ];
 
 let forestDropCounter = 0;
+let forestTreeShakeCooldown = false;
 
 
 // ======================================================
@@ -1529,12 +1530,30 @@ function shakeTree() {
         return;
     }
 
+    if (
+        forestTreeShakeCooldown
+    ) {
+        return;
+    }
+
+    forestTreeShakeCooldown = true;
+
     const treeButton =
         document.getElementById(
             "forest-tree-button"
         );
 
     if (treeButton) {
+        treeButton.disabled = true;
+
+        setTimeout(
+            function() {
+                forestTreeShakeCooldown = false;
+                treeButton.disabled = false;
+            },
+            2000
+        );
+
         treeButton.classList.remove(
             "shake-tree"
         );
@@ -1545,6 +1564,7 @@ function shakeTree() {
             "shake-tree"
         );
     }
+
 
     /*
      * Chance de faire tomber quelque chose.
