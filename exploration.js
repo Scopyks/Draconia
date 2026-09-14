@@ -154,6 +154,12 @@
         const message = document.getElementById("egg-message");
         const zone = zones[selectedZone];
 
+        if (typeof window.draconiaHasActiveEgg === "function" && window.draconiaHasActiveEgg()) {
+            if (message) message.textContent = "🥚 Un œuf est déjà en incubation. Fais-le éclore avant de repartir explorer.";
+            if (typeof window.renderDragonEgg === "function") window.renderDragonEgg();
+            return;
+        }
+
         if (button) button.disabled = true;
         if (message) message.textContent = `${zone.icon} Exploration de ${zone.name}...`;
 
@@ -161,25 +167,33 @@
             const foundSomething = Math.random() < 0.55;
 
             if (!foundSomething) {
-                if (message) message.textContent = `🍃 Aucun dragon trouvé dans ${zone.name} cette fois.`;
+                if (message) message.textContent = `🍃 Aucun œuf trouvé dans ${zone.name} cette fois.`;
                 if (button) button.disabled = false;
                 return;
             }
 
             const dragon = pickDragonForZone();
             if (!dragon) {
-                if (message) message.textContent = "Aucun dragon n'a pu être trouvé.";
+                if (message) message.textContent = "Aucun œuf n'a pu être trouvé.";
                 if (button) button.disabled = false;
                 return;
             }
 
-            if (typeof discoverDragon === "function") discoverDragon(dragon);
-
-            if (message) {
-                message.textContent = `${dragon.icon} Tu as rencontré ${dragon.name} • ${dragon.element} • ${dragon.rarity} !`;
+            if (typeof window.draconiaReceiveEgg !== "function") {
+                if (message) message.textContent = "🥚 L'incubateur n'est pas encore prêt.";
+                if (button) button.disabled = false;
+                return;
             }
 
-            if (button) button.disabled = false;
+            const accepted = window.draconiaReceiveEgg(dragon, zone.name);
+
+            if (message) {
+                message.textContent = accepted
+                    ? `🥚 Tu as trouvé un œuf ${dragon.element} • ${dragon.rarity} ! Il est maintenant en incubation.`
+                    : "🥚 Un œuf est déjà en incubation.";
+            }
+
+            if (!accepted && button) button.disabled = false;
         }, 850);
     }
 
