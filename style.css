@@ -2,42 +2,38 @@
 @import url("https://cdn.jsdelivr.net/gh/Scopyks/Draconia@417498907220fba03c9afd8b27a18e4b6080ebc9/style.css");
 
 /* =====================================================
-   TEST VISUEL : VRAI ARBRE DANS LA FORÊT
-   Image CC0 : Wikimedia Commons - Client1 AppleTree.png
+   ARBRE CENTRAL DE LA FORÊT
    ===================================================== */
 
 .forest-tree {
     position: absolute;
     z-index: 10;
     left: 50%;
-    top: 28px;
-    width: 340px;
-    height: 385px;
+    bottom: 0;
+    width: min(88%, 360px);
+    aspect-ratio: 900 / 950;
     transform: translateX(-50%);
-    transform-origin: 50% 92%;
-    border: none;
+    transform-origin: 50% 94%;
+    border: 0;
     padding: 0;
-    background-color: transparent;
-    background-image: url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Client1_AppleTree.png");
-    background-repeat: no-repeat;
-    background-position: center bottom;
-    background-size: contain;
-    filter: drop-shadow(0 18px 15px rgba(16, 38, 22, 0.34));
+    background: transparent;
     appearance: none;
     -webkit-appearance: none;
-    overflow: visible;
+    filter: drop-shadow(0 18px 15px rgba(16, 38, 22, 0.34));
     transition: transform 0.12s ease, filter 0.2s ease;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
 }
 
-/* On masque l'ancien arbre fabriqué avec des formes CSS. */
-.forest-tree .tree-trunk,
-.forest-tree .tree-branch,
-.forest-tree .tree-crown,
-.forest-tree .tree-leaf {
-    display: none;
+.forest-tree-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 .forest-tree:hover {
@@ -45,10 +41,15 @@
 }
 
 .forest-tree:active {
-    transform: translateX(-50%) scale(0.97);
+    transform: translateX(-50%) scale(0.985);
 }
 
-/* La fonction shakeTree() ajoute déjà cette classe. */
+.forest-tree:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.9);
+    outline-offset: 4px;
+    border-radius: 45%;
+}
+
 .forest-tree.shake-tree {
     animation: real-tree-shake 0.58s ease;
 }
@@ -64,7 +65,6 @@
     100% { transform: translateX(-50%) rotate(0deg); }
 }
 
-/* L'ancien ciel reste visible mais devient un peu plus naturel autour de l'image. */
 .forest-background {
     background:
         radial-gradient(circle at 76% 16%, rgba(255, 244, 190, 0.72), transparent 18%),
@@ -78,13 +78,16 @@
 
 @media (max-width: 380px) {
     .forest-tree {
-        top: 38px;
-        width: 300px;
-        height: 350px;
-        transform: translateX(-50%);
+        width: min(92%, 330px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .forest-tree {
+        transition: none;
     }
 
-    .forest-tree:active {
-        transform: translateX(-50%) scale(0.97);
+    .forest-tree.shake-tree {
+        animation-duration: 0.01ms;
     }
 }
