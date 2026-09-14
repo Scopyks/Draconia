@@ -115,15 +115,18 @@
 
     function ensurePanel() {
         let panel = document.getElementById("daily-missions");
-        if (panel) return panel;
-        const home = document.getElementById("home-page");
-        if (!home) return null;
+        const profile = document.getElementById("profile-page");
+        if (!profile) return null;
+
+        if (panel) {
+            if (panel.parentElement !== profile) profile.appendChild(panel);
+            return panel;
+        }
+
         panel = document.createElement("section");
         panel.id = "daily-missions";
         panel.className = "daily-missions";
-        const levelCard = home.querySelector(".level-card");
-        if (levelCard) levelCard.insertAdjacentElement("afterend", panel);
-        else home.prepend(panel);
+        profile.appendChild(panel);
         return panel;
     }
 
