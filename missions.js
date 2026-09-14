@@ -19,6 +19,7 @@
 
     let state = null;
     let hooksTimer = null;
+    let missionToastTimer = null;
 
     function today() {
         if (typeof getTodayDate === "function") return getTodayDate();
@@ -65,6 +66,36 @@
         updatePlayerDisplay();
     }
 
+    function showMissionCompleted(mission) {
+        injectStyles();
+
+        let toast = document.getElementById("daily-mission-completed-toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "daily-mission-completed-toast";
+            toast.className = "daily-mission-completed-toast";
+            document.body.appendChild(toast);
+        }
+
+        toast.innerHTML = `
+            <div class="daily-mission-toast-icon">${mission.icon}</div>
+            <div>
+                <strong>✅ Mission terminée !</strong>
+                <span>${mission.title}</span>
+                <small>Va dans Profil pour récupérer ${mission.reward} 💰</small>
+            </div>
+        `;
+
+        toast.classList.remove("show");
+        void toast.offsetWidth;
+        toast.classList.add("show");
+
+        if (missionToastTimer) clearTimeout(missionToastTimer);
+        missionToastTimer = setTimeout(function() {
+            toast.classList.remove("show");
+        }, 3500);
+    }
+
     function claimMission(index) {
         const mission = state.missions[index];
         if (!mission || mission.claimed || mission.progress < mission.target) return;
@@ -87,20 +118,33 @@
     function record(event, amount = 1) {
         load();
         let changed = false;
+        const newlyCompleted = [];
 
         state.missions.forEach(mission => {
             if (mission.event !== event || mission.claimed) return;
 
+            const wasComplete = mission.progress >= mission.target;
             const next = Math.min(mission.target, mission.progress + amount);
+
             if (next !== mission.progress) {
                 mission.progress = next;
                 changed = true;
+            }
+
+            if (!wasComplete && mission.progress >= mission.target) {
+                newlyCompleted.push(mission);
             }
         });
 
         if (changed) {
             save();
             render();
+
+            newlyCompleted.forEach(function(mission, index) {
+                setTimeout(function() {
+                    showMissionCompleted(mission);
+                }, index * 3800);
+            });
         }
     }
 
@@ -117,7 +161,10 @@
             .daily-mission-reward{font-weight:800;white-space:nowrap}.daily-mission-bar{height:9px;background:rgba(0,0,0,.09);border-radius:999px;overflow:hidden;margin:11px 0 7px}.daily-mission-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:999px;transition:width .25s ease}
             .daily-mission-bottom{display:flex;justify-content:space-between;align-items:center;font-size:12px}.daily-mission button,.daily-bonus button{border:0;border-radius:10px;padding:8px 11px;font-weight:800;cursor:pointer}.daily-mission button{background:#7c3aed;color:white}.daily-mission button:disabled{opacity:.45;cursor:default}
             .daily-bonus{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;padding:12px;border-radius:14px;background:rgba(250,204,21,.14)}.daily-bonus button{background:#f59e0b;color:#fff}.daily-bonus button:disabled{opacity:.5}
-            @media(max-width:520px){.daily-missions{padding:14px}.daily-missions-head{align-items:flex-start}.daily-mission-top{align-items:flex-start}.daily-mission-reward{font-size:13px}}
+            .daily-mission-completed-toast{position:fixed;left:50%;top:18px;z-index:3000;width:min(calc(100% - 28px),430px);display:flex;align-items:center;gap:13px;padding:14px 16px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:linear-gradient(135deg,#312e81,#7c3aed);color:#fff;box-shadow:0 16px 38px rgba(49,46,129,.38);opacity:0;pointer-events:none;transform:translate(-50%,-22px) scale(.96);transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
+            .daily-mission-completed-toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+            .daily-mission-toast-icon{display:grid;place-items:center;flex:0 0 50px;width:50px;height:50px;border-radius:15px;background:rgba(255,255,255,.15);font-size:27px}.daily-mission-completed-toast strong,.daily-mission-completed-toast span,.daily-mission-completed-toast small{display:block}.daily-mission-completed-toast strong{font-size:15px}.daily-mission-completed-toast span{margin-top:2px;font-weight:800}.daily-mission-completed-toast small{margin-top:3px;color:rgba(255,255,255,.82);line-height:1.35}
+            @media(max-width:520px){.daily-missions{padding:14px}.daily-missions-head{align-items:flex-start}.daily-mission-top{align-items:flex-start}.daily-mission-reward{font-size:13px}.daily-mission-completed-toast{top:12px;padding:12px 13px}.daily-mission-toast-icon{flex-basis:44px;width:44px;height:44px;font-size:24px}}
         `;
         document.head.appendChild(style);
     }
