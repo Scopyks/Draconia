@@ -11,21 +11,31 @@ const list=[
 {id:"bag20",icon:"🎒",title:"Sac bien rempli",text:"Possède 20 ressources",reward:35,type:"inventory",target:20},
 {id:"coin250",icon:"💰",title:"Trésorier",text:"Possède 250 pièces",reward:50,type:"coins",target:250}
 ];
-let state={unlocked:{}};try{state=JSON.parse(localStorage.getItem(KEY))||state}catch(e){}if(!state.unlocked)state.unlocked={};
+let state={unlocked:{}};
+try{state=JSON.parse(localStorage.getItem(KEY))||state}catch(e){}
+if(!state.unlocked)state.unlocked={};
+
 function sum(o){return o?Object.values(o).reduce((a,v)=>a+(Number(v)||0),0):0}
+function getOwned(){return typeof ownedDragons!=="undefined"&&Array.isArray(ownedDragons)?ownedDragons:[]}
+function getPlayer(){return typeof player!=="undefined"&&player?player:null}
+function getMeals(){return typeof preparedMeals!=="undefined"&&preparedMeals?preparedMeals:null}
+function getInventory(){return typeof inventory!=="undefined"&&inventory?inventory:null}
 function progress(a){
-if(a.type==="owned")return Array.isArray(window.ownedDragons)?ownedDragons.length:0;
-if(a.type==="dragonLevel")return Array.isArray(window.ownedDragons)&&ownedDragons.length?Math.max(...ownedDragons.map(d=>Number(d.level)||1)):0;
-if(a.type==="playerLevel")return window.player?Number(player.level)||1:0;
-if(a.type==="meals")return window.preparedMeals?sum(preparedMeals):0;
-if(a.type==="inventory")return window.inventory?sum(inventory):0;
-if(a.type==="coins")return window.player?Number(player.coins)||0:0;
-return 0}
+const owned=getOwned(),p=getPlayer();
+if(a.type==="owned")return owned.length;
+if(a.type==="dragonLevel")return owned.length?Math.max(...owned.map(d=>Number(d.level)||1)):0;
+if(a.type==="playerLevel")return p?Number(p.level)||1:0;
+if(a.type==="meals")return sum(getMeals());
+if(a.type==="inventory")return sum(getInventory());
+if(a.type==="coins")return p?Number(p.coins)||0:0;
+return 0;
+}
 function styles(){if(document.getElementById("achievements-style"))return;const s=document.createElement("style");s.id="achievements-style";s.textContent=`.achievements{margin:18px 0;padding:16px;border-radius:22px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)}.achievements h2{margin:3px 0 12px}.achievement{padding:12px;margin-top:9px;border-radius:15px;background:rgba(255,255,255,.72)}.achievement.done{background:rgba(250,204,21,.14)}.achievement-top{display:flex;gap:10px;align-items:center}.achievement-icon{font-size:26px}.achievement-info{flex:1}.achievement-info strong,.achievement-info small{display:block}.achievement-info small{opacity:.7;margin-top:2px}.achievement-reward{font-size:12px;font-weight:900}.achievement-bar{height:8px;background:rgba(0,0,0,.08);border-radius:999px;overflow:hidden;margin:9px 0 5px}.achievement-fill{height:100%;background:linear-gradient(90deg,#f59e0b,#facc15)}.achievement-bottom{display:flex;justify-content:space-between;font-size:11px;opacity:.72}.achievement-toast{position:fixed;top:16px;left:50%;z-index:3200;width:min(calc(100% - 28px),420px);transform:translate(-50%,-20px);opacity:0;padding:14px;border-radius:18px;background:linear-gradient(135deg,#92400e,#f59e0b);color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.25);transition:.25s;pointer-events:none}.achievement-toast.show{transform:translate(-50%,0);opacity:1}.achievement-toast strong,.achievement-toast span,.achievement-toast small{display:block}.achievement-toast span{font-weight:900;margin:2px 0}`;document.head.appendChild(s)}
 function toast(a){styles();let t=document.getElementById("achievement-toast");if(!t){t=document.createElement("div");t.id="achievement-toast";t.className="achievement-toast";document.body.appendChild(t)}t.innerHTML=`<strong>🏆 Succès débloqué !</strong><span>${a.icon} ${a.title}</span><small>💰 +${a.reward} pièces</small>`;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3500)}
 function panel(){const p=document.getElementById("profile-page");if(!p)return null;let x=document.getElementById("achievements");if(!x){x=document.createElement("section");x.id="achievements";x.className="achievements";p.appendChild(x)}return x}
-function render(){styles();const p=panel();if(!p)return;const done=list.filter(a=>state.unlocked[a.id]).length;p.innerHTML=`<p class="small-title">PROGRESSION PERMANENTE</p><h2>🏆 Succès <small>${done}/${list.length}</small></h2>`+list.map(a=>{const v=Math.min(a.target,progress(a)),ok=!!state.unlocked[a.id],pc=ok?100:Math.round(v/a.target*100);return `<div class="achievement ${ok?"done":""}"><div class="achievement-top"><div class="achievement-icon">${a.icon}</div><div class="achievement-info"><strong>${a.title}</strong><small>${a.text}</small></div><div class="achievement-reward">${ok?"✅":`💰 ${a.reward}`}</div></div><div class="achievement-bar"><div class="achievement-fill" style="width:${pc}%"></div></div><div class="achievement-bottom"><span>${ok?"Terminé":`${v} / ${a.target}`}</span><span>${ok?"Récompense reçue":"En progression"}</span></div></div>`}).join("")}
-function check(){let delay=0;list.forEach(a=>{if(state.unlocked[a.id]||progress(a)<a.target)return;state.unlocked[a.id]=Date.now();localStorage.setItem(KEY,JSON.stringify(state));if(window.player){player.coins=(Number(player.coins)||0)+a.reward;if(typeof savePlayer==="function")savePlayer();if(typeof updatePlayerDisplay==="function")updatePlayerDisplay()}setTimeout(()=>toast(a),delay);delay+=3700});render()}
-function start(){render();setTimeout(check,1200);setInterval(check,2500);window.renderAchievements=render;window.checkDraconiaAchievements=check}
+function render(){styles();const p=panel();if(!p)return;const done=list.filter(a=>state.unlocked[a.id]).length;p.innerHTML=`<p class="small-title">PROGRESSION PERMANENTE</p><h2>🏆 Succès <small>${done}/${list.length}</small></h2>`+list.map(a=>{const raw=progress(a),v=Math.min(a.target,raw),ok=!!state.unlocked[a.id],pc=ok?100:Math.round(v/a.target*100);return `<div class="achievement ${ok?"done":""}"><div class="achievement-top"><div class="achievement-icon">${a.icon}</div><div class="achievement-info"><strong>${a.title}</strong><small>${a.text}</small></div><div class="achievement-reward">${ok?"✅":`💰 ${a.reward}`}</div></div><div class="achievement-bar"><div class="achievement-fill" style="width:${pc}%"></div></div><div class="achievement-bottom"><span>${ok?"Terminé":`${v} / ${a.target}`}</span><span>${ok?"Récompense reçue":"En progression"}</span></div></div>`}).join("")}
+function reward(a){const p=getPlayer();if(!p)return false;p.coins=(Number(p.coins)||0)+a.reward;if(typeof savePlayer==="function")savePlayer();if(typeof updatePlayerDisplay==="function")updatePlayerDisplay();return true}
+function check(){let delay=0,changed=false;list.forEach(a=>{if(state.unlocked[a.id]||progress(a)<a.target)return;if(!reward(a))return;state.unlocked[a.id]=Date.now();changed=true;setTimeout(()=>toast(a),delay);delay+=3700});if(changed)localStorage.setItem(KEY,JSON.stringify(state));render()}
+function start(){render();setTimeout(check,500);setInterval(check,2000);window.renderAchievements=render;window.checkDraconiaAchievements=check}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
