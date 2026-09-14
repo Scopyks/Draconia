@@ -141,3 +141,114 @@
         animation-duration: 0.01ms;
     }
 }
+
+/* =====================================================
+   CHAMPIGNONS ILLUSTRÉS
+   ===================================================== */
+
+.forest-mushroom {
+    width: 48px;
+    height: 52px;
+    border: 0;
+    padding: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transform-origin: 50% 100%;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.forest-mushroom::before,
+.forest-mushroom::after {
+    display: none !important;
+    content: none !important;
+}
+
+.forest-mushroom-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 5px 4px rgba(49, 30, 12, 0.3));
+    transform-origin: 50% 100%;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.forest-mushroom:nth-child(1) {
+    left: 7%;
+    top: 76%;
+    width: 43px;
+}
+
+.forest-mushroom:nth-child(1) .forest-mushroom-image {
+    transform: rotate(-4deg);
+}
+
+.forest-mushroom:nth-child(2) {
+    left: 24%;
+    top: 85%;
+    width: 38px;
+}
+
+.forest-mushroom:nth-child(2) .forest-mushroom-image {
+    transform: scaleX(-1) rotate(-5deg);
+}
+
+.forest-mushroom:nth-child(3) {
+    left: 47%;
+    top: 79%;
+    width: 51px;
+}
+
+.forest-mushroom:nth-child(3) .forest-mushroom-image {
+    transform: rotate(3deg);
+}
+
+.forest-mushroom:nth-child(4) {
+    left: 69%;
+    top: 85%;
+    width: 40px;
+}
+
+.forest-mushroom:nth-child(4) .forest-mushroom-image {
+    transform: scaleX(-1) rotate(4deg);
+}
+
+.forest-mushroom:nth-child(5) {
+    left: 86%;
+    top: 75%;
+    width: 46px;
+}
+
+.forest-mushroom:nth-child(5) .forest-mushroom-image {
+    transform: rotate(-2deg);
+}
+
+.forest-mushroom:hover,
+.forest-mushroom:focus,
+.forest-mushroom:active {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.forest-mushroom:focus-visible .forest-mushroom-image {
+    filter:
+        drop-shadow(0 0 4px rgba(255, 255, 255, 0.95))
+        drop-shadow(0 5px 4px rgba(49, 30, 12, 0.3));
+}
+
+.forest-mushroom.picked {
+    opacity: 0;
+    transform: translateY(15px) scale(0.5);
+    pointer-events: none;
+}
+
+@media (max-width: 380px) {
+    .forest-mushroom {
+        width: 43px;
+        height: 47px;
+    }
+}

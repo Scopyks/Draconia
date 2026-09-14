@@ -18,14 +18,10 @@ let forestMushrooms = [
     true,
     true,
     true,
-    true,
-    true,
     true
 ];
 
 let forestMushroomTimers = [
-    null,
-    null,
     null,
     null,
     null,
