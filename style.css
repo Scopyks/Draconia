@@ -94,7 +94,39 @@
         linear-gradient(180deg, #7fac59 0%, #527d42 44%, #345c33 100%);
 }
 
+/* =====================================================
+   PAYSAGE DE LA FORÊT
+   ===================================================== */
+
+.forest-scene {
+    background: #79cce9;
+    box-shadow: none;
+}
+
+.forest-background {
+    background:
+        url("assets/forest-landscape.webp")
+        35% center / cover
+        no-repeat;
+}
+
+.forest-ground {
+    background: transparent;
+    border-top: 0;
+}
+
+.forest-sun,
+.forest-cloud,
+.grass-blade {
+    display: none;
+}
+
+
 @media (max-width: 380px) {
+    .forest-background {
+        background-position: 32% center;
+    }
+
     .forest-tree {
         width: min(92%, 330px);
     }
