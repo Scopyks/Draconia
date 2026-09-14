@@ -44,8 +44,6 @@ function finishDragonRest(ownedDragon) {
     delete ownedDragon.restStart;
     delete ownedDragon.restUntil;
     delete ownedDragon.restStartEnergy;
-
-    saveOwnedDragons();
 }
 
 function updateRestingDragonEnergy(ownedDragon) {
@@ -56,9 +54,13 @@ function updateRestingDragonEnergy(ownedDragon) {
         : ownedDragon.energy;
 
     const progress = getDragonRestProgress(ownedDragon) / 100;
+
     ownedDragon.energy = Math.min(
         100,
-        Math.round(startEnergy + (100 - startEnergy) * progress)
+        Math.round(
+            startEnergy +
+            (100 - startEnergy) * progress
+        )
     );
 }
 
@@ -71,31 +73,58 @@ function syncDragonRestStates() {
         if (ownedDragon.restUntil <= Date.now()) {
             finishDragonRest(ownedDragon);
             changed = true;
-        } else {
-            updateRestingDragonEnergy(ownedDragon);
-            changed = true;
+            return;
         }
+
+        updateRestingDragonEnergy(ownedDragon);
     });
 
-    if (changed) saveOwnedDragons();
+    if (changed) {
+        saveOwnedDragons();
+    }
 }
 
 function blockIfDragonResting(dragonId) {
-    const ownedDragon = ownedDragons.find(dragon => dragon.id === dragonId);
-    if (!isDragonResting(ownedDragon)) return false;
+    const ownedDragon =
+        ownedDragons.find(
+            dragon => dragon.id === dragonId
+        );
 
-    const dragon = dragons.find(item => item.id === dragonId);
-    const remaining = formatDragonRestTime(getDragonRestRemaining(ownedDragon));
+    if (!isDragonResting(ownedDragon)) {
+        return false;
+    }
 
-    alert(`${dragon ? dragon.name : "Ce dragon"} se repose encore pendant ${remaining}.`);
+    const dragon =
+        dragons.find(
+            item => item.id === dragonId
+        );
+
+    const remaining =
+        formatDragonRestTime(
+            getDragonRestRemaining(ownedDragon)
+        );
+
+    alert(
+        `${dragon ? dragon.name : "Ce dragon"} se repose encore pendant ${remaining}.`
+    );
+
     return true;
 }
 
 function injectDragonRestStyles() {
-    if (document.getElementById("dragon-rest-styles")) return;
+    if (
+        document.getElementById(
+            "dragon-rest-styles"
+        )
+    ) {
+        return;
+    }
 
-    const style = document.createElement("style");
+    const style =
+        document.createElement("style");
+
     style.id = "dragon-rest-styles";
+
     style.textContent = `
         .dragon-rest-panel {
             margin-top: 12px;
@@ -144,34 +173,64 @@ function injectDragonRestStyles() {
 }
 
 function decorateDragonRestCards() {
-    syncDragonRestStates();
-
-    const cards = document.querySelectorAll(".owned-dragon-card");
+    const cards =
+        document.querySelectorAll(
+            ".owned-dragon-card"
+        );
 
     cards.forEach(card => {
-        const buttons = card.querySelectorAll(".dragon-care-actions button");
-        if (buttons.length < 4) return;
+        const buttons =
+            card.querySelectorAll(
+                ".dragon-care-actions button"
+            );
+
+        if (buttons.length < 4) {
+            return;
+        }
 
         const feedButton = buttons[0];
         const washButton = buttons[1];
         const playButton = buttons[2];
         const restButton = buttons[3];
 
-        const match = restButton.getAttribute("onclick")?.match(/restDragon\('([^']+)'\)/);
-        if (!match) return;
+        const match =
+            restButton
+                .getAttribute("onclick")
+                ?.match(
+                    /restDragon\('([^']+)'\)/
+                );
+
+        if (!match) {
+            return;
+        }
 
         const dragonId = match[1];
-        const ownedDragon = ownedDragons.find(dragon => dragon.id === dragonId);
-        if (!ownedDragon) return;
 
-        let panel = card.querySelector(".dragon-rest-panel");
+        const ownedDragon =
+            ownedDragons.find(
+                dragon =>
+                    dragon.id === dragonId
+            );
+
+        if (!ownedDragon) {
+            return;
+        }
+
+        let panel =
+            card.querySelector(
+                ".dragon-rest-panel"
+            );
 
         if (!isDragonResting(ownedDragon)) {
-            card.classList.remove("dragon-resting-card");
+            card.classList.remove(
+                "dragon-resting-card"
+            );
+
             washButton.disabled = false;
             playButton.disabled = false;
             restButton.disabled = false;
-            restButton.textContent = "💤 Repos";
+            restButton.textContent =
+                "💤 Repos";
 
             if (ownedDragon.hunger < 100) {
                 feedButton.disabled = false;
@@ -181,23 +240,44 @@ function decorateDragonRestCards() {
             return;
         }
 
-        updateRestingDragonEnergy(ownedDragon);
-        card.classList.add("dragon-resting-card");
+        updateRestingDragonEnergy(
+            ownedDragon
+        );
+
+        card.classList.add(
+            "dragon-resting-card"
+        );
 
         feedButton.disabled = true;
         washButton.disabled = true;
         playButton.disabled = true;
         restButton.disabled = true;
-        restButton.textContent = "💤 En repos...";
+        restButton.textContent =
+            "💤 En repos...";
 
         if (!panel) {
-            panel = document.createElement("div");
-            panel.className = "dragon-rest-panel";
+            panel =
+                document.createElement(
+                    "div"
+                );
+
+            panel.className =
+                "dragon-rest-panel";
+
             card.appendChild(panel);
         }
 
-        const progress = getDragonRestProgress(ownedDragon);
-        const remaining = formatDragonRestTime(getDragonRestRemaining(ownedDragon));
+        const progress =
+            getDragonRestProgress(
+                ownedDragon
+            );
+
+        const remaining =
+            formatDragonRestTime(
+                getDragonRestRemaining(
+                    ownedDragon
+                )
+            );
 
         panel.innerHTML = `
             <div class="dragon-rest-info">
@@ -205,86 +285,183 @@ function decorateDragonRestCards() {
                 <strong>${remaining}</strong>
             </div>
             <div class="dragon-rest-bar">
-                <div class="dragon-rest-fill" style="width:${progress}%"></div>
+                <div
+                    class="dragon-rest-fill"
+                    style="width:${progress}%"
+                ></div>
             </div>
         `;
     });
 }
 
+const originalRenderOwnedDragonsForRest =
+    renderOwnedDragons;
+
+renderOwnedDragons = function() {
+    syncDragonRestStates();
+    originalRenderOwnedDragonsForRest();
+    decorateDragonRestCards();
+};
+
 function startDragonRestTimer() {
-    if (dragonRestIntervals.has("main")) return;
+    if (
+        dragonRestIntervals.has("main")
+    ) {
+        return;
+    }
 
-    const interval = setInterval(() => {
-        const before = ownedDragons.some(dragon => dragon.restUntil);
-        decorateDragonRestCards();
-        const after = ownedDragons.some(dragon => isDragonResting(dragon));
+    const interval =
+        setInterval(
+            function() {
+                let finished = false;
 
-        if (before && !after) {
-            renderOwnedDragons();
-            decorateDragonRestCards();
-        }
-    }, 1000);
+                ownedDragons.forEach(
+                    ownedDragon => {
+                        if (
+                            ownedDragon.restUntil &&
+                            ownedDragon.restUntil <=
+                                Date.now()
+                        ) {
+                            finishDragonRest(
+                                ownedDragon
+                            );
+                            finished = true;
+                        } else if (
+                            isDragonResting(
+                                ownedDragon
+                            )
+                        ) {
+                            updateRestingDragonEnergy(
+                                ownedDragon
+                            );
+                        }
+                    }
+                );
 
-    dragonRestIntervals.set("main", interval);
+                if (finished) {
+                    saveOwnedDragons();
+                    renderOwnedDragons();
+                    return;
+                }
+
+                decorateDragonRestCards();
+            },
+            1000
+        );
+
+    dragonRestIntervals.set(
+        "main",
+        interval
+    );
 }
 
-const originalFeedDragonForRest = feedDragon;
+const originalFeedDragonForRest =
+    feedDragon;
+
 feedDragon = function(dragonId) {
-    if (blockIfDragonResting(dragonId)) return;
-    return originalFeedDragonForRest(dragonId);
+    if (
+        blockIfDragonResting(
+            dragonId
+        )
+    ) {
+        return;
+    }
+
+    return originalFeedDragonForRest(
+        dragonId
+    );
 };
 
-const originalOpenWashDragonForRest = openWashDragon;
+const originalOpenWashDragonForRest =
+    openWashDragon;
+
 openWashDragon = function(dragonId) {
-    if (blockIfDragonResting(dragonId)) return;
-    return originalOpenWashDragonForRest(dragonId);
+    if (
+        blockIfDragonResting(
+            dragonId
+        )
+    ) {
+        return;
+    }
+
+    return originalOpenWashDragonForRest(
+        dragonId
+    );
 };
 
-const originalPlayWithDragonForRest = playWithDragon;
+const originalPlayWithDragonForRest =
+    playWithDragon;
+
 playWithDragon = function(dragonId) {
-    if (blockIfDragonResting(dragonId)) return;
-    return originalPlayWithDragonForRest(dragonId);
+    if (
+        blockIfDragonResting(
+            dragonId
+        )
+    ) {
+        return;
+    }
+
+    return originalPlayWithDragonForRest(
+        dragonId
+    );
 };
 
 restDragon = function(dragonId) {
-    const ownedDragon = ownedDragons.find(dragon => dragon.id === dragonId);
-    const dragon = dragons.find(item => item.id === dragonId);
+    const ownedDragon =
+        ownedDragons.find(
+            dragon =>
+                dragon.id === dragonId
+        );
 
-    if (!ownedDragon) return;
+    const dragon =
+        dragons.find(
+            item =>
+                item.id === dragonId
+        );
 
-    if (isDragonResting(ownedDragon)) {
-        blockIfDragonResting(dragonId);
+    if (!ownedDragon) {
+        return;
+    }
+
+    if (
+        isDragonResting(
+            ownedDragon
+        )
+    ) {
+        blockIfDragonResting(
+            dragonId
+        );
         return;
     }
 
     if (ownedDragon.energy >= 100) {
-        alert(`${dragon ? dragon.name : "Ce dragon"} a déjà toute son énergie.`);
+        alert(
+            `${dragon ? dragon.name : "Ce dragon"} a déjà toute son énergie.`
+        );
         return;
     }
 
-    ownedDragon.restStart = Date.now();
-    ownedDragon.restUntil = ownedDragon.restStart + DRAGON_REST_DURATION;
-    ownedDragon.restStartEnergy = ownedDragon.energy;
+    ownedDragon.restStart =
+        Date.now();
+
+    ownedDragon.restUntil =
+        ownedDragon.restStart +
+        DRAGON_REST_DURATION;
+
+    ownedDragon.restStartEnergy =
+        ownedDragon.energy;
 
     saveOwnedDragons();
     renderOwnedDragons();
-    decorateDragonRestCards();
 };
 
 injectDragonRestStyles();
 syncDragonRestStates();
 startDragonRestTimer();
 
-const dragonRestObserver = new MutationObserver(() => {
-    decorateDragonRestCards();
-});
-
-dragonRestObserver.observe(document.body, {
-    childList: true,
-    subtree: true
-});
-
-setTimeout(() => {
-    renderOwnedDragons();
-    decorateDragonRestCards();
-}, 0);
+setTimeout(
+    function() {
+        renderOwnedDragons();
+    },
+    0
+);
