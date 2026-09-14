@@ -10,7 +10,7 @@
 
 <title>Draconia 🐉</title>
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 
 <body>
@@ -402,27 +402,17 @@
         <button
             id="forest-tree-button"
             class="forest-tree"
-            onclick="shakeTree()"
+            onclick="handleForestTreeClick(event)"
             aria-label="Secouer l'arbre"
-            style="bottom: 0;"
+            type="button"
         >
-
-            <span class="tree-crown tree-crown-back"></span>
-
-            <span class="tree-branch branch-one"></span>
-            <span class="tree-branch branch-two"></span>
-            <span class="tree-branch branch-three"></span>
-
-            <span class="tree-trunk"></span>
-
-            <span class="tree-crown tree-crown-main"></span>
-
-            <span class="tree-leaf leaf-one"></span>
-            <span class="tree-leaf leaf-two"></span>
-            <span class="tree-leaf leaf-three"></span>
-            <span class="tree-leaf leaf-four"></span>
-            <span class="tree-leaf leaf-five"></span>
-
+            <img
+                id="forest-tree-image"
+                class="forest-tree-image"
+                src="assets/forest-tree.webp"
+                alt=""
+                draggable="false"
+            >
         </button>
 
 
@@ -1539,7 +1529,7 @@
 <script src="storage.js?v=1"></script>
 <script src="core.js?v=2"></script>
 <script src="gathering.js?v=2"></script>
-<script src="forest.js?v=1"></script>
+<script src="forest.js?v=2"></script>
 <script src="plains.js?v=1"></script>
 <script src="dragons.js?v=2"></script>
 <script src="ui.js?v=2"></script>

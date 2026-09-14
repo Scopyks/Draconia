@@ -4,6 +4,130 @@
 // ======================================================
 
 // ======================================================
+// FORÊT : CONTOUR CLIQUABLE DE L'ARBRE
+// ======================================================
+
+let forestTreeHitCanvas = null;
+let forestTreeHitContext = null;
+
+function getForestTreeHitContext(image) {
+    if (!image || !image.complete || !image.naturalWidth) {
+        return null;
+    }
+
+    if (!forestTreeHitCanvas) {
+        forestTreeHitCanvas = document.createElement("canvas");
+        forestTreeHitContext = forestTreeHitCanvas.getContext(
+            "2d",
+            { willReadFrequently: true }
+        );
+    }
+
+    if (!forestTreeHitContext) {
+        return null;
+    }
+
+    if (
+        forestTreeHitCanvas.width !== image.naturalWidth ||
+        forestTreeHitCanvas.height !== image.naturalHeight
+    ) {
+        forestTreeHitCanvas.width = image.naturalWidth;
+        forestTreeHitCanvas.height = image.naturalHeight;
+        forestTreeHitContext.clearRect(
+            0,
+            0,
+            image.naturalWidth,
+            image.naturalHeight
+        );
+        forestTreeHitContext.drawImage(image, 0, 0);
+    }
+
+    return forestTreeHitContext;
+}
+
+function isForestTreePixelVisible(event, image) {
+    // Un clic clavier doit toujours rester accessible.
+    if (!event || event.detail === 0) {
+        return true;
+    }
+
+    const context = getForestTreeHitContext(image);
+    if (!context) {
+        return true;
+    }
+
+    const rect = image.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+        return false;
+    }
+
+    const pixelX = Math.floor(
+        (event.clientX - rect.left) * image.naturalWidth / rect.width
+    );
+    const pixelY = Math.floor(
+        (event.clientY - rect.top) * image.naturalHeight / rect.height
+    );
+
+    if (
+        pixelX < 0 ||
+        pixelY < 0 ||
+        pixelX >= image.naturalWidth ||
+        pixelY >= image.naturalHeight
+    ) {
+        return false;
+    }
+
+    // Tolérance d'environ 5 px à l'écran pour faciliter le toucher mobile.
+    const radiusX = Math.max(
+        1,
+        Math.ceil(5 * image.naturalWidth / rect.width)
+    );
+    const radiusY = Math.max(
+        1,
+        Math.ceil(5 * image.naturalHeight / rect.height)
+    );
+    const startX = Math.max(0, pixelX - radiusX);
+    const startY = Math.max(0, pixelY - radiusY);
+    const width = Math.min(
+        image.naturalWidth - startX,
+        radiusX * 2 + 1
+    );
+    const height = Math.min(
+        image.naturalHeight - startY,
+        radiusY * 2 + 1
+    );
+
+    try {
+        const pixels = context.getImageData(
+            startX,
+            startY,
+            width,
+            height
+        ).data;
+
+        for (let index = 3; index < pixels.length; index += 4) {
+            if (pixels[index] > 32) {
+                return true;
+            }
+        }
+    } catch (error) {
+        // Si le navigateur refuse la lecture du canvas, le jeu reste utilisable.
+        return true;
+    }
+
+    return false;
+}
+
+function handleForestTreeClick(event) {
+    const image = document.getElementById("forest-tree-image");
+
+    if (isForestTreePixelVisible(event, image)) {
+        shakeTree();
+    }
+}
+
+
+// ======================================================
 // FORÊT : SECOUER L'ARBRE 🌲
 // ======================================================
 
