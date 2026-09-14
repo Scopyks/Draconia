@@ -133,14 +133,11 @@ function startFishingGame() {
         catchButton.textContent = "🐟 ATTRAPER !";
     }
 
-    // La flèche peut commencer à gauche ou à droite.
     fishingArrowDirection = Math.random() < 0.5 ? 1 : -1;
     fishingArrowPosition = fishingArrowDirection === 1 ? 0 : 100;
 
-    // Vitesse différente à chaque tentative.
     const fishingSpeed = 1.05 + Math.random() * 2.15;
 
-    // Position et largeur de la zone verte aléatoires.
     fishingGreenWidth = 14 + Math.random() * 16;
     fishingGreenStart = 4 + Math.random() * (92 - fishingGreenWidth);
 
@@ -211,9 +208,9 @@ injectFishingUpgradeStyles();
         document.body.appendChild(script);
     }
 
-    loadScriptOnce("hunting.js?v=1", "draconiaHunting");
+    loadScriptOnce("hunting.js?v=2", "draconiaHunting");
     loadScriptOnce("cooking.js?v=1", "draconiaCooking");
-    loadScriptOnce("missions.js?v=1", "draconiaMissions");
+    loadScriptOnce("missions.js?v=2", "draconiaMissions");
 
     loadScriptOnce(
         "dragoncare.js?v=1",
