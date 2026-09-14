@@ -36,8 +36,6 @@ function startHuntingGame() {
         duck.onclick = catchHuntingDuck;
     }
 
-    // L'ancien bouton Tirer n'est plus utile :
-    // il faut maintenant toucher directement le canard.
     if (bow) bow.style.display = "none";
 
     if (status) {
@@ -54,8 +52,6 @@ function scheduleHuntingDuck() {
 
     if (huntingSpawnTimer) clearTimeout(huntingSpawnTimer);
 
-    // Le canard revient après environ 5 à 11 secondes.
-    // Le délai change à chaque fois pour éviter de pouvoir prévoir son apparition.
     const delay = 5000 + Math.random() * 6000;
 
     huntingSpawnTimer = setTimeout(function() {
@@ -86,8 +82,6 @@ function showHuntingDuck() {
 
     if (status) status.textContent = "🦆 VITE ! Touche le canard !";
 
-    // Difficulté augmentée : le canard reste visible entre 0,45 et 0,75 seconde.
-    // Le temps varie à chaque apparition pour garder le mini-jeu imprévisible.
     const visibleTime = 450 + Math.random() * 300;
 
     huntingEscapeTimer = setTimeout(function() {
@@ -160,7 +154,6 @@ function stopHuntingGame() {
         huntingEscapeTimer = null;
     }
 
-    // Nettoie aussi les anciens minuteurs du script principal.
     if (huntingDuckTimer) {
         clearTimeout(huntingDuckTimer);
         huntingDuckTimer = null;
@@ -174,3 +167,12 @@ function stopHuntingGame() {
     const duck = document.getElementById("hunting-duck");
     if (duck) duck.style.display = "none";
 }
+
+(function loadDragonProgression() {
+    if (document.querySelector('script[data-draconia-progression="true"]')) return;
+
+    const script = document.createElement("script");
+    script.src = "progression.js?v=1";
+    script.dataset.draconiaProgression = "true";
+    document.body.appendChild(script);
+})();
