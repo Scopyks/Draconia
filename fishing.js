@@ -107,31 +107,48 @@ function startFishingGame() {
 // ======================================================
 
 (function loadDraconiaMiniGames() {
-    const files = [
-        {
-            src: "hunting.js?v=1",
-            key: "draconiaHunting"
-        },
-        {
-            src: "dragoncare.js?v=1",
-            key: "draconiaDragonCare"
-        }
-    ];
-
-    files.forEach(file => {
+    function loadScriptOnce(src, key, onload) {
         const selector =
-            `script[data-${file.key.replace(/([A-Z])/g, "-$1").toLowerCase()}="true"]`;
+            `script[data-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}="true"]`;
 
-        if (document.querySelector(selector)) {
+        const existing = document.querySelector(selector);
+
+        if (existing) {
+            if (onload) {
+                if (existing.dataset.loaded === "true") {
+                    onload();
+                } else {
+                    existing.addEventListener("load", onload, { once: true });
+                }
+            }
             return;
         }
 
-        const script =
-            document.createElement("script");
+        const script = document.createElement("script");
+        script.src = src;
+        script.dataset[key] = "true";
 
-        script.src = file.src;
-        script.dataset[file.key] = "true";
+        script.addEventListener("load", function() {
+            script.dataset.loaded = "true";
+            if (onload) onload();
+        }, { once: true });
 
         document.body.appendChild(script);
-    });
+    }
+
+    loadScriptOnce(
+        "hunting.js?v=1",
+        "draconiaHunting"
+    );
+
+    loadScriptOnce(
+        "dragoncare.js?v=1",
+        "draconiaDragonCare",
+        function() {
+            loadScriptOnce(
+                "dragonrest.js?v=1",
+                "draconiaDragonRest"
+            );
+        }
+    );
 })();
