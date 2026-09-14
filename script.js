@@ -1522,6 +1522,10 @@ function createFallingForestResource(
 // FORÊT : SECOUER L'ARBRE 🌲
 // ======================================================
 
+// ======================================================
+// FORÊT : SECOUER L'ARBRE 🌲
+// ======================================================
+
 function shakeTree() {
     if (
         currentGatheringGame !==
@@ -1551,7 +1555,7 @@ function shakeTree() {
                 forestTreeShakeCooldown = false;
                 treeButton.disabled = false;
             },
-            2000
+            1000
         );
 
         treeButton.classList.remove(
@@ -1565,19 +1569,18 @@ function shakeTree() {
         );
     }
 
-
     /*
-     * Chance de faire tomber quelque chose.
-     *
-     * 55 % = quelque chose tombe
-     * 45 % = rien
+     * À chaque secousse, le nombre de ressources
+     * est choisi aléatoirement entre 0, 1 et 2.
+     * Il est donc impossible d'en obtenir plus de 2
+     * en une seule secousse.
      */
-    const resourceChance =
-        Math.random();
+    const amount =
+        Math.floor(
+            Math.random() * 3
+        );
 
-    if (
-        resourceChance > 0.55
-    ) {
+    if (amount === 0) {
         const message =
             document.getElementById(
                 "forest-tree-message"
@@ -1592,15 +1595,6 @@ function shakeTree() {
 
         return;
     }
-
-    /*
-     * Quand quelque chose tombe :
-     * seulement 1 ou 2 ressources.
-     */
-    const amount =
-        Math.random() < 0.75
-            ? 1
-            : 2;
 
     const possibleResources = [
         "apple",
@@ -1628,13 +1622,6 @@ function shakeTree() {
             resource
         );
 
-        /*
-         * On crée seulement la ressource
-         * au sol.
-         *
-         * Elle n'est PAS ajoutée au sac
-         * avant que le joueur appuie dessus.
-         */
         createFallingForestResource(
             resource
         );
