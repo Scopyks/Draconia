@@ -18,6 +18,7 @@
     ];
 
     let state = null;
+    let hooksTimer = null;
 
     function today() {
         if (typeof getTodayDate === "function") return getTodayDate();
@@ -27,11 +28,13 @@
     function pickMissions() {
         const pool = [...missionPool];
         const selected = [];
+
         while (selected.length < DAILY_COUNT && pool.length) {
             const index = Math.floor(Math.random() * pool.length);
             const mission = pool.splice(index, 1)[0];
             selected.push({ ...mission, progress: 0, claimed: false });
         }
+
         return selected;
     }
 
@@ -65,6 +68,7 @@
     function claimMission(index) {
         const mission = state.missions[index];
         if (!mission || mission.claimed || mission.progress < mission.target) return;
+
         mission.claimed = true;
         addCoins(mission.reward);
         save();
@@ -73,6 +77,7 @@
 
     function claimBonus() {
         if (state.bonusClaimed || !state.missions.every(mission => mission.claimed)) return;
+
         state.bonusClaimed = true;
         addCoins(ALL_BONUS);
         save();
@@ -82,14 +87,17 @@
     function record(event, amount = 1) {
         load();
         let changed = false;
+
         state.missions.forEach(mission => {
             if (mission.event !== event || mission.claimed) return;
+
             const next = Math.min(mission.target, mission.progress + amount);
             if (next !== mission.progress) {
                 mission.progress = next;
                 changed = true;
             }
         });
+
         if (changed) {
             save();
             render();
@@ -98,6 +106,7 @@
 
     function injectStyles() {
         if (document.getElementById("daily-missions-style")) return;
+
         const style = document.createElement("style");
         style.id = "daily-missions-style";
         style.textContent = `
@@ -133,54 +142,177 @@
     function render() {
         load();
         injectStyles();
+
         const panel = ensurePanel();
         if (!panel) return;
-        const claimed = state.missions.filter(m => m.claimed).length;
+
+        const claimed = state.missions.filter(mission => mission.claimed).length;
+
         panel.innerHTML = `
             <div class="daily-missions-head">
-                <div><p class="small-title">OBJECTIFS DU JOUR</p><h2>📋 Missions quotidiennes</h2></div>
+                <div>
+                    <p class="small-title">OBJECTIFS DU JOUR</p>
+                    <h2>📋 Missions quotidiennes</h2>
+                </div>
                 <span>${claimed} / ${DAILY_COUNT} récompenses récupérées</span>
             </div>
+
             ${state.missions.map((mission, index) => {
                 const complete = mission.progress >= mission.target;
-                const percent = Math.min(100, Math.round(mission.progress / mission.target * 100));
-                return `<div class="daily-mission">
-                    <div class="daily-mission-top"><div class="daily-mission-icon">${mission.icon}</div><div class="daily-mission-info"><strong>${mission.title}</strong><small>${mission.text}</small></div><div class="daily-mission-reward">💰 ${mission.reward}</div></div>
-                    <div class="daily-mission-bar"><div class="daily-mission-fill" style="width:${percent}%"></div></div>
-                    <div class="daily-mission-bottom"><span>${mission.progress} / ${mission.target}</span><button ${complete && !mission.claimed ? "" : "disabled"} data-mission-claim="${index}">${mission.claimed ? "✅ Récupérée" : complete ? "🎁 Récupérer" : "En cours"}</button></div>
-                </div>`;
+                const percent = Math.min(100, Math.round((mission.progress / mission.target) * 100));
+
+                return `
+                    <div class="daily-mission">
+                        <div class="daily-mission-top">
+                            <div class="daily-mission-icon">${mission.icon}</div>
+                            <div class="daily-mission-info">
+                                <strong>${mission.title}</strong>
+                                <small>${mission.text}</small>
+                            </div>
+                            <div class="daily-mission-reward">💰 ${mission.reward}</div>
+                        </div>
+
+                        <div class="daily-mission-bar">
+                            <div class="daily-mission-fill" style="width:${percent}%"></div>
+                        </div>
+
+                        <div class="daily-mission-bottom">
+                            <span>${mission.progress} / ${mission.target}</span>
+                            <button ${complete && !mission.claimed ? "" : "disabled"} data-mission-claim="${index}">
+                                ${mission.claimed ? "✅ Récupérée" : complete ? "🎁 Récupérer" : "En cours"}
+                            </button>
+                        </div>
+                    </div>
+                `;
             }).join("")}
-            <div class="daily-bonus"><div><strong>🏆 Bonus du jour</strong><br><small>Termine et récupère les 3 missions</small></div><button id="daily-bonus-button" ${state.missions.every(m => m.claimed) && !state.bonusClaimed ? "" : "disabled"}>${state.bonusClaimed ? "✅ +30 💰" : "+30 💰"}</button></div>
+
+            <div class="daily-bonus">
+                <div>
+                    <strong>🏆 Bonus du jour</strong><br>
+                    <small>Termine et récupère les 3 missions</small>
+                </div>
+                <button id="daily-bonus-button" ${state.missions.every(mission => mission.claimed) && !state.bonusClaimed ? "" : "disabled"}>
+                    ${state.bonusClaimed ? "✅ +30 💰" : "+30 💰"}
+                </button>
+            </div>
         `;
+
         panel.querySelectorAll("[data-mission-claim]").forEach(button => {
             button.addEventListener("click", () => claimMission(Number(button.dataset.missionClaim)));
         });
+
         const bonus = document.getElementById("daily-bonus-button");
         if (bonus) bonus.addEventListener("click", claimBonus);
     }
 
-    const originalAddResource = window.addResource;
-    if (typeof originalAddResource === "function") {
-        window.addResource = function(resource, amount = 1) {
-            const before = inventory[resource] || 0;
-            const result = originalAddResource.apply(this, arguments);
-            const gained = Math.max(0, (inventory[resource] || 0) - before);
+    function hookAddResource() {
+        const current = window.addResource;
+        if (typeof current !== "function" || current.__dailyMissionHook) return;
+
+        const wrapped = function(resource, amount = 1) {
+            const before = (typeof inventory !== "undefined" && inventory[resource]) || 0;
+            const result = current.apply(this, arguments);
+            const after = (typeof inventory !== "undefined" && inventory[resource]) || 0;
+            const gained = Math.max(0, after - before);
+
             if (gained > 0) {
                 record("resource", gained);
                 if (resource === "fish") record("fish", gained);
             }
+
             return result;
         };
+
+        wrapped.__dailyMissionHook = true;
+        window.addResource = wrapped;
     }
 
-    const originalCookRecipe = window.cookRecipe;
-    if (typeof originalCookRecipe === "function") {
-        window.cookRecipe = function(recipeId) {
-            const before = preparedMeals[recipeId] || 0;
-            const result = originalCookRecipe.apply(this, arguments);
-            if ((preparedMeals[recipeId] || 0) > before) record("cook", 1);
+    function hookCookRecipe() {
+        const current = window.cookRecipe;
+        if (typeof current !== "function" || current.__dailyMissionHook) return;
+
+        const wrapped = function(recipeId) {
+            const before = (typeof preparedMeals !== "undefined" && preparedMeals[recipeId]) || 0;
+            const result = current.apply(this, arguments);
+            const after = (typeof preparedMeals !== "undefined" && preparedMeals[recipeId]) || 0;
+
+            if (after > before) record("cook", after - before);
             return result;
         };
+
+        wrapped.__dailyMissionHook = true;
+        window.cookRecipe = wrapped;
+    }
+
+    function hookFeedDragon() {
+        if (typeof window.blockIfDragonResting !== "function") return;
+
+        const current = window.feedDragon;
+        if (typeof current !== "function" || current.__dailyMissionHook) return;
+
+        const wrapped = function(dragonId) {
+            const owned = typeof ownedDragons !== "undefined"
+                ? ownedDragons.find(dragon => dragon.id === dragonId)
+                : null;
+            const before = owned ? Number(owned.hunger) || 0 : 0;
+            const result = current.apply(this, arguments);
+            const after = owned ? Number(owned.hunger) || 0 : before;
+
+            if (after > before) record("feed", 1);
+            return result;
+        };
+
+        wrapped.__dailyMissionHook = true;
+        window.feedDragon = wrapped;
+    }
+
+    function hookDragonMiniGame() {
+        const current = window.completeDragonMiniGame;
+        if (typeof current !== "function" || current.__dailyMissionHook) return;
+
+        const wrapped = function(success, message) {
+            const game = document.getElementById("dragon-mini-game");
+            const alreadyRewarded = game?.dataset.rewarded === "true";
+            const result = current.apply(this, arguments);
+            const nowRewarded = game?.dataset.rewarded === "true";
+
+            if (success && !alreadyRewarded && nowRewarded) {
+                record("play", 1);
+            }
+
+            return result;
+        };
+
+        wrapped.__dailyMissionHook = true;
+        window.completeDragonMiniGame = wrapped;
+    }
+
+    function hookWashDragon() {
+        const current = window.advanceWashStage;
+        if (typeof current !== "function" || current.__dailyMissionHook) return;
+
+        const wrapped = function() {
+            const before = typeof washStage === "number" ? washStage : -1;
+            const result = current.apply(this, arguments);
+            const after = typeof washStage === "number" ? washStage : before;
+
+            if (before === 2 && after === 3) {
+                record("wash", 1);
+            }
+
+            return result;
+        };
+
+        wrapped.__dailyMissionHook = true;
+        window.advanceWashStage = wrapped;
+    }
+
+    function installMissionHooks() {
+        hookAddResource();
+        hookCookRecipe();
+        hookFeedDragon();
+        hookDragonMiniGame();
+        hookWashDragon();
     }
 
     window.draconiaMissionProgress = record;
@@ -189,6 +321,11 @@
     function startMissions() {
         load();
         render();
+        installMissionHooks();
+
+        if (!hooksTimer) {
+            hooksTimer = setInterval(installMissionHooks, 1000);
+        }
     }
 
     if (document.readyState === "loading") {
