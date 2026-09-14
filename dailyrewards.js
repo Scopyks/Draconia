@@ -1,0 +1,23 @@
+// DRACONIA - RÉCOMPENSES QUOTIDIENNES 🎁
+(function(){
+const KEY="draconiaDailyRewardsV1";
+const rewards=[
+{icon:"💰",label:"20 pièces",coins:20},
+{icon:"🍎",label:"2 pommes + 2 baies",items:{apple:2,berry:2}},
+{icon:"💰",label:"35 pièces",coins:35},
+{icon:"🌿",label:"2 herbes + 1 champignon",items:{herb:2,mushroom:1}},
+{icon:"💰",label:"55 pièces",coins:55},
+{icon:"🎒",label:"Poisson, viande et légumes",items:{fish:1,meat:1,vegetable:2}},
+{icon:"👑",label:"100 pièces + ressources",coins:100,items:{apple:2,berry:2,herb:2,mushroom:1,fish:1,meat:1}}
+];
+function dayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function yesterdayKey(){const d=new Date();d.setDate(d.getDate()-1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{streak:0,last:null}}catch(e){return{streak:0,last:null}}}
+function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
+function styles(){if(document.getElementById("daily-reward-style"))return;const s=document.createElement("style");s.id="daily-reward-style";s.textContent=`.daily-rewards{margin:16px 0;padding:15px;border-radius:20px;background:linear-gradient(145deg,#241b4f,#162447);color:#f8f7ff;border:1px solid rgba(167,139,250,.28);box-shadow:0 9px 24px rgba(20,16,55,.18)}.daily-rewards h2{margin:3px 0 5px}.daily-rewards p{margin:4px 0;opacity:.8;font-size:12px}.daily-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:12px 0}.daily-day{padding:7px 2px;border-radius:10px;text-align:center;background:rgba(255,255,255,.08);font-size:10px}.daily-day span{display:block;font-size:20px;margin-bottom:3px}.daily-day.done{background:rgba(34,197,94,.18)}.daily-day.current{outline:2px solid #a78bfa;background:rgba(139,92,246,.2)}.daily-claim{width:100%;border:0;border-radius:13px;padding:11px;background:linear-gradient(135deg,#7c3aed,#3b82f6);color:#fff;font-weight:900}.daily-claim:disabled{opacity:.48}.daily-status{text-align:center;margin-top:8px!important;font-weight:800}@media(max-width:390px){.daily-day{font-size:9px}.daily-day span{font-size:17px}}`;document.head.appendChild(s)}
+function ensure(){const home=document.getElementById("home-page");if(!home)return null;let x=document.getElementById("daily-rewards");if(!x){x=document.createElement("section");x.id="daily-rewards";x.className="daily-rewards";const egg=home.querySelector(".egg-card");if(egg)egg.insertAdjacentElement("beforebegin",x);else home.prepend(x)}return x}
+function normalizedState(){const s=load(),today=dayKey();if(s.last&&s.last!==today&&s.last!==yesterdayKey()){s.streak=0;save(s)}return s}
+function render(){styles();const x=ensure();if(!x)return;const s=normalizedState(),claimed=s.last===dayKey(),next=claimed?(s.streak%7):((s.streak)%7),r=rewards[next];x.innerHTML=`<p class="small-title">CADEAU DU JOUR</p><h2>🎁 Récompenses quotidiennes</h2><p>Reviens chaque jour pour avancer dans la série de 7 jours.</p><div class="daily-days">${rewards.map((a,i)=>`<div class="daily-day ${i<s.streak%7&&claimed?"done":""} ${i===next?"current":""}"><span>${a.icon}</span>J${i+1}</div>`).join("")}</div><button id="daily-claim" class="daily-claim" ${claimed?"disabled":""}>${claimed?"✅ Récompense récupérée":`Récupérer • ${r.icon} ${r.label}`}</button><p class="daily-status">${claimed?"À demain pour la prochaine récompense 🐉":`Jour ${next+1}/7`}</p>`;const b=document.getElementById("daily-claim");if(b&&!claimed)b.onclick=claim}
+function claim(){const s=normalizedState(),today=dayKey();if(s.last===today)return;const idx=s.streak%7,r=rewards[idx];if(typeof player!=="undefined"&&player&&r.coins)player.coins=(Number(player.coins)||0)+r.coins;if(typeof inventory!=="undefined"&&inventory&&r.items)Object.entries(r.items).forEach(([k,v])=>inventory[k]=(Number(inventory[k])||0)+v);s.streak=(s.streak%7)+1;s.last=today;if(s.streak>=7)s.streak=7;save(s);if(typeof savePlayer==="function")savePlayer();if(typeof saveInventory==="function")saveInventory();if(typeof updatePlayerDisplay==="function")updatePlayerDisplay();if(typeof updateInventoryDisplay==="function")updateInventoryDisplay();render()}
+window.renderDailyRewards=render;if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",render,{once:true});else render();
+})();
