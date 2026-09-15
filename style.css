@@ -1,6 +1,20 @@
 /* Base visuelle Draconia conservée depuis la version précédente. */
 @import url("https://cdn.jsdelivr.net/gh/Scopyks/Draconia@417498907220fba03c9afd8b27a18e4b6080ebc9/style.css");
 
+/* Images transparentes de Flamio : aucun fond ou cadre ajouté au dessin. */
+.dragon-art {
+    display: block;
+    max-width: 100%;
+    object-fit: contain;
+    background: transparent;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.owned-dragon-icon .dragon-art { width: 88px; height: 88px; }
+.dex-card-icon .dragon-art { width: 72px; height: 72px; }
+.dex-dragon-image .dragon-art { width: 84px; height: 84px; }
+.wash-dragon-icon .dragon-art { width: 96px; height: 96px; margin: auto; }
+
 /* =====================================================
    ARBRE CENTRAL DE LA FORÊT
    ===================================================== */

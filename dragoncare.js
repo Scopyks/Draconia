@@ -98,7 +98,7 @@ function renderOwnedDragons() {
         card.className = "owned-dragon-card";
         card.innerHTML = `
             <div class="owned-dragon-top">
-                <div class="owned-dragon-icon">${dragon.icon}</div>
+                <div class="owned-dragon-icon">${dragonArtwork(dragon)}</div>
                 <div class="owned-dragon-info">
                     <p class="rarity">${dragon.rarity}</p>
                     <h3>${dragon.name}</h3>
@@ -204,7 +204,7 @@ function openWashDragon(dragonId) {
                 <p id="wash-instruction" class="wash-instruction">💧 Étape 1 : touche l'eau, puis passe ton doigt sur tout le dragon.</p>
                 <div id="wash-dragon-zone" class="wash-dragon-zone">
                     <div id="wash-water-effect" class="wash-water-effect"></div>
-                    <div class="wash-dragon-icon">${dragon.icon}</div>
+                    <div class="wash-dragon-icon">${dragonArtwork(dragon)}</div>
                     <div id="wash-foam" class="wash-foam">🫧 🫧 🫧<br>🫧 🫧 🫧<br>🫧 🫧 🫧</div>
                 </div>
                 <div class="wash-tools">
@@ -346,7 +346,7 @@ function openDragonMiniGame(dragonId) {
                 <button class="dragon-care-close" onclick="closeDragonCareOverlay()">✕</button>
             </div>
             <div class="dragon-game-card">
-                <div class="owned-dragon-icon" style="font-size:72px;margin-bottom:8px">${dragon.icon}</div>
+                <div class="owned-dragon-icon" style="font-size:72px;margin-bottom:8px">${dragonArtwork(dragon)}</div>
                 <div id="dragon-mini-game"></div>
                 <p id="dragon-game-message" class="game-message"></p>
             </div>

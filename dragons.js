@@ -308,7 +308,7 @@ function renderDragonDex() {
                 <div class="dex-dragon-image">
                     ${
                         discovered
-                            ? dragon.icon
+                            ? dragonArtwork(dragon)
                             : "❓"
                     }
                 </div>
@@ -428,7 +428,7 @@ function renderOwnedDragons() {
                 <div class="owned-dragon-top">
 
                     <div class="owned-dragon-icon">
-                        ${dragon.icon}
+                        ${dragonArtwork(dragon)}
                     </div>
 
                     <div class="owned-dragon-info">
