@@ -62,11 +62,14 @@ const dragonArtworks = Object.freeze({
 function dragonArtwork(dragon, stage = "dragon") {
     const artwork = dragon && dragonArtworks[dragon.id];
     if (!artwork) return dragon ? dragon.icon : "🥚";
+    const mirrored = dragon.id === "dragon-terre" && stage === "dragon"
+        ? ' style="transform:scaleX(-1)"'
+        : "";
     const labels = {
         egg: `Œuf de ${dragon.element}`,
         cracked: `Œuf de ${dragon.element} fissuré`,
         hatching: `${dragon.name} sort de son œuf`,
         dragon: `${dragon.name}, dragon de ${dragon.element}`
     };
-    return `<img class="dragon-art dragon-art-${stage}" src="${artwork[stage] || artwork.dragon}" alt="${labels[stage] || labels.dragon}" draggable="false">`;
+    return `<img class="dragon-art dragon-art-${stage}" src="${artwork[stage] || artwork.dragon}" alt="${labels[stage] || labels.dragon}" draggable="false"${mirrored}>`;
 }
