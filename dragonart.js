@@ -17,11 +17,18 @@ const lightningArtwork = Object.freeze({
     hatching: "assets/lightning-hatching.webp",
     dragon: "assets/lightning-dragon.webp"
 });
+const lightArtwork = Object.freeze({
+    egg: "assets/light-egg.webp",
+    cracked: "assets/light-egg-cracked.webp",
+    hatching: "assets/light-hatching.webp",
+    dragon: "assets/light-dragon.webp"
+});
 
 const dragonArtworks = Object.freeze({
     "dragon-feu": flamioArtwork,
     "dragon-nature": natureArtwork,
-    "dragon-foudre": lightningArtwork
+    "dragon-foudre": lightningArtwork,
+    "dragon-lumiere": lightArtwork
 });
 
 function dragonArtwork(dragon, stage = "dragon") {
