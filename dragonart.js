@@ -29,13 +29,20 @@ const waterArtwork = Object.freeze({
     hatching: "assets/water-hatching.webp",
     dragon: "assets/water-dragon.webp"
 });
+const earthArtwork = Object.freeze({
+    egg: "assets/earth-egg.webp",
+    cracked: "assets/earth-egg-cracked.webp",
+    hatching: "assets/earth-hatching.webp",
+    dragon: "assets/earth-dragon.webp"
+});
 
 const dragonArtworks = Object.freeze({
     "dragon-feu": flamioArtwork,
     "dragon-nature": natureArtwork,
     "dragon-foudre": lightningArtwork,
     "dragon-lumiere": lightArtwork,
-    "dragon-eau": waterArtwork
+    "dragon-eau": waterArtwork,
+    "dragon-terre": earthArtwork
 });
 
 function dragonArtwork(dragon, stage = "dragon") {
