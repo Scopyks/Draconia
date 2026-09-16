@@ -333,6 +333,7 @@ function playWithDragon(dragonId) {
 }
 
 function openDragonMiniGame(dragonId) {
+    closeDragonCareOverlay();
     const dragon = dragons.find(d => d.id === dragonId);
     const config = dragonMiniGames[dragonId];
     if (!dragon || !config) return;
@@ -377,6 +378,8 @@ function startConfiguredMiniGame(type) {
     const host = document.getElementById("dragon-mini-game");
     if (!host) return;
     host.dataset.rewarded = "false";
+    const message = document.getElementById("dragon-game-message");
+    if (message) message.textContent = "";
     const starters = {
         tictactoe: startTicTacToe,
         memory: startMemoryGame,
@@ -399,69 +402,354 @@ function makeButton(text, className = "game-cell") {
     return button;
 }
 
+// Chaque partie possède ses propres délais et un état terminal unique.
+function createMiniGameSession(host, rules, seconds = 0) {
+    let finished = false, mistakes = 0;
+    const timers = new Set();
+    host.innerHTML = "<p class='dragon-game-subtitle'></p>";
+    host.firstElementChild.textContent = rules;
+    const status = document.createElement("p");
+    status.className = "dragon-game-subtitle";
+    host.appendChild(status);
+    const deadline = seconds ? Date.now() + seconds * 1000 : 0;
+    const cancel = () => { finished = true; timers.forEach(clearTimeout); timers.clear(); };
+    dragonGameCleanup = cancel;
+    const finish = (success, message) => {
+        if (finished) return;
+        cancel();
+        disableAll(host);
+        completeDragonMiniGame(success, message);
+        const retry = makeButton("Rejouer", "game-action");
+        retry.onclick = () => {
+            const owned = ownedDragons.find(d => d.id === activeCareDragonId);
+            if (!owned || owned.energy < 10) {
+                completeDragonMiniGame(false, "Ce dragon est trop fatigué : offre-lui du repos.");
+                retry.disabled = true;
+                return;
+            }
+            startConfiguredMiniGame(dragonMiniGames[activeCareDragonId].type);
+        };
+        host.appendChild(retry);
+    };
+    const later = (callback, delay) => {
+        const timer = setTimeout(() => {
+            timers.delete(timer);
+            if (!finished) callback();
+        }, delay);
+        timers.add(timer);
+        return timer;
+    };
+    const tick = () => {
+        const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+        status.textContent = "⏳ " + remaining + " s • Erreurs : " + mistakes;
+        if (!remaining) finish(false, "Temps écoulé ! Tu peux réessayer.");
+        else later(tick, 200);
+    };
+    if (seconds) tick();
+    return {
+        get finished() { return finished; },
+        finish, later,
+        mistake(limit = 3) {
+            if (finished) return;
+            mistakes++;
+            if (!seconds) status.textContent = "Erreurs : " + mistakes + "/" + limit;
+            if (mistakes >= limit) finish(false, "Trop d'erreurs ! Observe bien avant de réessayer.");
+            else {
+                const msg = document.getElementById("dragon-game-message");
+                if (msg) msg.textContent = "Erreur " + mistakes + "/" + limit + " : concentre-toi !";
+            }
+        },
+        progress(text) { if (!finished) document.getElementById("dragon-game-message").textContent = text; }
+    };
+}
+
+function shuffleMiniGame(values) {
+    const result = [...values];
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+}
+
+function miniGameBoard(host, columns = 3) {
+    const board = document.createElement("div");
+    board.className = "game-board";
+    board.style.gridTemplateColumns = "repeat(" + columns + ",1fr)";
+    host.appendChild(board);
+    return board;
+}
+
+function chooseDragonMove(state) {
+    const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for (const symbol of ["🐉", "🔥"]) {
+        for (const line of lines) {
+            const free = line.filter(i => !state[i]);
+            if (free.length === 1 && line.filter(i => state[i] === symbol).length === 2) return free[0];
+        }
+    }
+    if (!state[4]) return 4;
+    const corners = shuffleMiniGame([0,2,6,8]).filter(i => !state[i]);
+    return corners[0] ?? shuffleMiniGame(state.map((v,i) => v ? null : i).filter(i => i !== null))[0];
+}
+
 function startTicTacToe(host) {
-    host.innerHTML = "<p class='dragon-game-subtitle'>Aligne 3 🔥 avant ton dragon.</p>";
-    const board = document.createElement("div"); board.className = "game-board"; board.style.gridTemplateColumns = "repeat(3,1fr)";
+    const session = createMiniGameSession(host, "Aligne 3 🔥. Le dragon peut gagner et bloquer tes lignes ; une égalité compte comme une réussite.");
+    const board = miniGameBoard(host);
     const state = Array(9).fill("");
     const win = s => [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(a => a.every(i => state[i] === s));
-    for (let i=0;i<9;i++) {
-        const b=makeButton(""); board.appendChild(b);
-        b.onclick=()=>{
-            if(state[i] || host.dataset.rewarded==="true") return;
-            state[i]="🔥"; b.textContent="🔥";
-            if(win("🔥")){ completeDragonMiniGame(true,"🔥 Gagné ! Ton dragon s'est bien amusé."); disableAll(board); return; }
-            const free=state.map((v,j)=>v?null:j).filter(v=>v!==null);
-            if(!free.length){ completeDragonMiniGame(false,"Égalité ! Tu peux fermer et rejouer."); return; }
-            const ai=free[Math.floor(Math.random()*free.length)]; state[ai]="🐉"; board.children[ai].textContent="🐉";
-            if(win("🐉")){ completeDragonMiniGame(false,"🐉 Ton dragon gagne cette manche !"); disableAll(board); }
+    const outcome = () => {
+        if (win("🔥")) { session.finish(true, "🔥 Tu as battu ton dragon !"); return true; }
+        if (win("🐉")) { session.finish(false, "🐉 Ton dragon gagne cette manche !"); return true; }
+        if (state.every(Boolean)) { session.finish(true, "Belle égalité : ton dragon s'est bien amusé !"); return true; }
+        return false;
+    };
+    for (let i=0; i<9; i++) {
+        const b = makeButton("");
+        b.onclick = () => {
+            if (session.finished || state[i]) return;
+            state[i] = b.textContent = "🔥";
+            if (outcome()) return;
+            const ai = chooseDragonMove(state);
+            state[ai] = board.children[ai].textContent = "🐉";
+            outcome();
         };
+        board.appendChild(b);
     }
-    host.appendChild(board);
 }
 
 function startMemoryGame(host) {
-    host.innerHTML="<p class='dragon-game-subtitle'>Retrouve les 3 paires aquatiques.</p>";
-    const vals=["🐟","🐚","💧","🐟","🐚","💧"].sort(()=>Math.random()-.5); let first=null, lock=false, found=0;
-    const board=document.createElement("div"); board.className="game-board"; board.style.gridTemplateColumns="repeat(3,1fr)";
-    vals.forEach((v,i)=>{ const b=makeButton("❓","game-cell memory-card"); b.onclick=()=>{ if(lock||b.dataset.done||b===first)return; b.textContent=v; b.classList.add("revealed"); if(!first){first=b;return;} if(first.textContent===v){first.dataset.done=b.dataset.done="1";found++;first=null;if(found===3)completeDragonMiniGame(true,"💧 Toutes les paires sont retrouvées !");}else{lock=true;setTimeout(()=>{first.textContent=b.textContent="❓";first.classList.remove("revealed");b.classList.remove("revealed");first=null;lock=false;},650);} }; board.appendChild(b); });
-    host.appendChild(board);
+    const session = createMiniGameSession(host, "Retrouve 4 paires en 40 s. Maximum 7 mauvaises paires.", 40);
+    const values = shuffleMiniGame(["🐟","🐚","💧","🪸","🐟","🐚","💧","🪸"]);
+    const board = miniGameBoard(host, 4);
+    let first = null, locked = false, found = 0;
+    values.forEach(value => {
+        const b = makeButton("❓", "game-cell memory-card");
+        b.onclick = () => {
+            if (session.finished || locked || b.dataset.done || b === first) return;
+            b.textContent = value;
+            b.classList.add("revealed");
+            if (!first) { first = b; return; }
+            const previous = first;
+            first = null;
+            if (previous.textContent === value) {
+                previous.dataset.done = b.dataset.done = "1";
+                found++;
+                session.progress("Paires : " + found + "/4");
+                if (found === 4) session.finish(true, "💧 Toutes les paires sont retrouvées !");
+            } else {
+                session.mistake(7);
+                locked = true;
+                session.later(() => {
+                    previous.textContent = b.textContent = "❓";
+                    previous.classList.remove("revealed");
+                    b.classList.remove("revealed");
+                    locked = false;
+                }, 700);
+            }
+        };
+        board.appendChild(b);
+    });
 }
 
 function startSequenceGame(host) {
-    const symbols=["🌿","🍃","🌸","🌱"]; const seq=Array.from({length:5},()=>symbols[Math.floor(Math.random()*symbols.length)]); let step=0;
-    host.innerHTML=`<p class='dragon-game-subtitle'>Reproduis cette suite : <b>${seq.join(" ")}</b></p>`;
-    const board=document.createElement("div"); board.className="game-board"; board.style.gridTemplateColumns="repeat(4,1fr)";
-    symbols.forEach(s=>{const b=makeButton(s);b.onclick=()=>{if(s===seq[step]){step++;if(step===seq.length)completeDragonMiniGame(true,"🌿 Suite parfaite !");}else{step=0;document.getElementById("dragon-game-message").textContent="🍃 Raté, recommence depuis le début.";}};board.appendChild(b);});host.appendChild(board);
+    const session = createMiniGameSession(host, "Mémorise la suite durant 3 s, puis reproduis-la. Deux manches : 4 puis 5 symboles. Maximum 3 erreurs.");
+    const symbols = ["🌿","🍃","🌸","🌱"];
+    const preview = document.createElement("p");
+    host.appendChild(preview);
+    const board = miniGameBoard(host, 4);
+    let sequence = [], step = 0, round = 0, observing = true;
+    const show = () => {
+        observing = true;
+        step = 0;
+        sequence = Array.from({length: 4 + round}, () => symbols[Math.floor(Math.random() * 4)]);
+        preview.textContent = sequence.join(" ");
+        disableAll(board);
+        session.later(() => {
+            observing = false;
+            preview.textContent = "À toi ! Manche " + (round + 1) + "/2";
+            Array.from(board.children).forEach(b => b.disabled = false);
+        }, 3000);
+    };
+    symbols.forEach(symbol => {
+        const b = makeButton(symbol);
+        b.onclick = () => {
+            if (session.finished || observing) return;
+            if (symbol !== sequence[step]) {
+                session.mistake();
+                step = 0;
+                session.progress("Reprends cette suite depuis le début.");
+                return;
+            }
+            step++;
+            session.progress("Suite : " + step + "/" + sequence.length);
+            if (step === sequence.length) {
+                if (++round === 2) session.finish(true, "🌿 Les deux suites sont mémorisées !");
+                else show();
+            }
+        };
+        board.appendChild(b);
+    });
+    show();
 }
 
 function startCloudGame(host) {
-    host.innerHTML="<p class='dragon-game-subtitle'>Attrape 6 nuages avant la fin du temps.</p><div id='cloud-target' class='reaction-pad cloud-target'>☁️</div>"; let hits=0; const target=document.getElementById("cloud-target");
-    const move=()=>{target.style.transform=`translate(${Math.floor(Math.random()*90-45)}px,${Math.floor(Math.random()*45-22)}px)`;}; target.onclick=()=>{hits++;move();document.getElementById("dragon-game-message").textContent=`☁️ ${hits}/6`;if(hits>=6){clearTimeout(timer);completeDragonMiniGame(true,"🌪️ Tous les nuages sont attrapés !");target.onclick=null;}}; move(); const timer=setTimeout(()=>{if(hits<6)completeDragonMiniGame(false,"💨 Trop tard, les nuages se sont envolés.");target.onclick=null;},7000); dragonGameCleanup=()=>clearTimeout(timer);
+    const session = createMiniGameSession(host, "Attrape 8 nuages en 12 s. Chaque nuage change de case toutes les 900 ms. Maximum 3 erreurs.", 12);
+    const board = miniGameBoard(host);
+    let target = -1, hits = 0, generation = 0;
+    const draw = () => {
+        const current = ++generation;
+        const choices = Array.from({length:9}, (_,i) => i).filter(i => i !== target);
+        target = choices[Math.floor(Math.random() * choices.length)];
+        board.innerHTML = "";
+        for (let i=0;i<9;i++) {
+            const b = makeButton(i === target ? "☁️" : "·");
+            b.onclick = () => {
+                if (session.finished || current !== generation) return;
+                if (i !== target) { session.mistake(); return; }
+                if (++hits === 8) session.finish(true, "🌪️ Les huit nuages sont capturés !");
+                else { session.progress("Nuages : " + hits + "/8"); draw(); }
+            };
+            board.appendChild(b);
+        }
+        session.later(() => { if (current === generation) draw(); }, 900);
+    };
+    draw();
 }
 
 function startReactionGame(host) {
-    host.innerHTML="<p class='dragon-game-subtitle'>N'appuie que lorsque l'éclair apparaît !</p><button id='reaction-pad' class='reaction-pad'>⏳</button>"; const pad=document.getElementById("reaction-pad"); let ready=false,finished=false;
-    const timer=setTimeout(()=>{ready=true;pad.classList.add("ready");pad.textContent="⚡";},1200+Math.random()*2200); pad.onclick=()=>{if(finished)return;if(!ready){finished=true;clearTimeout(timer);pad.textContent="💥";completeDragonMiniGame(false,"Trop tôt ! L'éclair n'était pas encore là.");}else{finished=true;pad.textContent="⚡✅";completeDragonMiniGame(true,"⚡ Réflexe parfait !");}}; dragonGameCleanup=()=>clearTimeout(timer);
+    const session = createMiniGameSession(host, "Réagis à 3 éclairs en moins de 900 ms chacun. Appuyer avant le signal termine la partie.");
+    const pad = makeButton("⏳", "reaction-pad");
+    host.appendChild(pad);
+    let ready = false, round = 0, signalAt = 0, generation = 0;
+    const prepare = () => {
+        const current = ++generation;
+        ready = false;
+        pad.classList.remove("ready");
+        pad.textContent = "⏳";
+        session.later(() => {
+            ready = true;
+            signalAt = Date.now();
+            pad.classList.add("ready");
+            pad.textContent = "⚡";
+            session.later(() => {
+                if (ready && current === generation) session.finish(false, "Éclair manqué : réagis en moins de 900 ms.");
+            }, 900);
+        }, 1000 + Math.random() * 2200);
+    };
+    pad.onclick = () => {
+        if (session.finished) return;
+        if (!ready) { session.finish(false, "Trop tôt ! Attends l'éclair."); return; }
+        if (Date.now() - signalAt >= 900) { session.finish(false, "Trop tard !"); return; }
+        ready = false;
+        if (++round === 3) session.finish(true, "⚡ Trois éclairs, trois bons réflexes !");
+        else { session.progress("Éclairs : " + round + "/3"); prepare(); }
+    };
+    prepare();
 }
 
-function startNumberGame(host) {
-    const nums=[1,2,3,4,5].sort(()=>Math.random()-.5);let next=1;host.innerHTML="<p class='dragon-game-subtitle'>Touche les cristaux dans l'ordre de 1 à 5.</p>";const board=document.createElement("div");board.className="game-board";board.style.gridTemplateColumns="repeat(3,1fr)";nums.forEach(n=>{const b=makeButton(`❄️ ${n}`);b.onclick=()=>{if(n!==next){document.getElementById("dragon-game-message").textContent="🧊 Mauvais cristal !";return;}b.disabled=true;next++;if(next===6)completeDragonMiniGame(true,"❄️ Les cristaux sont parfaitement ordonnés !");};board.appendChild(b);});host.appendChild(board);
+function startOrderedDragonGame(host, stars) {
+    const count = stars ? 8 : 9;
+    const session = createMiniGameSession(host, stars
+        ? "Mémorise 8 étoiles pendant 4 s, puis touche-les dans l'ordre. Maximum 3 erreurs."
+        : "Touche les 9 cristaux dans l'ordre en 18 s. Maximum 3 erreurs.", stars ? 0 : 18);
+    const board = miniGameBoard(host);
+    let next = 1, observing = stars;
+    shuffleMiniGame(Array.from({length:count}, (_,i) => i+1)).forEach(n => {
+        const b = makeButton((stars ? "⭐ " : "❄️ ") + n, stars ? "game-cell star-cell" : "game-cell");
+        b.disabled = stars;
+        b.onclick = () => {
+            if (session.finished || observing || b.disabled) return;
+            if (n !== next) { session.mistake(); return; }
+            b.disabled = true;
+            b.textContent = "✨";
+            next++;
+            session.progress((stars ? "Étoiles : " : "Cristaux : ") + (next-1) + "/" + count);
+            if (next > count) session.finish(true, stars ? "🌌 Constellation mémorisée !" : "❄️ Cristaux ordonnés !");
+        };
+        board.appendChild(b);
+    });
+    if (stars) session.later(() => {
+        observing = false;
+        Array.from(board.children).forEach(b => { b.textContent = "⭐"; b.disabled = false; });
+        session.progress("À toi ! Les numéros sont maintenant cachés.");
+    }, 4000);
 }
+function startNumberGame(host) { startOrderedDragonGame(host, false); }
+function startStarsGame(host) { startOrderedDragonGame(host, true); }
 
 function startRpsGame(host) {
-    host.innerHTML="<p class='dragon-game-subtitle'>Bats ton dragon au duel : pierre, feuille ou ciseaux.</p>";const choices=[["🪨","pierre"],["📄","feuille"],["✂️","ciseaux"]];const board=document.createElement("div");board.className="game-board";board.style.gridTemplateColumns="repeat(3,1fr)";const beats={pierre:"ciseaux",feuille:"pierre",ciseaux:"feuille"};choices.forEach(([icon,key])=>{const b=makeButton(icon);b.onclick=()=>{const d=choices[Math.floor(Math.random()*3)][1];if(key===d){document.getElementById("dragon-game-message").textContent=`Égalité ! Le dragon choisit ${d}. Rejoue.`;}else if(beats[key]===d){completeDragonMiniGame(true,`🪨 Gagné ! Le dragon avait choisi ${d}.`);disableAll(board);}else{document.getElementById("dragon-game-message").textContent=`Perdu ! Le dragon choisit ${d}. Essaie encore.`;}};board.appendChild(b);});host.appendChild(board);
+    const session = createMiniGameSession(host, "Duel au meilleur des 5 : remporte 3 manches avant le dragon. Les égalités ne comptent pas.");
+    const choices = [["🪨","pierre"],["📄","feuille"],["✂️","ciseaux"]];
+    const beats = {pierre:"ciseaux", feuille:"pierre", ciseaux:"feuille"};
+    const board = miniGameBoard(host);
+    let wins = 0, losses = 0;
+    choices.forEach(([icon,key]) => {
+        const b = makeButton(icon);
+        b.onclick = () => {
+            if (session.finished) return;
+            const dragon = choices[Math.floor(Math.random()*3)][1];
+            if (key !== dragon) {
+                if (beats[key] === dragon) wins++; else losses++;
+            }
+            session.progress("Dragon : " + dragon + " • Toi " + wins + " – " + losses + " Dragon");
+            if (wins === 3) session.finish(true, "🪨 Duel remporté !");
+            else if (losses === 3) session.finish(false, "Le dragon remporte le duel !");
+        };
+        board.appendChild(b);
+    });
 }
 
 function startShadowGame(host) {
-    let round=0;host.innerHTML="<p class='dragon-game-subtitle'>Trouve l'ombre cachée 3 fois.</p>";const board=document.createElement("div");board.className="game-board";board.style.gridTemplateColumns="repeat(3,1fr)";host.appendChild(board);const draw=()=>{board.innerHTML="";const target=Math.floor(Math.random()*9);for(let i=0;i<9;i++){const b=makeButton(i===target?"🌑":"🌘");b.onclick=()=>{if(i===target){round++;if(round===3){completeDragonMiniGame(true,"🌑 Toutes les ombres sont trouvées !");disableAll(board);}else draw();}else document.getElementById("dragon-game-message").textContent="🌘 Ce n'était pas la bonne ombre.";};board.appendChild(b);}};draw();
+    const session = createMiniGameSession(host, "Observe l'ombre 🌑 durant 1 s, puis retrouve sa case cachée. 4 manches, maximum 3 erreurs.");
+    const board = miniGameBoard(host);
+    let round = 0, target = 0, observing = true;
+    const draw = () => {
+        observing = true;
+        target = Math.floor(Math.random()*9);
+        board.innerHTML = "";
+        for (let i=0;i<9;i++) {
+            const b = makeButton(i === target ? "🌑" : "🌘");
+            b.disabled = true;
+            b.onclick = () => {
+                if (session.finished || observing) return;
+                if (i !== target) { b.disabled = true; session.mistake(); return; }
+                if (++round === 4) session.finish(true, "🌑 Les quatre ombres sont retrouvées !");
+                else { session.progress("Ombres : " + round + "/4"); draw(); }
+            };
+            board.appendChild(b);
+        }
+        session.later(() => {
+            observing = false;
+            Array.from(board.children).forEach(b => { b.textContent = "🌘"; b.disabled = false; });
+        }, 1000);
+    };
+    draw();
 }
 
 function startLightGame(host) {
-    let score=0;host.innerHTML="<p class='dragon-game-subtitle'>Touche uniquement la case lumineuse, 5 fois.</p>";const board=document.createElement("div");board.className="game-board";board.style.gridTemplateColumns="repeat(3,1fr)";host.appendChild(board);const draw=()=>{board.innerHTML="";const target=Math.floor(Math.random()*9);for(let i=0;i<9;i++){const b=makeButton(i===target?"☀️":"·",`game-cell ${i===target?"light-cell active":""}`);b.onclick=()=>{if(i!==target){document.getElementById("dragon-game-message").textContent="✨ Cherche la lumière !";return;}score++;if(score>=5){completeDragonMiniGame(true,"☀️ Tous les rayons sont capturés !");disableAll(board);}else draw();};board.appendChild(b);}};draw();
-}
-
-function startStarsGame(host) {
-    const order=[1,2,3,4,5,6];const shuffled=[...order].sort(()=>Math.random()-.5);let next=1;host.innerHTML="<p class='dragon-game-subtitle'>Relie la constellation en touchant les étoiles de 1 à 6.</p>";const board=document.createElement("div");board.className="game-board";board.style.gridTemplateColumns="repeat(3,1fr)";shuffled.forEach(n=>{const b=makeButton(`⭐ ${n}`,"game-cell star-cell");b.onclick=()=>{if(n!==next){document.getElementById("dragon-game-message").textContent="🌌 Mauvaise étoile, suis les numéros.";return;}b.disabled=true;b.textContent="✨";next++;if(next===7)completeDragonMiniGame(true,"🌌 Constellation terminée !");};board.appendChild(b);});host.appendChild(board);
+    const session = createMiniGameSession(host, "Capture 8 rayons en 15 s. La lumière change de case toutes les 1,2 s. Maximum 3 erreurs.", 15);
+    const board = miniGameBoard(host);
+    let score = 0, generation = 0, previous = -1;
+    const draw = () => {
+        const current = ++generation;
+        const choices = Array.from({length:9}, (_,i) => i).filter(i => i !== previous);
+        const target = choices[Math.floor(Math.random()*choices.length)];
+        previous = target;
+        board.innerHTML = "";
+        for (let i=0;i<9;i++) {
+            const b = makeButton(i === target ? "☀️" : "·", i === target ? "game-cell light-cell active" : "game-cell");
+            b.onclick = () => {
+                if (session.finished || current !== generation) return;
+                if (i !== target) { session.mistake(); return; }
+                if (++score === 8) session.finish(true, "☀️ Tous les rayons sont capturés !");
+                else { session.progress("Rayons : " + score + "/8"); draw(); }
+            };
+            board.appendChild(b);
+        }
+        session.later(() => { if (current === generation) draw(); }, 1200);
+    };
+    draw();
 }
 
 function disableAll(container) {
