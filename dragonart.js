@@ -54,6 +54,13 @@ const airArtwork = Object.freeze({
     dragon: "assets/air-dragon.webp"
 });
 
+const iceArtwork = Object.freeze({
+    egg: "assets/ice-egg.webp",
+    cracked: "assets/ice-egg-cracked.webp",
+    hatching: "assets/ice-hatching.webp",
+    dragon: "assets/ice-dragon.webp"
+});
+
 const dragonArtworks = Object.freeze({
     "dragon-feu": flamioArtwork,
     "dragon-nature": natureArtwork,
@@ -63,7 +70,8 @@ const dragonArtworks = Object.freeze({
     "dragon-terre": earthArtwork,
     "dragon-ombre": shadowArtwork,
     "dragon-cosmique": cosmicArtwork,
-    "dragon-air": airArtwork
+    "dragon-air": airArtwork,
+    "dragon-glace": iceArtwork
 });
 
 function dragonArtwork(dragon, stage = "dragon") {
