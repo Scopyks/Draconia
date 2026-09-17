@@ -33,8 +33,10 @@
         // Les positions des réponses changent sans déplacer la bonne réponse logique.
         const answers=r.answers.map((text,i)=>({text,correct:i===r.correct}));
         for(let i=answers.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[answers[i],answers[j]]=[answers[j],answers[i]];}
-        return {icon:"🧩",title:"L'énigme du passage",text:r.question,puzzle:true,
-            choices:answers.map(a=>({label:a.text,success:a.correct,result:a.correct?"La rune s'illumine : le passage est ouvert !":"La rune s'éteint. L'énigme est ratée et le passage reste fermé.",reward:a.correct?{coins:14,xp:5}:null}))};
+        const settings={forest:["La borne du vieux sentier","Sous le lierre, une borne gravée indique une cache. Trois signes entourent cette inscription : "],lake:["Le coffret de la rive","Un coffret échoué porte trois signes sur son fermoir. Une inscription permet de choisir le bon : "],mountain:["La niche scellée","Dans une niche rocheuse, une petite porte porte trois signes. Au-dessus, une inscription indique lequel presser : "],ruins:["Le sceau oublié","Un coffre est protégé par un sceau à trois signes. Son couvercle porte cette inscription : "]};
+        const setting=settings[zone]||settings.forest;
+        return {icon:"🧩",title:setting[0],text:setting[1]+r.question,puzzle:true,
+            choices:answers.map(a=>({label:a.text,success:a.correct,result:a.correct?"Le signe choisi s'illumine. La cache s'ouvre et tu récupères une poignée de pièces.":"Le signe choisi s'efface et le mécanisme se bloque. La cache reste fermée ; tu reprends ta route sans récompense.",reward:a.correct?{coins:14,xp:5}:null}))};
     }
     global.DraconiaExplorationRules=Object.freeze({rates,pickRarity,puzzle});
 })(typeof window!=="undefined"?window:globalThis);

@@ -26,9 +26,9 @@ const before=JSON.stringify(c.ownedDragons);
 const hooks='renderZones=function(){};adventurePanel=capture;window.testFlow={find,pickDragon};';
 vm.runInContext(read('exploration.js').replace('function install(){',hooks+'\nfunction install(){'),c);
 const choose=i=>{const s=screen;s.callback(s.choices[i],i);};
-const startPuzzle=()=>{c.Math.random=()=>.1;c.testFlow.find();choose(0);assert(screen.title.includes('énigme'));};
+const startPuzzle=()=>{c.Math.random=()=>.1;c.testFlow.find();choose(0);assert(screen.choices.some(x=>x.success===false));};
 startPuzzle();const old=screen;
-const wrong=screen.choices.findIndex(x=>!x.success);choose(wrong);assert(screen.title.includes('raté'));
+const wrong=screen.choices.findIndex(x=>!x.success);choose(wrong);assert(screen.title.includes('échoue'));
 old.callback(old.choices.find(x=>x.success),0);assert.equal(c.player.coins,0,'ancienne réponse ne récompense pas');
 choose(0);assert(screen.text.includes('20 %'));choose(0);assert.equal(eggs,0,'rentrer ne cherche pas œuf');
 startPuzzle();choose(screen.choices.findIndex(x=>x.success));assert.equal(c.player.coins,14);
@@ -43,8 +43,14 @@ for(const [roll,rarity] of [[.1,'Commun'],[.7,'Peu commun'],[.9,'Rare'],[.98,'É
     c.Math.random=()=>roll;assert.equal(c.testFlow.pickDragon().rarity,rarity);
 }
 // Événement standard et double récompense.
-c.Math.random=()=>.3;c.testFlow.find();choose(0);assert(!screen.title.includes('énigme'));
+c.Math.random=()=>.3;c.testFlow.find();choose(0);assert(screen.choices.every(x=>x.success===undefined));
 const eventScreen=screen;choose(0);assert.equal(resources,1);
 eventScreen.callback(eventScreen.choices[0],0);assert.equal(resources,1);
 choose(0);choose(0);
+// Une traversée sans événement saute directement à la recherche, sans malus.
+c.draconiaPlayerPerks=()=>({explorationBonus:0});
+c.Math.random=()=>.8;c.testFlow.find();choose(0);
+assert(screen.title.includes('Chercher un nid'));
+assert(screen.text.includes('32 %'),'aucun malus pour absence événement');
+choose(1);c.Math.random=()=>.1;timers.shift()();assert.equal(eggs,2);
 console.log('Parcours, énigmes, échecs, double récompense, incubation et taux exacts : OK');

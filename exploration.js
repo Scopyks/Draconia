@@ -15,6 +15,7 @@ let exploring=false;
 let eventResolved=false;
 let trip=null;
 let phase="idle";
+let lastEventTitle="";
 
 function finishTrip(){
     exploring=false;
@@ -25,67 +26,215 @@ const weatherMap={sun:"Lumière",water:"Eau",lightning:"Foudre",ice:"Glace",shad
 const labels={fish:"🐟 poisson",herb:"🌿 herbe",mushroom:"🍄 champignon",meat:"🍖 viande",insect:"🐛 insecte",apple:"🍎 pomme",berry:"🍓 baie",vegetable:"🥕 légume"};
 
 const events={
-    forest:[
+    "forest": [
         {
-            icon:"🐾",title:"Des traces mystérieuses",text:"De grandes empreintes disparaissent entre les arbres.",
-            choices:[
-                {label:"🔍 Suivre les traces",result:"Tu trouves des baies rares près d'un ancien nid.",reward:{resource:"berry",amount:2,xp:3}},
-                {label:"🌿 Fouiller les alentours",result:"Sous les feuilles, tu découvres plusieurs plantes utiles.",reward:{resource:"herb",amount:2}}
+            "icon": "🐾",
+            "title": "Des traces dans la mousse",
+            "text": "Des empreintes fraîches quittent le sentier. Elles mènent vers un fourré de ronces ; quelques baies poussent au bord du chemin.",
+            "choices": [
+                {
+                    "label": "Cueillir les baies accessibles",
+                    "result": "Tu remplis une petite poche de baies, puis reprends le sentier.",
+                    "reward": {
+                        "resource": "berry",
+                        "amount": 2
+                    }
+                },
+                {
+                    "label": "Suivre les traces à travers les ronces — réussite 60 %",
+                    "risk": 0.6,
+                    "result": "Les traces mènent à un nid abandonné. Des baies ont poussé à l'abri de ses branches.",
+                    "failure": "Les ronces sont trop épaisses. Tu fais demi-tour sans atteindre le nid.",
+                    "reward": {
+                        "resource": "berry",
+                        "amount": 3,
+                        "xp": 5
+                    }
+                }
             ]
         },
         {
-            icon:"🧚",title:"Une petite créature perdue",text:"Une créature de la forêt semble chercher son chemin.",
-            choices:[
-                {label:"💚 L'aider",result:"Elle te mène jusqu'à une cache oubliée.",reward:{coins:16,xp:4}},
-                {label:"🍎 Lui donner à manger",result:"Elle te remercie en déposant quelques ressources devant toi.",cost:{resource:"apple",amount:1},reward:{resource:"mushroom",amount:2,xp:5}}
+            "icon": "🧚",
+            "title": "Une créature méfiante",
+            "text": "Une petite créature reste immobile près d'un tronc creux. Elle observe ton sac, puis une pomme tombée hors de sa portée.",
+            "choices": [
+                {
+                    "label": "Lui tendre une pomme — coûte 1 pomme",
+                    "cost": {
+                        "resource": "apple",
+                        "amount": 1
+                    },
+                    "result": "Rassurée, elle récupère la pomme et te montre des champignons cachés sous le tronc.",
+                    "reward": {
+                        "resource": "mushroom",
+                        "amount": 3,
+                        "xp": 4
+                    }
+                },
+                {
+                    "label": "Garder ses distances et examiner le tronc",
+                    "result": "Sans la déranger, tu ramasses quelques plantes au pied du tronc.",
+                    "reward": {
+                        "resource": "herb",
+                        "amount": 1
+                    }
+                }
             ]
         }
     ],
-    lake:[
+    "lake": [
         {
-            icon:"✨",title:"Une lueur sous l'eau",text:"Quelque chose brille au fond du lac brumeux.",
-            choices:[
-                {label:"🌊 Plonger",result:"Tu remontes avec du poisson et quelques pièces anciennes.",reward:{resource:"fish",amount:1,coins:10,xp:3}},
-                {label:"🎣 Essayer de l'attraper",result:"Ta patience est récompensée par une belle prise.",reward:{resource:"fish",amount:2}}
+            "icon": "✨",
+            "title": "Un reflet sous la surface",
+            "text": "Entre les roseaux, un objet brille au fond du lac. L'eau est peu profonde près de la rive, mais le courant se renforce plus loin.",
+            "choices": [
+                {
+                    "label": "Pêcher près des roseaux",
+                    "result": "Tu laisses le reflet au fond du lac et attrapes deux poissons près de la rive.",
+                    "reward": {
+                        "resource": "fish",
+                        "amount": 2
+                    }
+                },
+                {
+                    "label": "Plonger vers le reflet — réussite 60 %",
+                    "risk": 0.6,
+                    "result": "Tu récupères une bourse coincée sous une pierre et rejoins la rive.",
+                    "failure": "Le courant t'empêche d'atteindre le fond. Tu rejoins la rive sans rien récupérer.",
+                    "reward": {
+                        "coins": 24,
+                        "xp": 5
+                    }
+                }
             ]
         },
         {
-            icon:"🪷",title:"L'île aux herbes",text:"Une petite île couverte de plantes apparaît dans la brume.",
-            choices:[
-                {label:"🌿 Récolter prudemment",result:"Tu récupères des herbes sans déranger la faune.",reward:{resource:"herb",amount:2}},
-                {label:"🧭 Explorer l'île",result:"Tu trouves une vieille bourse cachée sous une pierre.",reward:{coins:20,xp:4}}
+            "icon": "🪷",
+            "title": "Des pierres dans la brume",
+            "text": "Une rangée de pierres permet de rejoindre un îlot couvert de plantes. Certaines disparaissent sous l'eau lorsque le vent se lève.",
+            "choices": [
+                {
+                    "label": "Récolter les plantes de la rive",
+                    "result": "Tu trouves des herbes entre les roseaux sans quitter la terre ferme.",
+                    "reward": {
+                        "resource": "herb",
+                        "amount": 2
+                    }
+                },
+                {
+                    "label": "Traverser jusqu'à l'îlot — réussite 60 %",
+                    "risk": 0.6,
+                    "result": "Tu atteins l'îlot et récoltes des plantes que personne n'a encore cueillies.",
+                    "failure": "Une pierre glisse sous ton pied. Tu renonces à la traversée et reviens sur la rive.",
+                    "reward": {
+                        "resource": "herb",
+                        "amount": 3,
+                        "xp": 5
+                    }
+                }
             ]
         }
     ],
-    mountain:[
+    "mountain": [
         {
-            icon:"🪨",title:"Un passage instable",text:"Un petit éboulement révèle une cavité dans la montagne.",
-            choices:[
-                {label:"⛏️ Entrer dans la cavité",result:"À l'intérieur, tu trouves des champignons et quelques pièces.",reward:{resource:"mushroom",amount:2,coins:8,xp:3}},
-                {label:"🧗 Continuer vers le sommet",result:"L'effort t'apporte de l'expérience et une ressource inattendue.",reward:{resource:"meat",amount:1,xp:6}}
+            "icon": "🪨",
+            "title": "Une fissure dans la roche",
+            "text": "Un éboulement récent a ouvert une cavité. Des pierres continuent de tomber de sa voûte ; des champignons poussent déjà près de l'entrée.",
+            "choices": [
+                {
+                    "label": "Récolter à l'entrée",
+                    "result": "Tu ramasses les champignons accessibles sans entrer sous la voûte.",
+                    "reward": {
+                        "resource": "mushroom",
+                        "amount": 2
+                    }
+                },
+                {
+                    "label": "Explorer la cavité — réussite 60 %",
+                    "risk": 0.6,
+                    "result": "Tu trouves des pièces anciennes dans une niche avant de ressortir.",
+                    "failure": "Le bruit des pierres s'intensifie. Tu ressors avant d'avoir trouvé quoi que ce soit.",
+                    "reward": {
+                        "coins": 24,
+                        "xp": 6
+                    }
+                }
             ]
         },
         {
-            icon:"🔥",title:"Un ancien brasier",text:"Des braises magiques brûlent encore au milieu des rochers.",
-            choices:[
-                {label:"🔥 Examiner les braises",result:"Tu découvres une petite cache protégée par la chaleur.",reward:{coins:22,xp:3}},
-                {label:"🍄 Chercher autour",result:"La chaleur a fait pousser d'étranges champignons.",reward:{resource:"mushroom",amount:2}}
+            "icon": "🔥",
+            "title": "Le camp des braises",
+            "text": "Un campement désert borde le chemin. Son foyer est encore chaud. Un sac repose derrière les braises, tandis que des plantes poussent à l'écart.",
+            "choices": [
+                {
+                    "label": "Ramasser les plantes loin du foyer",
+                    "result": "Tu récoltes quelques herbes sans t'approcher des braises.",
+                    "reward": {
+                        "resource": "herb",
+                        "amount": 2
+                    }
+                },
+                {
+                    "label": "Atteindre le sac derrière le foyer — réussite 60 %",
+                    "risk": 0.6,
+                    "result": "Tu contournes les braises et récupères les provisions oubliées dans le sac.",
+                    "failure": "Une bourrasque ravive le foyer. Tu t'éloignes et laisses le sac sur place.",
+                    "reward": {
+                        "resource": "meat",
+                        "amount": 2,
+                        "xp": 5
+                    }
+                }
             ]
         }
     ],
-    ruins:[
+    "ruins": [
         {
-            icon:"📜",title:"Une inscription ancienne",text:"Des symboles lumineux apparaissent sur un mur des ruines.",
-            choices:[
-                {label:"📖 Les étudier",result:"Tu comprends une partie du message et gagnes de l'expérience.",reward:{xp:8,coins:8}},
-                {label:"🔎 Inspecter le mur",result:"Un compartiment secret s'ouvre devant toi.",reward:{coins:25}}
+            "icon": "📜",
+            "title": "Le mur aux symboles",
+            "text": "Une dalle gravée dépasse d'un mur effondré. Un léger courant d'air sort de sa base : un compartiment se cache peut-être derrière.",
+            "choices": [
+                {
+                    "label": "Étudier les symboles sans déplacer la dalle",
+                    "result": "Tu reconnais des marques de passage et notes leur signification.",
+                    "reward": {
+                        "xp": 7
+                    }
+                },
+                {
+                    "label": "Soulever la dalle — réussite 60 %",
+                    "risk": 0.6,
+                    "result": "La dalle pivote et révèle un petit trésor intact.",
+                    "failure": "La dalle reste bloquée. Tu préfères ne pas fragiliser davantage le mur.",
+                    "reward": {
+                        "coins": 25,
+                        "xp": 4
+                    }
+                }
             ]
         },
         {
-            icon:"🌌",title:"Une faille scintillante",text:"Une faible énergie cosmique traverse les pierres anciennes.",
-            choices:[
-                {label:"✨ S'en approcher",result:"L'énergie t'enveloppe quelques secondes et renforce ton expérience.",reward:{xp:10}},
-                {label:"🐛 Observer les alentours",result:"Des insectes étranges se cachent près de la faille.",reward:{resource:"insect",amount:2,coins:6}}
+            "icon": "🌌",
+            "title": "Une arche qui scintille",
+            "text": "Une lueur traverse une arche brisée par intermittence. À chaque pulsation, les pierres vibrent et les insectes alentour s'éloignent.",
+            "choices": [
+                {
+                    "label": "Observer les pulsations depuis l'extérieur",
+                    "result": "Tu repères un rythme régulier et consignes cette découverte.",
+                    "reward": {
+                        "xp": 6
+                    }
+                },
+                {
+                    "label": "Franchir l'arche entre deux pulsations — réussite 60 %",
+                    "risk": 0.6,
+                    "result": "Tu passes au bon moment et découvres une offrande ancienne de l'autre côté.",
+                    "failure": "La lueur revient avant que tu ne traverses. Tu recules et renonces à l'offrande.",
+                    "reward": {
+                        "coins": 24,
+                        "xp": 6
+                    }
+                }
             ]
         }
     ]
@@ -258,8 +407,8 @@ function chooseEvent(event,choice,index){
     if(success&&choice.reward){applyReward(choice.reward);trip.gains.push(rewardText(choice.reward));}
     trip.eventSuccess=success;
     phase="result";
-    const text=success?choice.result:(event.puzzle?choice.result:"Le passage est trop dangereux : cette tentative échoue. Tes gains précédents sont conservés.");
-    adventurePanel(success?"✅ Événement réussi":"❌ Événement raté",text,[{label:"Étape 3 : décider de la suite"}],decision);
+    const text=success?choice.result:(choice.failure||choice.result);
+    adventurePanel(success?"✅ Tu poursuis ta route":"❌ La tentative échoue",text,[{label:"Poursuivre l'exploration"}],decision);
 }
 
 function showRandomEvent(){
@@ -267,20 +416,22 @@ function showRandomEvent(){
     let event;
     if(Math.random()<.25)event=DraconiaExplorationRules.puzzle(selectedZone);
     else {
-        const base=list[Math.floor(Math.random()*list.length)];
-        event={...base,choices:[...base.choices,{label:"⚠️ Ouvrir un passage risqué (60 % de réussite)",result:"Tu ouvres le passage et découvres une cache !",risk:.6,reward:{coins:24,xp:6}}]};
+        const alternatives=list.filter(e=>e.title!==lastEventTitle);
+        const pool=alternatives.length?alternatives:list;
+        event=pool[Math.floor(Math.random()*pool.length)];
     }
+    lastEventTitle=event.title;
     phase="event";activeEvent=true;eventResolved=false;renderZones();
-    adventurePanel("Étape 2 — "+event.icon+" "+event.title,event.text,event.choices,(choice,i)=>chooseEvent(event,choice,i));
+    adventurePanel(event.icon+" "+event.title,event.text,event.choices,(choice,i)=>chooseEvent(event,choice,i));
 }
 
 function decision(){
     if(phase!=="result")return;
     phase="decision";
     const bonus=Math.min(.1,Math.max(0,Number(perks().explorationBonus)||0));
-    const chance=Math.min(.65,Math.max(.1,(trip.route==="risk"?.48:.32)+(trip.eventSuccess?.08:-.12)+bonus));
+    const chance=Math.min(.65,Math.max(.1,(trip.route==="risk"?.48:.32)+(trip.eventSuccess===null?0:trip.eventSuccess?.08:-.12)+bonus));
     trip.eggChance=chance;
-    adventurePanel("Étape 3 — Continuer ou rentrer ?",(trip.eventSuccess?"Le passage t'aide à chercher un nid.":"Le passage n'a pas été ouvert : la recherche sera plus difficile.")+" Chance de trouver un œuf si tu continues : "+Math.round(chance*100)+" %. Rentrer conserve tes gains, sans rechercher d'œuf.",[
+    adventurePanel("Chercher un nid ou rentrer ?",(trip.eventSuccess===null?"La traversée est calme. Tu repères des traces qui pourraient mener à un nid.":trip.eventSuccess?"Ta découverte te donne une piste pour chercher un nid.":"Cette piste n'a rien donné. Tu peux encore chercher un nid ailleurs, avec moins de chances.")+" Chance de trouver un œuf : "+Math.round(chance*100)+" %. Rentrer termine la sortie et conserve tes gains.",[
         {label:"🏠 Rentrer avec mes trouvailles",home:true},{label:"🥚 Continuer pour chercher un œuf"}
     ],choice=>{
         if(choice.home){endTrip("Tu rentres de "+zones[selectedZone].name+" avec tes trouvailles.");return;}
@@ -309,7 +460,7 @@ function find(){
     if(b)b.disabled=true;renderZones();
     if(m)m.textContent="🗺️ Une nouvelle exploration commence.";
     adventurePanel("Étape 1 — Choisis ton chemin","Les gains d'événement sont conservés. Le chemin aventureux donne de meilleures chances de trouver un œuf, mais peut t'arrêter avant l'événement. Parmi les œufs obtenus : épique 2,7 %, légendaire 0,3 %.",[
-        {label:"🌿 Chemin prudent — accès garanti à l'événement",route:"safe"},
+        {label:"🌿 Suivre le sentier — trajet sans risque",route:"safe"},
         {label:"⚠️ Chemin aventureux — 20 % de risque de devoir rentrer",route:"risk"},
         {label:"🏠 Annuler la sortie",cancel:true}
     ],choice=>{
@@ -317,7 +468,8 @@ function find(){
         trip.route=choice.route;
         phase="travel";
         if(choice.route==="risk"&&Math.random()<.2){endTrip("Un éboulement bloque le chemin. Tu rentres sans trouvaille.");return;}
-        showRandomEvent();
+        if(Math.random()<.4)showRandomEvent();
+        else {trip.eventSuccess=null;phase="result";decision();}
     });
 }
 
