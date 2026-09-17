@@ -16,7 +16,14 @@ let tripCompanion=null;
 let eventResolved=false;
 
 function finishTrip(){
-    if(tripCompanion&&window.draconiaCompanion)window.draconiaCompanion.finish(tripCompanion,zones[selectedZone].name);
+    if(tripCompanion&&window.draconiaCompanion){
+        const summary=window.draconiaCompanion.finish(tripCompanion,zones[selectedZone]);
+        if(summary){
+            let result=document.getElementById("exploration-companion-summary");
+            if(!result){result=document.createElement("div");result.id="exploration-companion-summary";result.className="exploration-current";document.getElementById("egg-message")?.insertAdjacentElement("afterend",result);}
+            result.textContent="🐉 Bilan du compagnon — "+summary;
+        }
+    }
     tripCompanion=null;
     exploring=false;
     renderZones();
@@ -145,7 +152,7 @@ function renderZones(){
         renderZones();
     });
     c.querySelectorAll("[data-zone]").forEach(b=>b.disabled=activeEvent||exploring);
-    if(window.draconiaCompanion)window.draconiaCompanion.render(c,activeEvent||exploring);
+    if(window.draconiaCompanion)window.draconiaCompanion.render(c,activeEvent||exploring,z);
 }
 
 function pickDragon(){
@@ -251,7 +258,8 @@ function chooseEvent(event,choice,index){
 
 function showRandomEvent(){
     const list=events[selectedZone]||events.forest;
-    const baseEvent=list[Math.floor(Math.random()*list.length)];
+    const companionEvent=tripCompanion&&Math.random()<.65?window.draconiaCompanion?.adventure(tripCompanion,zones[selectedZone]):null;
+    const baseEvent=companionEvent||list[Math.floor(Math.random()*list.length)];
     const special=window.draconiaCompanion?.choice(baseEvent,tripCompanion);
     const event={...baseEvent,choices:[...baseEvent.choices,...(special?[special]:[])]};
     const panel=eventPanel();
@@ -277,6 +285,7 @@ function find(){
     const departure=window.draconiaCompanion?window.draconiaCompanion.depart():{ok:true,companion:null};
     if(!departure.ok){if(m)m.textContent=departure.message;renderZones();return;}
     tripCompanion=departure.companion;
+    document.getElementById("exploration-companion-summary")?.remove();
     exploring=true;
     renderZones();
     if(b)b.disabled=true;
@@ -294,7 +303,8 @@ function find(){
             showRandomEvent();
             return;
         }
-        if(m)m.textContent=`🍃 Tu explores ${z.name}, mais tu ne trouves rien cette fois.`;
+        if(tripCompanion&&window.draconiaCompanion?.affinity(tripCompanion,z)&&Math.random()<.65){showRandomEvent();return;}
+        if(m)m.textContent=tripCompanion?`🍃 Pas d'œuf ni d'événement dans ${z.name}. Ton compagnon termine sa sortie.`:`🍃 Tu explores ${z.name}, mais tu ne trouves rien cette fois.`;
         finishTrip();
         if(b)b.disabled=false;
     },850);

@@ -4,6 +4,9 @@
     let selected = DraconiaStorage.getItem(key) || "";
     const energyCost = 5;
     const minimumEnergy = 25;
+    const bonusResources = {Feu:"mushroom", Eau:"fish", Nature:"herb", Air:"berry", Foudre:"meat", Glace:"fish", Terre:"vegetable", Ombre:"insect", Lumière:"apple", Cosmique:"insect"};
+    const resourceNames = {mushroom:"🍄 champignon",fish:"🐟 poisson",herb:"🌿 herbe",berry:"🍓 baie",meat:"🍖 viande",vegetable:"🥕 légume",insect:"🐛 insecte",apple:"🍎 pomme"};
+    function affinity(companion, zone) { return !!companion && !!zone?.elements?.includes(companion.element); }
     const abilities = {
         Feu: { label: "Éclairer une cavité", result: "éclaire une cavité et repère une cache", resource: "mushroom" },
         Eau: { label: "Explorer sous l'eau", result: "plonge et rapporte une belle prise", resource: "fish" },
@@ -30,7 +33,7 @@
     function available(d) {
         return !!d && !(Number(d.restUntil) > Date.now()) && Number(d.energy) >= minimumEnergy;
     }
-    function render(container, locked) {
+    function render(container, locked, zone) {
         const label = document.createElement("label");
         label.className = "exploration-current";
         label.style.display = "block";
@@ -54,11 +57,18 @@
         });
         if (selected && !owned(selected)) selected = "";
         select.value = selected;
-        select.onchange = () => { selected = select.value; DraconiaStorage.setItem(key, selected); };
+        select.onchange = () => { selected = select.value; DraconiaStorage.setItem(key, selected); updateHint(); };
         label.appendChild(select);
         const hint = document.createElement("small");
         hint.style.display = "block";
-        hint.textContent = "Avec un dragon : −5 énergie par départ, minimum 25. Son élément ouvre certains choix spéciaux.";
+        function updateHint() {
+            const dragon = dragons.find(d => d.id === selected);
+            hint.textContent = !dragon ? "Exploration solo gratuite. Choisis un dragon pour profiter de son élément."
+                : "−5 énergie (minimum 25 au départ). +2 XP dragon et +2 bonheur au retour. " +
+                  (affinity(dragon, zone) ? "Zone adaptée : +1 " + resourceNames[bonusResources[dragon.element]] + " garanti à chaque retour, même avec un œuf. Des aventures de compagnon peuvent apparaître."
+                  : "Pas de récolte bonus ici : choisis une zone adaptée à l'élément " + dragon.element + ". Ses choix spéciaux restent possibles dans les événements compatibles.");
+        }
+        updateHint();
         label.appendChild(hint);
         container.appendChild(label);
     }
@@ -82,8 +92,30 @@
             companionAction: true
         };
     }
+    function adventure(companion, zone) {
+        if (!affinity(companion, zone) || !abilities[companion.element]) return null;
+        const skill = abilities[companion.element];
+        const resource = bonusResources[companion.element];
+        return {
+            icon: "🐉", title: "Une découverte de " + companion.name,
+            text: "Dans " + zone.name + ", " + companion.name + " reconnaît une énergie " + companion.element + " et t'invite à explorer un passage oublié.",
+            choices: [
+                { label: "🐉 " + skill.label + " avec " + companion.name, result: companion.name + " " + skill.result + ". Vous découvrez le passage ensemble.",
+                  reward: skill.resource ? {resource:skill.resource,amount:3,xp:5} : skill.coins ? {coins:skill.coins,xp:5} : {xp:10}, companionAction:true },
+                { label: "🔎 Inspecter prudemment les alentours", result: "Tu suis les indications de " + companion.name + " et ramasses des ressources sans entrer dans le passage.",
+                  reward:{resource,amount:2,xp:3}, companionAction:true }
+            ]
+        };
+    }
     function finish(companion, zone) {
-        if (!companion) return;
+        if (!companion || companion.returned) return "";
+        companion.returned = true;
+        let summary = companion.name + " : +2 XP dragon • +2 bonheur (maximum 100) • −5 énergie au départ.";
+        const resource = bonusResources[companion.element];
+        if (affinity(companion, zone) && resource && typeof addResource === "function") {
+            addResource(resource, 1);
+            summary += " Récolte de compagnon : +1 " + resourceNames[resource] + ".";
+        }
         const d = owned(companion.id);
         if (d) {
             d.happiness = Math.min(100, (Number(d.happiness) || 0) + 2);
@@ -92,8 +124,9 @@
             if (typeof renderOwnedDragons === "function") renderOwnedDragons();
         }
         if (typeof window.draconiaAdventureLog === "function") {
-            window.draconiaAdventureLog(companion.name + " t'a accompagné dans " + zone + ".", "🐉", "exploration");
+            window.draconiaAdventureLog(companion.name + " t'a accompagné dans " + (zone.name || zone) + ". " + summary, "🐉", "exploration");
         }
+        return summary;
     }
-    window.draconiaCompanion = Object.freeze({ render, depart, choice, finish });
+    window.draconiaCompanion = Object.freeze({ render, depart, choice, finish, affinity, adventure });
 })();
