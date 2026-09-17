@@ -13,13 +13,14 @@ if(!zones[selectedZone])selectedZone="forest";
 let activeEvent=false;
 let exploring=false;
 let eventResolved=false;
+let trip=null;
+let phase="idle";
 
 function finishTrip(){
     exploring=false;
     renderZones();
 }
 
-const rarityWeights={"Commun":5,"Peu commun":3.6,"Rare":2,"Épique":1,"Légendaire":.35};
 const weatherMap={sun:"Lumière",water:"Eau",lightning:"Foudre",ice:"Glace",shadow:"Ombre",air:"Air",nature:"Nature"};
 const labels={fish:"🐟 poisson",herb:"🌿 herbe",mushroom:"🍄 champignon",meat:"🍖 viande",insect:"🐛 insecte",apple:"🍎 pomme",berry:"🍓 baie",vegetable:"🥕 légume"};
 
@@ -146,14 +147,16 @@ function renderZones(){
 
 function pickDragon(){
     if(typeof dragons==="undefined"||!dragons.length)return null;
-    const z=zones[selectedZone],w=weatherElement(),p=perks();
-    const arr=dragons.map(d=>{
-        let weight=rarityWeights[d.rarity]||1;
+    const rarity=DraconiaExplorationRules.pickRarity();
+    const candidates=dragons.filter(d=>d.rarity===rarity);
+    if(!candidates.length)return null; // Ne jamais transformer une rareté absente en une autre.
+    const z=zones[selectedZone],w=weatherElement();
+    const arr=candidates.map(d=>{
+        let weight=1;
         if(z.elements.includes(d.element))weight*=3;
         if(w===d.element)weight*=2.2;
         if(typeof isNight==="function"&&isNight()&&d.element==="Ombre")weight*=1.7;
-        if(["Rare","Épique","Légendaire"].includes(d.rarity))weight*=p.rarityBonus||1;
-        return{d,weight};
+        return {d,weight};
     });
     const total=arr.reduce((a,x)=>a+x.weight,0);
     let r=Math.random()*total;
@@ -219,76 +222,103 @@ function clearEvent(){
     renderZones();
 }
 
-function chooseEvent(event,choice,index){
-    if(!activeEvent||eventResolved)return;
+function adventurePanel(title,text,choices,callback){
     const panel=eventPanel();
-    if(!panel)return;
+    if(!panel){endTrip("L'exploration n'est pas disponible ici.");return;}
+    panel.innerHTML="";
+    const heading=document.createElement("h3");heading.textContent=title;panel.appendChild(heading);
+    const description=document.createElement("p");description.textContent=text;panel.appendChild(description);
+    const buttons=document.createElement("div");buttons.className="exploration-event-choices";panel.appendChild(buttons);
+    const currentPhase=phase;
+    choices.forEach((choice,i)=>{
+        const button=document.createElement("button");button.className="exploration-event-choice";button.textContent=choice.label;
+        button.onclick=()=>{if(!exploring||phase!==currentPhase)return;callback(choice,i);};
+        buttons.appendChild(button);
+    });
+}
+
+function endTrip(text){
+    const gains=trip?.gains?.join(" • ");
+    const message=document.getElementById("egg-message");
+    if(message)message.textContent=text+(gains?" Récompenses conservées : "+gains:" ");
+    if(typeof window.draconiaAdventureLog==="function")window.draconiaAdventureLog(text,"🗺️","exploration");
+    trip=null;phase="idle";
+    finishTrip();clearEvent();
+}
+
+function chooseEvent(event,choice,index){
+    if(!activeEvent||eventResolved||phase!=="event")return;
     if(choice.cost&&!removeEventCost(choice.cost)){
-        panel.querySelector(".exploration-event-result")?.remove();
-        const result=document.createElement("div");
-        result.className="exploration-event-result";
-        result.textContent=`❌ Il te manque ${choice.cost.amount||1} ${labels[choice.cost.resource]||choice.cost.resource} pour faire ce choix.`;
-        panel.appendChild(result);
+        const message=document.getElementById("egg-message");
+        if(message)message.textContent="Il te manque "+(choice.cost.amount||1)+" "+(labels[choice.cost.resource]||choice.cost.resource)+". Choisis une autre option.";
         return;
     }
     eventResolved=true;
-    applyReward(choice.reward);
-    finishTrip();
-    panel.querySelectorAll(".exploration-event-choice").forEach(b=>b.disabled=true);
-    let result=panel.querySelector(".exploration-event-result");
-    if(!result){result=document.createElement("div");result.className="exploration-event-result";panel.appendChild(result)}
-    const gain=rewardText(choice.reward);
-    result.textContent=`${choice.result}${gain?` 🎁 ${gain}`:""}`;
-    const message=document.getElementById("egg-message");
-    if(message)message.textContent=`${event.icon} Événement terminé dans ${zones[selectedZone].name}.`;
-    setTimeout(clearEvent,1800);
+    const success=choice.success!==false&&(!choice.risk||Math.random()<choice.risk);
+    if(success&&choice.reward){applyReward(choice.reward);trip.gains.push(rewardText(choice.reward));}
+    trip.eventSuccess=success;
+    phase="result";
+    const text=success?choice.result:(event.puzzle?choice.result:"Le passage est trop dangereux : cette tentative échoue. Tes gains précédents sont conservés.");
+    adventurePanel(success?"✅ Événement réussi":"❌ Événement raté",text,[{label:"Étape 3 : décider de la suite"}],decision);
 }
 
 function showRandomEvent(){
     const list=events[selectedZone]||events.forest;
-    const baseEvent=list[Math.floor(Math.random()*list.length)];
-    const event=baseEvent;
-    const panel=eventPanel();
-    if(!panel){finishTrip();const b=document.getElementById("egg-button");if(b)b.disabled=false;return;}
-    activeEvent=true;
-    eventResolved=false;
-    renderZones();
-    panel.innerHTML=`<div class="exploration-event-icon">${event.icon}</div><h3>${event.title}</h3><p>${event.text}</p><div class="exploration-event-choices">${event.choices.map((choice,i)=>`<button class="exploration-event-choice" data-event-choice="${i}">${choice.label}</button>`).join("")}</div>`;
-    panel.querySelectorAll("[data-event-choice]").forEach(button=>{
-        button.onclick=()=>chooseEvent(event,event.choices[Number(button.dataset.eventChoice)],Number(button.dataset.eventChoice));
+    let event;
+    if(Math.random()<.25)event=DraconiaExplorationRules.puzzle(selectedZone);
+    else {
+        const base=list[Math.floor(Math.random()*list.length)];
+        event={...base,choices:[...base.choices,{label:"⚠️ Ouvrir un passage risqué (60 % de réussite)",result:"Tu ouvres le passage et découvres une cache !",risk:.6,reward:{coins:24,xp:6}}]};
+    }
+    phase="event";activeEvent=true;eventResolved=false;renderZones();
+    adventurePanel("Étape 2 — "+event.icon+" "+event.title,event.text,event.choices,(choice,i)=>chooseEvent(event,choice,i));
+}
+
+function decision(){
+    if(phase!=="result")return;
+    phase="decision";
+    const bonus=Math.min(.1,Math.max(0,Number(perks().explorationBonus)||0));
+    const chance=Math.min(.65,Math.max(.1,(trip.route==="risk"?.48:.32)+(trip.eventSuccess?.08:-.12)+bonus));
+    trip.eggChance=chance;
+    adventurePanel("Étape 3 — Continuer ou rentrer ?",(trip.eventSuccess?"Le passage t'aide à chercher un nid.":"Le passage n'a pas été ouvert : la recherche sera plus difficile.")+" Chance de trouver un œuf si tu continues : "+Math.round(chance*100)+" %. Rentrer conserve tes gains, sans rechercher d'œuf.",[
+        {label:"🏠 Rentrer avec mes trouvailles",home:true},{label:"🥚 Continuer pour chercher un œuf"}
+    ],choice=>{
+        if(choice.home){endTrip("Tu rentres de "+zones[selectedZone].name+" avec tes trouvailles.");return;}
+        phase="search";
+        adventurePanel("Recherche du nid…","Tu poursuis le chemin. La recherche peut ne rien donner.",[],()=>{});
+        setTimeout(()=>{
+            if(phase!=="search"||!trip)return;
+            if(Math.random()<trip.eggChance){
+                const d=pickDragon();
+                if(d&&typeof window.draconiaReceiveEgg==="function"&&window.draconiaReceiveEgg(d,zones[selectedZone].name)){
+                    endTrip("🥚 Tu as trouvé un œuf "+d.element+" • "+d.rarity+" !");return;
+                }
+            }
+            endTrip("🍃 Aucun œuf trouvé cette fois. Tu rentres sans perdre tes trouvailles.");
+        },850);
     });
-    const message=document.getElementById("egg-message");
-    if(message)message.textContent="✨ Un événement se produit ! Choisis ce que tu veux faire.";
 }
 
 function find(){
-    const b=document.getElementById("egg-button"),m=document.getElementById("egg-message"),z=zones[selectedZone];
+    const b=document.getElementById("egg-button"),m=document.getElementById("egg-message");
     if(activeEvent||exploring)return;
     if(typeof window.draconiaHasActiveEgg==="function"&&window.draconiaHasActiveEgg()){
-        if(m)m.textContent="🥚 Un œuf est déjà en incubation.";
-        return;
+        if(m)m.textContent="🥚 Un œuf est déjà en incubation.";return;
     }
-    exploring=true;
-    renderZones();
-    if(b)b.disabled=true;
-    if(m)m.textContent=`${z.icon} Exploration de ${z.name}...`;
-    setTimeout(()=>{
-        const p=perks(),roll=Math.random(),eggChance=.42+(p.explorationBonus||0),eventChance=.38;
-        if(roll<eggChance){
-            const d=pickDragon();
-            if(d&&typeof window.draconiaReceiveEgg==="function"&&window.draconiaReceiveEgg(d,z.name)){
-                if(m)m.textContent=`🥚 Tu as trouvé un œuf ${d.element} • ${d.rarity} !`;
-                finishTrip();
-                return;
-            }
-        }else if(roll<eggChance+eventChance){
-            showRandomEvent();
-            return;
-        }
-        if(m)m.textContent=`🍃 Tu explores ${z.name}, mais tu ne trouves rien cette fois.`;
-        finishTrip();
-        if(b)b.disabled=false;
-    },850);
+    exploring=true;activeEvent=true;phase="route";trip={route:null,eventSuccess:false,gains:[]};
+    if(b)b.disabled=true;renderZones();
+    if(m)m.textContent="🗺️ Une nouvelle exploration commence.";
+    adventurePanel("Étape 1 — Choisis ton chemin","Les gains d'événement sont conservés. Le chemin aventureux donne de meilleures chances de trouver un œuf, mais peut t'arrêter avant l'événement. Parmi les œufs obtenus : épique 2,7 %, légendaire 0,3 %.",[
+        {label:"🌿 Chemin prudent — accès garanti à l'événement",route:"safe"},
+        {label:"⚠️ Chemin aventureux — 20 % de risque de devoir rentrer",route:"risk"},
+        {label:"🏠 Annuler la sortie",cancel:true}
+    ],choice=>{
+        if(choice.cancel){endTrip("Sortie annulée.");return;}
+        trip.route=choice.route;
+        phase="travel";
+        if(choice.route==="risk"&&Math.random()<.2){endTrip("Un éboulement bloque le chemin. Tu rentres sans trouvaille.");return;}
+        showRandomEvent();
+    });
 }
 
 function install(){
