@@ -21,6 +21,7 @@
             dailyRewards: "draconiaDailyRewardsV1",
             activeEgg: "draconiaActiveEggV1",
             explorationZone: "draconiaExplorationZone",
+            explorationCompanion: "draconiaExplorationCompanionV1",
             dailyMissions: "draconiaDailyMissionsV1"
         },
 
