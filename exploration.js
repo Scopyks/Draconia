@@ -12,12 +12,9 @@ let selectedZone=DraconiaStorage.getItem(KEY);
 if(!zones[selectedZone])selectedZone="forest";
 let activeEvent=false;
 let exploring=false;
-let tripCompanion=null;
 let eventResolved=false;
 
 function finishTrip(){
-    if(tripCompanion&&window.draconiaCompanion)window.draconiaCompanion.finish(tripCompanion,zones[selectedZone].name);
-    tripCompanion=null;
     exploring=false;
     renderZones();
 }
@@ -145,7 +142,6 @@ function renderZones(){
         renderZones();
     });
     c.querySelectorAll("[data-zone]").forEach(b=>b.disabled=activeEvent||exploring);
-    if(window.draconiaCompanion)window.draconiaCompanion.render(c,activeEvent||exploring);
 }
 
 function pickDragon(){
@@ -237,7 +233,6 @@ function chooseEvent(event,choice,index){
     }
     eventResolved=true;
     applyReward(choice.reward);
-    if(choice.companionAction&&typeof window.draconiaAdventureLog==="function")window.draconiaAdventureLog(choice.result,"🐉","exploration");
     finishTrip();
     panel.querySelectorAll(".exploration-event-choice").forEach(b=>b.disabled=true);
     let result=panel.querySelector(".exploration-event-result");
@@ -252,8 +247,7 @@ function chooseEvent(event,choice,index){
 function showRandomEvent(){
     const list=events[selectedZone]||events.forest;
     const baseEvent=list[Math.floor(Math.random()*list.length)];
-    const special=window.draconiaCompanion?.choice(baseEvent,tripCompanion);
-    const event={...baseEvent,choices:[...baseEvent.choices,...(special?[special]:[])]};
+    const event=baseEvent;
     const panel=eventPanel();
     if(!panel){finishTrip();const b=document.getElementById("egg-button");if(b)b.disabled=false;return;}
     activeEvent=true;
@@ -274,9 +268,6 @@ function find(){
         if(m)m.textContent="🥚 Un œuf est déjà en incubation.";
         return;
     }
-    const departure=window.draconiaCompanion?window.draconiaCompanion.depart():{ok:true,companion:null};
-    if(!departure.ok){if(m)m.textContent=departure.message;renderZones();return;}
-    tripCompanion=departure.companion;
     exploring=true;
     renderZones();
     if(b)b.disabled=true;
