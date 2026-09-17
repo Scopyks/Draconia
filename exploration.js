@@ -11,6 +11,16 @@ const zones={
 let selectedZone=DraconiaStorage.getItem(KEY);
 if(!zones[selectedZone])selectedZone="forest";
 let activeEvent=false;
+let exploring=false;
+let tripCompanion=null;
+let eventResolved=false;
+
+function finishTrip(){
+    if(tripCompanion&&window.draconiaCompanion)window.draconiaCompanion.finish(tripCompanion,zones[selectedZone].name);
+    tripCompanion=null;
+    exploring=false;
+    renderZones();
+}
 
 const rarityWeights={"Commun":5,"Peu commun":3.6,"Rare":2,"Épique":1,"Légendaire":.35};
 const weatherMap={sun:"Lumière",water:"Eau",lightning:"Foudre",ice:"Glace",shadow:"Ombre",air:"Air",nature:"Nature"};
@@ -129,11 +139,13 @@ function renderZones(){
     const w=weatherElement(),z=zones[selectedZone];
     c.innerHTML=`<p class="exploration-zones-title">🗺️ Choisis une zone à explorer</p><div class="exploration-zone-grid">${Object.entries(zones).map(([id,x])=>`<button class="exploration-zone ${id===selectedZone?"selected":""}" data-zone="${id}"><div class="exploration-zone-icon">${x.icon}</div><strong>${x.name}</strong><small>${x.description}</small></button>`).join("")}</div><div class="exploration-current"><strong>${z.icon} ${z.name}</strong><br>${w?`🌦️ Météo favorable aux dragons ${w}.`:"🌦️ La météo peut influencer les rencontres."}</div>`;
     c.querySelectorAll("[data-zone]").forEach(b=>b.onclick=()=>{
-        if(activeEvent)return;
+        if(activeEvent||exploring)return;
         selectedZone=b.dataset.zone;
         DraconiaStorage.setItem(KEY,selectedZone);
         renderZones();
     });
+    c.querySelectorAll("[data-zone]").forEach(b=>b.disabled=activeEvent||exploring);
+    if(window.draconiaCompanion)window.draconiaCompanion.render(c,activeEvent||exploring);
 }
 
 function pickDragon(){
@@ -207,10 +219,12 @@ function clearEvent(){
     const p=document.getElementById("exploration-event");
     if(p)p.remove();
     const b=document.getElementById("egg-button");
-    if(b)b.disabled=false;
+    if(b)b.disabled=typeof window.draconiaHasActiveEgg==="function"&&window.draconiaHasActiveEgg();
+    renderZones();
 }
 
 function chooseEvent(event,choice,index){
+    if(!activeEvent||eventResolved)return;
     const panel=eventPanel();
     if(!panel)return;
     if(choice.cost&&!removeEventCost(choice.cost)){
@@ -221,7 +235,10 @@ function chooseEvent(event,choice,index){
         panel.appendChild(result);
         return;
     }
+    eventResolved=true;
     applyReward(choice.reward);
+    if(choice.companionAction&&typeof window.draconiaAdventureLog==="function")window.draconiaAdventureLog(choice.result,"🐉","exploration");
+    finishTrip();
     panel.querySelectorAll(".exploration-event-choice").forEach(b=>b.disabled=true);
     let result=panel.querySelector(".exploration-event-result");
     if(!result){result=document.createElement("div");result.className="exploration-event-result";panel.appendChild(result)}
@@ -234,10 +251,14 @@ function chooseEvent(event,choice,index){
 
 function showRandomEvent(){
     const list=events[selectedZone]||events.forest;
-    const event=list[Math.floor(Math.random()*list.length)];
+    const baseEvent=list[Math.floor(Math.random()*list.length)];
+    const special=window.draconiaCompanion?.choice(baseEvent,tripCompanion);
+    const event={...baseEvent,choices:[...baseEvent.choices,...(special?[special]:[])]};
     const panel=eventPanel();
-    if(!panel)return;
+    if(!panel){finishTrip();const b=document.getElementById("egg-button");if(b)b.disabled=false;return;}
     activeEvent=true;
+    eventResolved=false;
+    renderZones();
     panel.innerHTML=`<div class="exploration-event-icon">${event.icon}</div><h3>${event.title}</h3><p>${event.text}</p><div class="exploration-event-choices">${event.choices.map((choice,i)=>`<button class="exploration-event-choice" data-event-choice="${i}">${choice.label}</button>`).join("")}</div>`;
     panel.querySelectorAll("[data-event-choice]").forEach(button=>{
         button.onclick=()=>chooseEvent(event,event.choices[Number(button.dataset.eventChoice)],Number(button.dataset.eventChoice));
@@ -248,11 +269,16 @@ function showRandomEvent(){
 
 function find(){
     const b=document.getElementById("egg-button"),m=document.getElementById("egg-message"),z=zones[selectedZone];
-    if(activeEvent)return;
+    if(activeEvent||exploring)return;
     if(typeof window.draconiaHasActiveEgg==="function"&&window.draconiaHasActiveEgg()){
         if(m)m.textContent="🥚 Un œuf est déjà en incubation.";
         return;
     }
+    const departure=window.draconiaCompanion?window.draconiaCompanion.depart():{ok:true,companion:null};
+    if(!departure.ok){if(m)m.textContent=departure.message;renderZones();return;}
+    tripCompanion=departure.companion;
+    exploring=true;
+    renderZones();
     if(b)b.disabled=true;
     if(m)m.textContent=`${z.icon} Exploration de ${z.name}...`;
     setTimeout(()=>{
@@ -261,6 +287,7 @@ function find(){
             const d=pickDragon();
             if(d&&typeof window.draconiaReceiveEgg==="function"&&window.draconiaReceiveEgg(d,z.name)){
                 if(m)m.textContent=`🥚 Tu as trouvé un œuf ${d.element} • ${d.rarity} !`;
+                finishTrip();
                 return;
             }
         }else if(roll<eggChance+eventChance){
@@ -268,6 +295,7 @@ function find(){
             return;
         }
         if(m)m.textContent=`🍃 Tu explores ${z.name}, mais tu ne trouves rien cette fois.`;
+        finishTrip();
         if(b)b.disabled=false;
     },850);
 }
