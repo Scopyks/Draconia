@@ -25,7 +25,7 @@ function hatchEgg(){
     if(typeof renderDragonDex==="function")renderDragonDex();
     const m=document.getElementById("egg-message");
     if(m)m.textContent=owned
-        ?`✨ Œuf en double : ${d.name} gagne +50 XP !${owned.level>previousLevel?` Niveau ${owned.level} atteint !`:""}`
+        ?`✨ Œuf en double : ${d.name} gagne +25 XP !${owned.level>previousLevel?` Niveau ${owned.level} atteint !`:""}`
         :`🐣 ${d.name} vient d'éclore ! Il rejoint maintenant tes dragons.`;
 }
 function start(){render();if(timer)clearInterval(timer);timer=setInterval(render,1000)}

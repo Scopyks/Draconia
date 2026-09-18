@@ -261,7 +261,7 @@ function discoverDragon(dragon) {
         saveOwnedDragons();
     } else {
         // Un doublon fait progresser le dragon existant, sans le remplacer.
-        addDragonXP(alreadyOwned, 50);
+        addDragonXP(alreadyOwned, 25);
         saveOwnedDragons();
     }
 }
@@ -703,4 +703,3 @@ function addDragonXP(
         dragon.level += 1;
     }
 }
-
