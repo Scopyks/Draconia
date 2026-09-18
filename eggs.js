@@ -12,7 +12,22 @@ function injectStyles(){if(document.getElementById("draconia-eggs-style"))return
 function ensurePanel(){const card=document.querySelector(".egg-card");if(!card)return null;let p=document.getElementById("dragon-egg-panel");if(!p){p=document.createElement("div");p.id="dragon-egg-panel";p.className="dragon-egg-panel";const b=document.getElementById("egg-button");if(b)b.insertAdjacentElement("afterend",p);else card.appendChild(p)}return p}
 function render(){injectStyles();const p=ensurePanel();if(!p)return;const egg=loadEgg(),b=document.getElementById("egg-button");if(!egg){p.className="dragon-egg-panel empty";p.innerHTML=`<div class="dragon-egg-big">🥚</div><h3>Aucun œuf en incubation</h3><p>Explore une zone pour tenter de trouver un œuf de dragon.</p>`;if(b)b.disabled=false;return}const d=getDragon(egg.dragonId);if(!d){saveEgg(null);render();return}const rem=Math.max(0,egg.hatchAt-Date.now()),dur=Math.max(1,egg.hatchAt-egg.startedAt),pc=Math.min(100,Math.round((dur-rem)/dur*100)),ready=rem<=0;const stage=ready?"hatching":rem<=dur/2?"cracked":"egg";p.className="dragon-egg-panel";p.innerHTML=`<div class="dragon-egg-big">${dragonArtworks[d.id]?dragonArtwork(d,stage):ready?"✨🥚✨":"🥚"}</div><h3>Œuf ${d.element}</h3><p>${d.rarity} • Trouvé dans ${egg.zoneName||"Draconia"}</p><div class="dragon-egg-progress"><div class="dragon-egg-fill" style="width:${pc}%"></div></div><p class="${ready?"dragon-egg-ready":""}">${ready?"✨ L'œuf est prêt à éclore !":`⏳ Éclosion dans ${formatTime(rem)}`}</p><button class="dragon-egg-hatch" id="dragon-egg-hatch-button" ${ready?"":"disabled"}>🐣 Faire éclore</button>`;if(b)b.disabled=true;const hb=document.getElementById("dragon-egg-hatch-button");if(hb)hb.onclick=hatchEgg}
 function receiveEgg(d,zone){if(!d||loadEgg())return false;const perks=typeof window.draconiaPlayerPerks==="function"?window.draconiaPlayerPerks():{hatchMultiplier:1};const duration=Math.round((hatchTimes[d.rarity]||60000)*(perks.hatchMultiplier||1)),startedAt=Date.now();saveEgg({dragonId:d.id,zoneName:zone||"Draconia",startedAt,hatchAt:startedAt+duration});render();return true}
-function hatchEgg(){const egg=loadEgg();if(!egg||Date.now()<egg.hatchAt)return;const d=getDragon(egg.dragonId);if(!d){saveEgg(null);render();return}saveEgg(null);if(typeof discoverDragon==="function")discoverDragon(d);render();const m=document.getElementById("egg-message");if(m)m.textContent=`🐣 ${d.name} vient d'éclore ! Il rejoint maintenant tes dragons.`}
+function hatchEgg(){
+    const egg=loadEgg();if(!egg||Date.now()<egg.hatchAt)return;
+    const d=getDragon(egg.dragonId);if(!d){saveEgg(null);render();return}
+    const owned=typeof ownedDragons!=="undefined"?ownedDragons.find(x=>x.id===d.id):null;
+    const previousLevel=owned?owned.level:0;
+    // Consommer avant la récompense protège des doubles clics.
+    saveEgg(null);
+    if(typeof discoverDragon==="function")discoverDragon(d);
+    render();
+    if(typeof renderOwnedDragons==="function")renderOwnedDragons();
+    if(typeof renderDragonDex==="function")renderDragonDex();
+    const m=document.getElementById("egg-message");
+    if(m)m.textContent=owned
+        ?`✨ Œuf en double : ${d.name} gagne +50 XP !${owned.level>previousLevel?` Niveau ${owned.level} atteint !`:""}`
+        :`🐣 ${d.name} vient d'éclore ! Il rejoint maintenant tes dragons.`;
+}
 function start(){render();if(timer)clearInterval(timer);timer=setInterval(render,1000)}
 window.draconiaReceiveEgg=receiveEgg;window.draconiaHasActiveEgg=()=>Boolean(loadEgg());window.renderDragonEgg=render;if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
