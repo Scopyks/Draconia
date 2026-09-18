@@ -17,6 +17,7 @@ function hatchEgg(){
     const d=getDragon(egg.dragonId);if(!d){saveEgg(null);render();return}
     const owned=typeof ownedDragons!=="undefined"?ownedDragons.find(x=>x.id===d.id):null;
     const previousLevel=owned?owned.level:0;
+    const duplicateXP=d.rarity==="Légendaire"?50:d.rarity==="Épique"?35:25;
     // Consommer avant la récompense protège des doubles clics.
     saveEgg(null);
     if(typeof discoverDragon==="function")discoverDragon(d);
@@ -25,7 +26,7 @@ function hatchEgg(){
     if(typeof renderDragonDex==="function")renderDragonDex();
     const m=document.getElementById("egg-message");
     if(m)m.textContent=owned
-        ?`✨ Œuf en double : ${d.name} gagne +25 XP !${owned.level>previousLevel?` Niveau ${owned.level} atteint !`:""}`
+        ?`✨ Œuf en double : ${d.name} gagne +${duplicateXP} XP !${owned.level>previousLevel?` Niveau ${owned.level} atteint !`:""}`
         :`🐣 ${d.name} vient d'éclore ! Il rejoint maintenant tes dragons.`;
 }
 function start(){render();if(timer)clearInterval(timer);timer=setInterval(render,1000)}

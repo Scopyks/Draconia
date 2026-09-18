@@ -21,4 +21,11 @@ c.hatchTest();assert.equal(dragon.xp,5,'double clic sans double récompense');
 assert.equal(JSON.parse(data.get('owned'))[0].xp,5,'progression sauvegardée');
 data.set('egg',JSON.stringify({dragonId:'fire',hatchAt:now+1000}));c.hatchTest();assert.equal(dragon.xp,5,'pas de récompense anticipée');
 now+=1000;c.hatchTest();assert.equal(dragon.xp,30);
+for(const [rarity,reward] of [['Commun',25],['Peu commun',25],['Rare',25],['Épique',35],['Légendaire',50]]){
+ c.dragons[0].rarity=rarity;dragon.xp=80;dragon.level=1;
+ egg();c.hatchTest();assert.equal(dragon.xp,80+reward-100);assert.equal(dragon.level,2);
+ assert(message.textContent.includes('+'+reward+' XP'));
+ c.hatchTest();assert.equal(dragon.xp,80+reward-100);
+ assert.equal(JSON.parse(data.get('owned'))[0].xp,80+reward-100);
+}
 console.log('Œufs : nouveau dragon, doublon +25 XP, niveau, sauvegarde, soins conservés et double clic OK');
