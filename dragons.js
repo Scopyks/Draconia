@@ -259,6 +259,11 @@ function discoverDragon(dragon) {
         });
 
         saveOwnedDragons();
+    } else {
+        // Un doublon fait progresser le dragon existant, sans le remplacer.
+        const duplicateXP = dragon.rarity === "Légendaire" ? 50 : dragon.rarity === "Épique" ? 35 : 25;
+        addDragonXP(alreadyOwned, duplicateXP);
+        saveOwnedDragons();
     }
 }
 
@@ -699,5 +704,3 @@ function addDragonXP(
         dragon.level += 1;
     }
 }
-
-
