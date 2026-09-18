@@ -20,37 +20,33 @@ Object.assign(c,{
     dragons:rules.rates.map((r,i)=>({id:'d'+i,element:'Nature',rarity:r.rarity})),
     draconiaHasActiveEgg:()=>eggActive,
     draconiaReceiveEgg:d=>{eggs++;eggActive=true;return true;},
-    capture:(title,text,choices,callback)=>{screen={title,text,choices,callback};}
+    capture:e=>{screen=e;}
 });
+
 const before=JSON.stringify(c.ownedDragons);
-const hooks='renderZones=function(){};adventurePanel=capture;window.testFlow={find,pickDragon};';
-vm.runInContext(read('exploration.js').replace('function install(){',hooks+'\nfunction install(){'),c);
-const choose=i=>{const s=screen;s.callback(s.choices[i],i);};
-const startPuzzle=()=>{c.Math.random=()=>.1;c.testFlow.find();choose(0);assert(screen.choices.some(x=>x.success===false));};
-startPuzzle();const old=screen;
-const wrong=screen.choices.findIndex(x=>!x.success);choose(wrong);assert(screen.title.includes('échoue'));
-old.callback(old.choices.find(x=>x.success),0);assert.equal(c.player.coins,0,'ancienne réponse ne récompense pas');
-choose(0);assert(screen.text.includes('20 %'));choose(0);assert.equal(eggs,0,'rentrer ne cherche pas œuf');
-startPuzzle();choose(screen.choices.findIndex(x=>x.success));assert.equal(c.player.coins,14);
-choose(0);assert(screen.text.includes('40 %'));choose(1);assert.equal(timers.length,1);
-timers.shift()();assert.equal(eggs,1);assert.equal(button.disabled,true,'incubation garde bouton bloqué');
+const hooks='renderZones=function(){};displayEvent=capture;window.testFlow={find,pickDragon,chooseEvent};';
+const source=read('exploration.js');
+assert(!source.includes('Choisis ton chemin'));
+assert(!source.includes('Chercher un nid ou rentrer'));
+vm.runInContext(source.replace('function install(){',hooks+'\nfunction install(){'),c);
+const tick=()=>timers.shift()();
+const rolls=(...values)=>c.Math.random=()=>values.length>1?values.shift():values[0];
+rolls(.95);c.testFlow.find();c.testFlow.find();assert.equal(timers.length,1);tick();
+assert(message.textContent.includes('sans trouvaille'));assert.equal(button.disabled,false);assert.equal(screen,undefined);
+rolls(.6,.1);c.testFlow.find();tick();assert(screen.puzzle);
+const old=screen;c.testFlow.chooseEvent(screen,screen.choices.find(x=>!x.success));
+assert(message.textContent.startsWith('❌'));assert.equal(c.player.coins,0);
+c.testFlow.chooseEvent(old,old.choices.find(x=>x.success));assert.equal(c.player.coins,0);tick();
+rolls(.6,.1);c.testFlow.find();tick();c.testFlow.chooseEvent(screen,screen.choices.find(x=>x.success));
+assert.equal(c.player.coins,14);c.testFlow.chooseEvent(screen,screen.choices.find(x=>x.success));assert.equal(c.player.coins,14);tick();
+rolls(.6,.9,.1);c.testFlow.find();tick();assert(!screen.puzzle);
+c.testFlow.chooseEvent(screen,screen.choices[0]);assert.equal(resources,1);tick();
+rolls(.1);c.testFlow.find();tick();assert.equal(eggs,1);assert.equal(button.disabled,true);
 c.testFlow.find();assert.equal(timers.length,0);eggActive=false;
-c.Math.random=()=>.1;c.testFlow.find();choose(1);assert(message.textContent.includes('éboulement'));
-assert.equal(resources,0);assert.equal(JSON.stringify(c.ownedDragons),before,'aucun compagnon');
-// Taux de rareté inchangés même avec bonus joueur/météo extrêmes.
+assert.equal(JSON.stringify(c.ownedDragons),before,'aucun compagnon');
 c.draconiaPlayerPerks=()=>({rarityBonus:100,explorationBonus:100});c.getWeatherBonus=()=> 'nature';
 for(const [roll,rarity] of [[.1,'Commun'],[.7,'Peu commun'],[.9,'Rare'],[.98,'Épique'],[.999,'Légendaire']]){
-    c.Math.random=()=>roll;assert.equal(c.testFlow.pickDragon().rarity,rarity);
+ rolls(roll);assert.equal(c.testFlow.pickDragon().rarity,rarity);
 }
-// Événement standard et double récompense.
-c.Math.random=()=>.3;c.testFlow.find();choose(0);assert(screen.choices.every(x=>x.success===undefined));
-const eventScreen=screen;choose(0);assert.equal(resources,1);
-eventScreen.callback(eventScreen.choices[0],0);assert.equal(resources,1);
-choose(0);choose(0);
-// Une traversée sans événement saute directement à la recherche, sans malus.
-c.draconiaPlayerPerks=()=>({explorationBonus:0});
-c.Math.random=()=>.8;c.testFlow.find();choose(0);
-assert(screen.title.includes('Chercher un nid'));
-assert(screen.text.includes('32 %'),'aucun malus pour absence événement');
-choose(1);c.Math.random=()=>.1;timers.shift()();assert.equal(eggs,2);
-console.log('Parcours, énigmes, échecs, double récompense, incubation et taux exacts : OK');
+rolls(.95);c.testFlow.find();tick();assert(message.textContent.includes('sans trouvaille'));
+console.log('Exploration directe, événements ponctuels, décision unique, double clic, incubation et raretés : OK');
