@@ -11,7 +11,7 @@
         // À compléter avec les deux valeurs PUBLIQUES du projet Supabase.
         cloud: {
             supabaseUrl: "https://qaucukmxomlgumoryxxh.supabase.co",
-            supabaseAnonKey: ""
+            supabaseAnonKey: "sb_publishable_WyAN-yBGBVfwylB6sGGJFwu_u7f-8-tr"
         },
 
         storage: {
