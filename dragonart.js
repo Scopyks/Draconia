@@ -40,7 +40,8 @@ const shadowArtwork = Object.freeze({
     egg: "assets/shadow-egg.webp",
     cracked: "assets/shadow-egg-cracked.webp",
     hatching: "assets/shadow-hatching.webp",
-    dragon: "assets/shadow-dragon.webp"
+    dragon: "assets/shadow-dragon.webp",
+    level10: "assets/noctis-level-10-aura.webp"
 });
 const cosmicArtwork = Object.freeze({
     egg: "assets/cosmic-egg.webp",
