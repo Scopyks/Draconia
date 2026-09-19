@@ -8,6 +8,12 @@
     const config = {
         saveVersion: 1,
 
+        // À compléter avec les deux valeurs PUBLIQUES du projet Supabase.
+        cloud: {
+            supabaseUrl: "",
+            supabaseAnonKey: ""
+        },
+
         storage: {
             version: "draconiaSaveVersion",
             player: "draconiaPlayer",
@@ -31,6 +37,7 @@
         }
     };
 
+    Object.freeze(config.cloud);
     Object.freeze(config.storage);
     Object.freeze(config.timings);
     global.DraconiaConfig = Object.freeze(config);

@@ -1414,25 +1414,15 @@
     style="display: none;"
 >
 
-<section class="weather-card">
-
+<section class="weather-card account-profile-card">
     <div>
-
-        <p class="small-title">
-            JOUEUR
-        </p>
-
-        <h2>
-            👤 Mon profil
-        </h2>
-
-        <p>
-            Ton profil et tes statistiques
-            arriveront bientôt.
-        </p>
-
+        <p class="small-title">JOUEUR</p>
+        <h2>👤 Mon profil</h2>
+        <p>Retrouve ta progression Draconia sur un autre appareil.</p>
     </div>
-
+</section>
+<section id="account-panel" class="account-panel" aria-live="polite">
+    <p>Chargement du compte…</p>
 </section>
 
 </main>
@@ -1534,7 +1524,7 @@
 <!-- ================================================== -->
 
 <!-- Cœur du jeu : l'ordre est important car ces scripts partagent l'état global. -->
-<script src="config.js?v=2"></script>
+<script src="config.js?v=3"></script>
 <script src="storage.js?v=1"></script>
 <script src="core.js?v=2"></script>
 <script src="dragonart.js?v=11"></script>
@@ -1564,6 +1554,7 @@
 <script src="dragonrest.js?v=1"></script>
 <script src="dragonneeds.js?v=1"></script>
 <script src="dragonprofile.js?v=1"></script>
+<script src="account.js?v=1"></script>
 <script src="pwa.js?v=1"></script>
 
 </body>
