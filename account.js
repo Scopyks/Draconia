@@ -1,12 +1,22 @@
 // DRACONIA - COMPTE SIMPLE PAR PSEUDO ET CLÉ SECRÈTE
 (function(){
-const SESSION_KEY="draconiaCloudSessionV1",HASH_KEY="draconiaCloudLastHashV1",BACKUP_KEY="draconiaCloudConflictBackupV1";
+const SESSION_KEY="draconiaCloudSessionV1",HASH_KEY="draconiaCloudLastHashV1",BACKUP_KEY="draconiaCloudConflictBackupV1",RECOVERY_KEY="draconiaCloudRecoveryKeyV1";
 const cloud=DraconiaConfig.cloud||{},configured=/^https:\/\//.test(cloud.supabaseUrl||"")&&Boolean(cloud.supabaseAnonKey);
 let busy=false,lastMessage="",syncTimer=null;
 const panel=()=>document.getElementById("account-panel");
 const escape=value=>String(value||"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
 function readSession(){try{return JSON.parse(localStorage.getItem(SESSION_KEY)||"null")}catch{return null}}
 function writeSession(value){if(value)localStorage.setItem(SESSION_KEY,JSON.stringify(value));else localStorage.removeItem(SESSION_KEY)}
+function readRecoveryKey(username){
+    try{
+        const saved=JSON.parse(localStorage.getItem(RECOVERY_KEY)||"null");
+        return saved&&saved.username===username&&typeof saved.key==="string"?saved.key:"";
+    }catch{return ""}
+}
+function writeRecoveryKey(username,key){
+    if(username&&key)localStorage.setItem(RECOVERY_KEY,JSON.stringify({username,key}));
+    else localStorage.removeItem(RECOVERY_KEY);
+}
 function gameSnapshot(){
     const save={};
     for(let index=0;index<localStorage.length;index++){
@@ -68,8 +78,10 @@ function render(){
     }
     const session=readSession();
     if(session){
+        const recoveryKey=readRecoveryKey(session.username);
         host.innerHTML=`<div class="account-status"><div><strong>🐉 ${escape(session.username)}</strong><small>${busy?"Synchronisation…":"Compte connecté"}</small></div><span>☁️</span></div>
-        <p>La progression de cet appareil est sauvegardée en ligne. Ta clé secrète n’est jamais affichée ni enregistrée par le jeu.</p>
+        <p>La progression de cet appareil est sauvegardée en ligne. Ta clé reste uniquement sur cet appareil jusqu’à la déconnexion ou au changement de compte.</p>
+        ${recoveryKey?'<div class="account-key" id="generated-account-key">'+escape(recoveryKey)+'</div><button class="account-button secondary" onclick="draconiaCopyKey()">Copier ma clé</button>':'<p class="account-message">La clé de ce compte n’est pas enregistrée sur cet appareil.</p>'}
         <div class="account-actions"><button class="account-button secondary" onclick="draconiaSyncAccount()">☁️ Synchroniser</button><button class="account-button secondary" onclick="draconiaRotateKey()">🔑 Nouvelle clé</button><button class="account-button danger" onclick="draconiaLogout()">Se déconnecter</button></div>
         ${lastMessage?'<p class="account-message">'+escape(lastMessage)+'</p>':""}`;
         return;
@@ -89,7 +101,7 @@ async function createAccount(event){
     try{
         const data=await rpc("create_draconia_account",{p_username:username,p_secret_key:key,p_save:gameSnapshot()});
         const session={username:data.username,token:data.session_token,revision:Number(data.save_revision)||1};
-        writeSession(session);localStorage.setItem(HASH_KEY,snapshotHash(gameSnapshot()));showKey(session.username,key,"Compte créé");
+        writeSession(session);writeRecoveryKey(session.username,key);localStorage.setItem(HASH_KEY,snapshotHash(gameSnapshot()));showKey(session.username,key,"Compte créé");
     }catch(error){lastMessage=error.message;busy=false;render();return}
     busy=false;
 }
@@ -100,7 +112,7 @@ async function login(event){
         const data=await rpc("login_draconia_account",{p_username:username,p_secret_key:key});
         if(data.error==="RATE_LIMITED")throw new Error("Trop de tentatives. Réessaie dans 15 minutes.");
         if(data.error)throw new Error("Pseudo ou clé incorrecte.");
-        writeSession({username:data.username,token:data.session_token,revision:Number(data.save_revision)||0});
+        writeSession({username:data.username,token:data.session_token,revision:Number(data.save_revision)||0});writeRecoveryKey(data.username,key);
         applySnapshot(data.save_data||{});localStorage.setItem(HASH_KEY,snapshotHash(data.save_data||{}));
         window.location.reload();
     }catch(error){lastMessage=error.message||"Pseudo ou clé incorrecte.";busy=false;render()}
@@ -131,10 +143,10 @@ async function sync(silent=false){
 async function rotateKey(){
     const session=readSession();if(!session||busy)return;
     const key=generateKey();busy=true;render();
-    try{await rpc("rotate_draconia_key",{p_session_token:session.token,p_new_secret_key:key});busy=false;showKey(session.username,key,"Nouvelle clé créée")}
+    try{await rpc("rotate_draconia_key",{p_session_token:session.token,p_new_secret_key:key});writeRecoveryKey(session.username,key);busy=false;showKey(session.username,key,"Nouvelle clé créée")}
     catch(error){busy=false;lastMessage="Impossible de renouveler la clé.";render()}
 }
-function logout(){writeSession(null);localStorage.removeItem(HASH_KEY);lastMessage="Déconnexion réussie. La sauvegarde locale reste sur cet appareil.";render()}
+function logout(){writeSession(null);writeRecoveryKey();localStorage.removeItem(HASH_KEY);lastMessage="Déconnexion réussie. La sauvegarde locale reste sur cet appareil.";render()}
 async function copyKey(){
     const key=document.getElementById("generated-account-key")?.textContent||"";
     try{await navigator.clipboard.writeText(key);lastMessage="Clé copiée."}catch{lastMessage="Maintiens ton doigt sur la clé pour la copier."}

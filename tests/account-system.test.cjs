@@ -2,12 +2,14 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const source=fs.readFileSync('account.js','utf8'),sql=fs.readFileSync('supabase/schema.sql','utf8'),html=fs.readFileSync('index.html','utf8');
 const configSource=fs.readFileSync('config.js','utf8');
 assert(configSource.includes('https://qaucukmxomlgumoryxxh.supabase.co'));assert(configSource.includes('sb_publishable_WyAN-yBGBVfxylB6sGGJFw_u7f-8-tr'));
-assert(html.includes('id="account-panel"'));assert(html.includes('account.js?v=1'));
+assert(html.includes('id="account-panel"'));assert(html.includes('account.js?v=2'));
 assert(source.includes('crypto.getRandomValues'));assert(source.includes('type="password"'));
 assert(source.includes('create_draconia_account'));assert(source.includes('login_draconia_account'));
 assert(source.includes('startsWith("eyJ")'),'compatible avec les clés anon JWT et publishable');
 assert(source.includes('p_expected_revision'));assert(source.includes('draconiaCloudConflictBackupV1'));
 assert(source.includes('startsWith("draconia")'));assert(!source.includes('localStorage.setItem("secret'));
+assert(source.includes('draconiaCloudRecoveryKeyV1'));assert(source.includes('writeRecoveryKey(session.username,key)'));
+assert(source.includes('writeRecoveryKey(data.username,key)'));assert(source.includes('writeRecoveryKey();localStorage.removeItem(HASH_KEY)'));
 assert(sql.includes("extensions.crypt(p_secret_key, extensions.gen_salt('bf', 12))"));assert(sql.includes("extensions.digest(p_session_token, 'sha256')"));
 assert(sql.includes('extensions.gen_random_bytes(32)'),'les fonctions pgcrypto doivent viser le schéma extensions de Supabase');
 assert(sql.includes('enable row level security'));assert(sql.includes('save_revision = p_expected_revision'));
