@@ -31,8 +31,11 @@ function applySnapshot(save){
     Object.entries(incoming).forEach(([key,value])=>{if(key.startsWith("draconia")&&!key.startsWith("draconiaCloud"))localStorage.setItem(key,String(value))});
 }
 async function rpc(name,body){
+    const headers={"Content-Type":"application/json","apikey":cloud.supabaseAnonKey};
+    // Les anciennes clés anon sont des JWT ; les nouvelles clés publishable passent uniquement dans apikey.
+    if(cloud.supabaseAnonKey.startsWith("eyJ"))headers.Authorization="Bearer "+cloud.supabaseAnonKey;
     const response=await fetch(cloud.supabaseUrl.replace(/\/$/,"")+"/rest/v1/rpc/"+name,{
-        method:"POST",headers:{"Content-Type":"application/json","apikey":cloud.supabaseAnonKey,"Authorization":"Bearer "+cloud.supabaseAnonKey},
+        method:"POST",headers,
         body:JSON.stringify(body)
     });
     const data=await response.json().catch(()=>({}));

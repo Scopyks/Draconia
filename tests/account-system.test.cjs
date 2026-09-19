@@ -5,6 +5,7 @@ assert(configSource.includes('supabaseUrl: ""'));assert(configSource.includes('s
 assert(html.includes('id="account-panel"'));assert(html.includes('account.js?v=1'));
 assert(source.includes('crypto.getRandomValues'));assert(source.includes('type="password"'));
 assert(source.includes('create_draconia_account'));assert(source.includes('login_draconia_account'));
+assert(source.includes('startsWith("eyJ")'),'compatible avec les clés anon JWT et publishable');
 assert(source.includes('p_expected_revision'));assert(source.includes('draconiaCloudConflictBackupV1'));
 assert(source.includes('startsWith("draconia")'));assert(!source.includes('localStorage.setItem("secret'));
 assert(sql.includes("crypt(p_secret_key, gen_salt('bf', 12))"));assert(sql.includes("digest(p_session_token, 'sha256')"));
