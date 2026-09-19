@@ -11,4 +11,7 @@ m=mood({hunger:90,happiness:90,energy:90,cleanliness:5});assert(c.draconiaDragon
 m=mood({hunger:-20,happiness:900,energy:'x',cleanliness:45});assert.equal(m.values.hunger,0);assert.equal(m.values.happiness,100);assert.equal(m.values.energy,0);
 const source=fs.readFileSync('dragonprofile.js','utf8');assert(source.includes('Nourrir'));assert(source.includes('Laver'));assert(source.includes('Jouer'));assert(source.includes('Repos'));
 assert(source.includes('dragonArtwork(dragon)'));assert(!source.includes('background-image'));
-console.log('Fiche dragon : humeurs, priorités, dialogues, bornes, actions et illustration sans décor OK');
+assert(source.includes('list.addEventListener("click"'),'ouverture déléguée compatible avec les cartes recréées');
+assert(source.includes('touch-action:manipulation'),'toucher iPhone explicite');
+const careSource=fs.readFileSync('dragoncare.js','utf8');assert(careSource.includes('card.dataset.dragonId = ownedDragon.id'));
+console.log('Fiche dragon : humeurs, dialogues, actions, illustration et ouverture tactile déléguée OK');
