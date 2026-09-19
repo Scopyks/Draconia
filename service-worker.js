@@ -1,4 +1,4 @@
-const CACHE_NAME="draconia-offline-v7";
+const CACHE_NAME="draconia-offline-v8";
 const APP_SHELL=["./","./index.html","./style.css"];
 self.addEventListener("install",event=>{
     event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).catch(()=>{}));
