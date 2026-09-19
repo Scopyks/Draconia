@@ -1,6 +1,7 @@
 // DRACONIA - FICHE DÉTAILLÉE ET HUMEUR DES DRAGONS
 (function(){
 let selectedDragonId=null;
+let profileRestInterval=null;
 const clamp=value=>Math.max(0,Math.min(100,Math.round(Number(value)||0)));
 function stateFor(owned){
     const values={hunger:clamp(owned.hunger),happiness:clamp(owned.happiness),energy:clamp(owned.energy),cleanliness:clamp(owned.cleanliness)};
@@ -31,7 +32,42 @@ function ensureOverlay(){
     return overlay;
 }
 function stat(icon,label,value,kind){
-    return `<div class="dragon-profile-stat"><div><span>${icon} ${label}</span><strong>${value}%</strong></div><div class="dragon-profile-bar"><i class="${kind}" style="width:${value}%"></i></div></div>`;
+    return `<div class="dragon-profile-stat" data-profile-stat="${kind}"><div><span>${icon} ${label}</span><strong>${value}%</strong></div><div class="dragon-profile-bar"><i class="${kind}" style="width:${value}%"></i></div></div>`;
+}
+function restPanel(owned){
+    const progress=typeof getDragonRestProgress==="function"?getDragonRestProgress(owned):0;
+    const remaining=typeof getDragonRestRemaining==="function"?getDragonRestRemaining(owned):0;
+    const time=typeof formatDragonRestTime==="function"?formatDragonRestTime(remaining):"0:00";
+    return `<div class="dragon-profile-rest" aria-live="polite">
+        <div><span>💤 Repos en cours</span><strong class="dragon-profile-rest-time">${time}</strong></div>
+        <div class="dragon-profile-rest-bar"><i class="dragon-profile-rest-fill" style="width:${progress}%"></i></div>
+    </div>`;
+}
+function stopProfileRestTimer(){
+    if(profileRestInterval!==null){clearInterval(profileRestInterval);profileRestInterval=null;}
+}
+function updateProfileRestTimer(){
+    if(!selectedDragonId)return stopProfileRestTimer();
+    const owned=ownedDragons.find(item=>item.id===selectedDragonId);
+    if(!owned||typeof isDragonResting!=="function"||!isDragonResting(owned)){
+        stopProfileRestTimer();
+        if(owned&&owned.restUntil&&typeof finishDragonRest==="function"){
+            finishDragonRest(owned);if(typeof saveOwnedDragons==="function")saveOwnedDragons();
+        }
+        if(owned)openDragonProfile(owned.id);
+        return;
+    }
+    if(typeof updateRestingDragonEnergy==="function")updateRestingDragonEnergy(owned);
+    const progress=getDragonRestProgress(owned),remaining=formatDragonRestTime(getDragonRestRemaining(owned));
+    const overlay=document.getElementById("dragon-profile-overlay");
+    const fill=overlay?.querySelector(".dragon-profile-rest-fill"),time=overlay?.querySelector(".dragon-profile-rest-time");
+    const energy=overlay?.querySelector('[data-profile-stat="energy"]');
+    if(fill)fill.style.width=`${progress}%`;if(time)time.textContent=remaining;
+    if(energy){const value=clamp(owned.energy);const label=energy.querySelector("strong"),bar=energy.querySelector("i");if(label)label.textContent=`${value}%`;if(bar)bar.style.width=`${value}%`;}
+}
+function startProfileRestTimer(resting){
+    stopProfileRestTimer();if(!resting)return;
+    updateProfileRestTimer();profileRestInterval=setInterval(updateProfileRestTimer,1000);
 }
 function openDragonProfile(id){
     if(typeof window.syncDragonNeeds==="function")window.syncDragonNeeds();
@@ -52,20 +88,22 @@ function openDragonProfile(id){
             ${stat("⚡","Énergie",mood.values.energy,"energy")}
             ${stat("🫧","Propreté",mood.values.cleanliness,"cleanliness")}
         </div>
+        ${resting?restPanel(owned):""}
         <div class="dragon-profile-actions">
             <button onclick="dragonProfileAction('feed')" ${owned.hunger>=100||resting?"disabled":""}>🍲 Nourrir</button>
             <button onclick="dragonProfileAction('wash')" ${tired||resting?"disabled":""}>🛁 Laver</button>
             <button onclick="dragonProfileAction('play')" ${tired||resting?"disabled":""}>🎮 Jouer</button>
             <button onclick="dragonProfileAction('rest')" ${owned.energy>=100||resting?"disabled":""}>💤 ${resting?"En repos":"Repos"}</button>
         </div>
-        ${resting?'<p class="dragon-profile-note">💤 Ce dragon récupère actuellement son énergie.</p>':tired?'<p class="dragon-profile-note">Il doit retrouver au moins 25 % d’énergie avant de jouer ou d’être lavé.</p>':""}
+        ${!resting&&tired?'<p class="dragon-profile-note">Il doit retrouver au moins 25 % d’énergie avant de jouer ou d’être lavé.</p>':""}
     </article>`;
     overlay.classList.add("visible");document.body.classList.add("dragon-profile-open");
     overlay.querySelector(".dragon-profile-close")?.focus();
+    startProfileRestTimer(resting);
 }
 function closeDragonProfile(){
     const overlay=document.getElementById("dragon-profile-overlay");if(overlay)overlay.classList.remove("visible");
-    document.body.classList.remove("dragon-profile-open");selectedDragonId=null;
+    document.body.classList.remove("dragon-profile-open");selectedDragonId=null;stopProfileRestTimer();
 }
 function action(type){
     const id=selectedDragonId;if(!id)return;
@@ -128,6 +166,7 @@ function styles(){
     .dragon-profile-xp i,.dragon-profile-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8b5cf6,#d946ef)}
     .dragon-profile-stats{display:grid;gap:11px;margin:18px 0}.dragon-profile-stat>div:first-child{display:flex;justify-content:space-between;font-size:13px}
     .dragon-profile-bar i.hunger{background:linear-gradient(90deg,#f97316,#fbbf24)}.dragon-profile-bar i.happiness{background:linear-gradient(90deg,#ec4899,#fb7185)}.dragon-profile-bar i.energy{background:linear-gradient(90deg,#eab308,#fde047)}.dragon-profile-bar i.cleanliness{background:linear-gradient(90deg,#3b82f6,#67e8f9)}
+    .dragon-profile-rest{margin:0 0 14px;padding:13px;border:1px solid #454a71;border-radius:15px;background:#20233a}.dragon-profile-rest>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:14px}.dragon-profile-rest-bar{height:11px;overflow:hidden;border-radius:999px;background:#30344f}.dragon-profile-rest-fill{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7b86ff,#b58cff);transition:width .5s linear}
     .dragon-profile-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.dragon-profile-actions button{min-height:48px;border:1px solid #454a71;border-radius:14px;background:#292d4b;color:#fff;font-weight:900;font-size:14px}.dragon-profile-actions button:disabled{opacity:.38}
     .dragon-profile-note{margin:12px 0 0;color:#c9cbe3;font-size:12px;text-align:center}
     @media(max-height:720px){.dragon-profile-art{height:160px}.dragon-profile-card{padding:14px}.dragon-profile-dialogue{margin-top:10px}.dragon-profile-stats{margin:12px 0}}

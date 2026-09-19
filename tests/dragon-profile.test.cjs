@@ -13,5 +13,8 @@ const source=fs.readFileSync('dragonprofile.js','utf8');assert(source.includes('
 assert(source.includes('dragonArtwork(dragon)'));assert(!source.includes('background-image'));
 assert(source.includes('list.addEventListener("click"'),'ouverture déléguée compatible avec les cartes recréées');
 assert(source.includes('touch-action:manipulation'),'toucher iPhone explicite');
+assert(source.includes('dragon-profile-rest-time'),'compte à rebours de repos dans la fiche');
+assert(source.includes('getDragonRestProgress(owned)'),'progression du repos dans la fiche');
+assert(source.includes('setInterval(updateProfileRestTimer,1000)'),'actualisation du repos chaque seconde');
 const careSource=fs.readFileSync('dragoncare.js','utf8');assert(careSource.includes('card.dataset.dragonId = ownedDragon.id'));
-console.log('Fiche dragon : humeurs, dialogues, actions, illustration et ouverture tactile déléguée OK');
+console.log('Fiche dragon : humeurs, actions, ouverture tactile et barre de repos en temps réel OK');
