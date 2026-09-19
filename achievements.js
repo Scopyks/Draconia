@@ -6,6 +6,14 @@ const list=[
 {id:"d5",icon:"🐲",title:"Gardien de dragons",text:"Possède 5 dragons",reward:60,type:"owned",target:5},
 {id:"d10",icon:"👑",title:"Maître du DragonDex",text:"Possède les 10 dragons",reward:120,type:"owned",target:10},
 {id:"dl5",icon:"⭐",title:"Apprenti dresseur",text:"Fais atteindre le niveau 5 à un dragon",reward:50,type:"dragonLevel",target:5},
+{id:"titles3",icon:"🏅",title:"Trio titré",text:"Débloque le titre de 3 dragons",reward:75,type:"titles",target:3},
+{id:"titles10",icon:"🎖️",title:"Panthéon de Draconia",text:"Débloque le titre des 10 dragons",reward:200,type:"titles",target:10},
+{id:"dl10",icon:"✨",title:"Premier éveil",text:"Fais atteindre le niveau 10 à un dragon",reward:100,type:"dragonLevel",target:10},
+{id:"all10",icon:"🌠",title:"Refuge légendaire",text:"Fais atteindre le niveau 10 aux 10 dragons",reward:350,type:"dragonsAtLevel",level:10,target:10},
+{id:"bond1",icon:"💞",title:"Âmes liées",text:"Atteins le niveau d’affinité 5 avec un dragon",reward:75,type:"maxAffinity",target:1},
+{id:"bond5",icon:"💖",title:"Cercle de confiance",text:"Atteins le niveau d’affinité 5 avec 5 dragons",reward:150,type:"maxAffinity",target:5},
+{id:"bond10",icon:"💗",title:"Liens éternels",text:"Atteins le niveau d’affinité 5 avec les 10 dragons",reward:350,type:"maxAffinity",target:10},
+{id:"care5",icon:"🌈",title:"Refuge rayonnant",text:"Garde 5 dragons avec tous leurs besoins à 80 % ou plus",reward:100,type:"healthyDragons",target:5},
 {id:"pl5",icon:"🌟",title:"Aventurier confirmé",text:"Atteins le niveau joueur 5",reward:50,type:"playerLevel",target:5},
 {id:"meal5",icon:"🍲",title:"Chef de Draconia",text:"Possède 5 plats préparés",reward:35,type:"meals",target:5},
 {id:"bag20",icon:"🎒",title:"Sac bien rempli",text:"Possède 20 ressources",reward:35,type:"inventory",target:20},
@@ -22,8 +30,13 @@ function getMeals(){return typeof preparedMeals!=="undefined"&&preparedMeals?pre
 function getInventory(){return typeof inventory!=="undefined"&&inventory?inventory:null}
 function progress(a){
 const owned=getOwned(),p=getPlayer();
+const currentDragons=owned.filter(d=>String(d.id||"").startsWith("dragon-"));
 if(a.type==="owned")return owned.length;
 if(a.type==="dragonLevel")return owned.length?Math.max(...owned.map(d=>Number(d.level)||1)):0;
+if(a.type==="titles")return currentDragons.filter(d=>Number(d.level)>=5).length;
+if(a.type==="dragonsAtLevel")return currentDragons.filter(d=>Number(d.level)>=Number(a.level||1)).length;
+if(a.type==="maxAffinity")return currentDragons.filter(d=>Number(d.affinity)>=85).length;
+if(a.type==="healthyDragons")return currentDragons.filter(d=>["hunger","happiness","energy","cleanliness"].every(key=>Number(d[key])>=80)).length;
 if(a.type==="playerLevel")return p?Number(p.level)||1:0;
 if(a.type==="meals")return sum(getMeals());
 if(a.type==="inventory")return sum(getInventory());
