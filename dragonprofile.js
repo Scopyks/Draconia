@@ -75,21 +75,43 @@ function action(type){
     if(type==="wash")openWashDragon(id);
     if(type==="play")playWithDragon(id);
 }
+function eventElement(event){
+    let target=event.target;
+    if(target&&target.nodeType===3)target=target.parentElement;
+    return target&&typeof target.closest==="function"?target:null;
+}
+function bindCardInteractions(){
+    const list=document.getElementById("owned-dragons-list");
+    if(!list||list.dataset.dragonProfileBound==="1")return;
+    list.dataset.dragonProfileBound="1";
+    list.addEventListener("click",event=>{
+        const target=eventElement(event);if(!target||target.closest("button"))return;
+        const card=target.closest(".owned-dragon-card");
+        if(!card||!list.contains(card)||!card.dataset.dragonId)return;
+        openDragonProfile(card.dataset.dragonId);
+    });
+    list.addEventListener("keydown",event=>{
+        if(event.key!=="Enter"&&event.key!==" ")return;
+        const target=eventElement(event),card=target&&target.closest(".owned-dragon-card");
+        if(!card||!list.contains(card)||!card.dataset.dragonId)return;
+        event.preventDefault();openDragonProfile(card.dataset.dragonId);
+    });
+}
 function decorateCards(){
+    bindCardInteractions();
     document.querySelectorAll("#owned-dragons-list .owned-dragon-card").forEach((card,index)=>{
-        const owned=ownedDragons[index];if(!owned)return;
-        card.dataset.dragonId=owned.id;card.tabIndex=0;card.setAttribute("role","button");
+        const owned=ownedDragons[index];
+        if(!card.dataset.dragonId&&owned)card.dataset.dragonId=owned.id;
+        if(!card.dataset.dragonId)return;
+        card.tabIndex=0;card.setAttribute("role","button");
         card.setAttribute("aria-label","Ouvrir la fiche du dragon");
-        card.onclick=event=>{if(!event.target.closest("button"))openDragonProfile(owned.id);};
-        card.onkeydown=event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();openDragonProfile(owned.id);}};
-        card.querySelectorAll(".dragon-care-actions button").forEach(button=>button.onclick=event=>event.stopPropagation());
     });
 }
 function styles(){
     if(document.getElementById("dragon-profile-styles"))return;
     const style=document.createElement("style");style.id="dragon-profile-styles";style.textContent=`
     body.dragon-profile-open{overflow:hidden}
-    #owned-dragons-list .owned-dragon-card{cursor:pointer;transition:transform .18s ease,border-color .18s ease}
+    #owned-dragons-list .owned-dragon-card{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .18s ease,border-color .18s ease}
     #owned-dragons-list .owned-dragon-card:hover{transform:translateY(-2px);border-color:#8b5cf6}
     #owned-dragons-list .owned-dragon-card:focus-visible{outline:3px solid #8b5cf6;outline-offset:3px}
     #owned-dragons-list .dragon-care-stats,#owned-dragons-list .dragon-care-actions,#owned-dragons-list .dragon-rest-panel,#owned-dragons-list .dragon-tired-warning{display:none!important}
@@ -117,4 +139,6 @@ window.openDragonProfile=openDragonProfile;window.closeDragonProfile=closeDragon
 window.draconiaDragonMood=stateFor;window.draconiaDragonDialogue=dialogue;
 document.addEventListener("keydown",event=>{if(event.key==="Escape")closeDragonProfile();});
 styles();setTimeout(()=>{decorateCards();},0);
+document.addEventListener("DOMContentLoaded",decorateCards,{once:true});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)decorateCards();});
 })();
