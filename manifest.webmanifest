@@ -1,0 +1,11 @@
+{
+  "name": "Draconia — Refuge des dragons",
+  "short_name": "Draconia",
+  "description": "Collectionne et prends soin de tes dragons.",
+  "lang": "fr",
+  "start_url": "./?source=installed",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1020",
+  "theme_color": "#0f1020"
+}

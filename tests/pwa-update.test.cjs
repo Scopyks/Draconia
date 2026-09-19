@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const html=fs.readFileSync('index.html','utf8');
+const worker=fs.readFileSync('service-worker.js','utf8');
+const updater=fs.readFileSync('pwa.js','utf8');
+const manifest=JSON.parse(fs.readFileSync('manifest.webmanifest','utf8'));
+assert(html.includes('rel="manifest"'));
+assert(html.includes('pwa.js?v=1'));
+assert(html.includes('apple-mobile-web-app-capable'));
+assert.equal(manifest.display,'standalone');
+assert(manifest.start_url.includes('source=installed'));
+assert(worker.includes('fetch(request,{cache:"no-store"})'),'réseau prioritaire');
+assert(worker.includes('request.mode==="navigate"'),'fallback HTML réservé aux navigations');
+assert(updater.includes('updateViaCache:"none"'));
+assert(updater.includes('registration.update()'));
+assert(updater.includes('visibilitychange'));
+console.log('Application iPhone : manifeste, mode autonome, réseau prioritaire et mises à jour au retour OK');
