@@ -8,7 +8,8 @@ assert(source.includes('create_draconia_account'));assert(source.includes('login
 assert(source.includes('startsWith("eyJ")'),'compatible avec les clés anon JWT et publishable');
 assert(source.includes('p_expected_revision'));assert(source.includes('draconiaCloudConflictBackupV1'));
 assert(source.includes('startsWith("draconia")'));assert(!source.includes('localStorage.setItem("secret'));
-assert(sql.includes("crypt(p_secret_key, gen_salt('bf', 12))"));assert(sql.includes("digest(p_session_token, 'sha256')"));
+assert(sql.includes("extensions.crypt(p_secret_key, extensions.gen_salt('bf', 12))"));assert(sql.includes("extensions.digest(p_session_token, 'sha256')"));
+assert(sql.includes('extensions.gen_random_bytes(32)'),'les fonctions pgcrypto doivent viser le schéma extensions de Supabase');
 assert(sql.includes('enable row level security'));assert(sql.includes('save_revision = p_expected_revision'));
 assert(sql.includes("failed_attempts + 1 >= 5"));assert(sql.includes("interval '15 minutes'"));
 assert(sql.includes("return jsonb_build_object('error', 'RATE_LIMITED')"),'le verrouillage doit être validé sans rollback SQL');
