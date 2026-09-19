@@ -3,7 +3,8 @@ const flamioArtwork = Object.freeze({
     egg: "assets/flamio-egg.webp",
     cracked: "assets/flamio-egg-cracked.webp",
     hatching: "assets/flamio-hatching.webp",
-    dragon: "assets/flamio.webp"
+    dragon: "assets/flamio.webp",
+    level10: "assets/flamio-level-10-aura.png"
 });
 const natureArtwork = Object.freeze({
     egg: "assets/nature-egg.webp",
@@ -77,6 +78,12 @@ const dragonArtworks = Object.freeze({
 function dragonArtwork(dragon, stage = "dragon") {
     const artwork = dragon && dragonArtworks[dragon.id];
     if (!artwork) return dragon ? dragon.icon : "🥚";
+    const owned = stage === "dragon" && typeof ownedDragons !== "undefined" && Array.isArray(ownedDragons)
+        ? ownedDragons.find(item => item && item.id === dragon.id)
+        : null;
+    const source = owned && Number(owned.level) >= 10 && artwork.level10
+        ? artwork.level10
+        : artwork[stage] || artwork.dragon;
     const mirrored = dragon.id === "dragon-terre" && stage === "dragon"
         ? ' style="transform:scaleX(-1)"'
         : "";
@@ -86,5 +93,5 @@ function dragonArtwork(dragon, stage = "dragon") {
         hatching: `${dragon.name} sort de son œuf`,
         dragon: `${dragon.name}, dragon de ${dragon.element}`
     };
-    return `<img class="dragon-art dragon-art-${stage}" src="${artwork[stage] || artwork.dragon}" alt="${labels[stage] || labels.dragon}" draggable="false"${mirrored}>`;
+    return `<img class="dragon-art dragon-art-${stage}" src="${source}" alt="${labels[stage] || labels.dragon}" draggable="false"${mirrored}>`;
 }
