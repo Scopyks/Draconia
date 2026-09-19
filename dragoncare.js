@@ -94,6 +94,8 @@ function renderOwnedDragons() {
         const dragon = dragons.find(item => item.id === ownedDragon.id);
         if (!dragon) return;
         const clean = Math.max(0, Math.min(100, ownedDragon.cleanliness));
+        const titleState = typeof window.getDragonTitleState === "function" ? window.getDragonTitleState(ownedDragon) : null;
+        const unlockedTitle = titleState && titleState.unlocked ? titleState.title : "";
         const card = document.createElement("div");
         card.className = "owned-dragon-card";
         card.dataset.dragonId = ownedDragon.id;
@@ -103,6 +105,7 @@ function renderOwnedDragons() {
                 <div class="owned-dragon-info">
                     <p class="rarity">${dragon.rarity}</p>
                     <h3>${dragon.name}</h3>
+                    ${unlockedTitle ? `<p class="dragon-unlocked-title">✦ ${unlockedTitle}</p>` : ""}
                     <p>Élément : ${dragon.element}</p>
                     <span class="dragon-level">Niveau ${ownedDragon.level}</span>
                 </div>
