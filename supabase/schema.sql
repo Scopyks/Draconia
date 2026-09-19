@@ -35,7 +35,7 @@ as $$
 declare
     clean_name text := trim(p_username);
     account_id uuid;
-    token text := encode(gen_random_bytes(32), 'hex');
+    token text := encode(extensions.gen_random_bytes(32), 'hex');
 begin
     if clean_name !~ '^[A-Za-z0-9_-]{3,20}$' then
         raise exception 'Le pseudo doit contenir 3 à 20 lettres, chiffres, tirets ou underscores.';
@@ -43,11 +43,11 @@ begin
     if length(p_secret_key) < 25 then raise exception 'Clé invalide.'; end if;
 
     insert into public.draconia_accounts(username, username_normalized, secret_hash, save_data)
-    values(clean_name, lower(clean_name), crypt(p_secret_key, gen_salt('bf', 12)), coalesce(p_save, '{}'::jsonb))
+    values(clean_name, lower(clean_name), extensions.crypt(p_secret_key, extensions.gen_salt('bf', 12)), coalesce(p_save, '{}'::jsonb))
     returning id into account_id;
 
     insert into public.draconia_sessions(token_hash, account_id)
-    values(digest(token, 'sha256'), account_id);
+    values(extensions.digest(token, 'sha256'), account_id);
 
     return jsonb_build_object('username', clean_name, 'session_token', token, 'save_revision', 1);
 exception
@@ -63,7 +63,7 @@ set search_path = public
 as $$
 declare
     account_row public.draconia_accounts%rowtype;
-    token text := encode(gen_random_bytes(32), 'hex');
+    token text := encode(extensions.gen_random_bytes(32), 'hex');
 begin
     select * into account_row from public.draconia_accounts
     where username_normalized = lower(trim(p_username));
@@ -71,7 +71,7 @@ begin
     if account_row.locked_until is not null and account_row.locked_until > now() then
         return jsonb_build_object('error', 'RATE_LIMITED');
     end if;
-    if account_row.secret_hash <> crypt(p_secret_key, account_row.secret_hash) then
+    if account_row.secret_hash <> extensions.crypt(p_secret_key, account_row.secret_hash) then
         update public.draconia_accounts
         set failed_attempts = failed_attempts + 1,
             locked_until = case when failed_attempts + 1 >= 5 then now() + interval '15 minutes' else null end
@@ -81,7 +81,7 @@ begin
     update public.draconia_accounts set failed_attempts = 0, locked_until = null where id = account_row.id;
 
     insert into public.draconia_sessions(token_hash, account_id)
-    values(digest(token, 'sha256'), account_row.id);
+    values(extensions.digest(token, 'sha256'), account_row.id);
 
     return jsonb_build_object(
         'username', account_row.username,
@@ -103,7 +103,7 @@ begin
     select a.* into account_row
     from public.draconia_accounts a
     join public.draconia_sessions s on s.account_id = a.id
-    where s.token_hash = digest(p_session_token, 'sha256') and s.expires_at > now();
+    where s.token_hash = extensions.digest(p_session_token, 'sha256') and s.expires_at > now();
 
     if account_row.id is null then raise exception 'Session expirée.'; end if;
     return jsonb_build_object('username', account_row.username, 'save_data', account_row.save_data, 'save_revision', account_row.save_revision);
@@ -121,7 +121,7 @@ declare
     new_revision bigint;
 begin
     select account_id into target_id from public.draconia_sessions
-    where token_hash = digest(p_session_token, 'sha256') and expires_at > now();
+    where token_hash = extensions.digest(p_session_token, 'sha256') and expires_at > now();
     if target_id is null then raise exception 'Session expirée.'; end if;
 
     update public.draconia_accounts
@@ -144,9 +144,9 @@ declare target_id uuid;
 begin
     if length(p_new_secret_key) < 25 then raise exception 'Clé invalide.'; end if;
     select account_id into target_id from public.draconia_sessions
-    where token_hash = digest(p_session_token, 'sha256') and expires_at > now();
+    where token_hash = extensions.digest(p_session_token, 'sha256') and expires_at > now();
     if target_id is null then raise exception 'Session expirée.'; end if;
-    update public.draconia_accounts set secret_hash = crypt(p_new_secret_key, gen_salt('bf', 12)), updated_at = now() where id = target_id;
+    update public.draconia_accounts set secret_hash = extensions.crypt(p_new_secret_key, extensions.gen_salt('bf', 12)), updated_at = now() where id = target_id;
     return true;
 end;
 $$;
