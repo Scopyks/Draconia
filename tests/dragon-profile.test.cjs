@@ -16,5 +16,7 @@ assert(source.includes('touch-action:manipulation'),'toucher iPhone explicite');
 assert(source.includes('dragon-profile-rest-time'),'compte à rebours de repos dans la fiche');
 assert(source.includes('getDragonRestProgress(owned)'),'progression du repos dans la fiche');
 assert(source.includes('setInterval(updateProfileRestTimer,1000)'),'actualisation du repos chaque seconde');
+assert(source.includes('dragon-profile-affinity'),'barre d’affinité dans la fiche');
+assert(source.includes('getDragonAffinityPreference'),'préférences du dragon affichées');
 const careSource=fs.readFileSync('dragoncare.js','utf8');assert(careSource.includes('card.dataset.dragonId = ownedDragon.id'));
-console.log('Fiche dragon : humeurs, actions, ouverture tactile et barre de repos en temps réel OK');
+console.log('Fiche dragon : humeurs, actions, ouverture tactile, repos et affinité OK');
