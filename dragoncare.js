@@ -96,6 +96,7 @@ function renderOwnedDragons() {
         const clean = Math.max(0, Math.min(100, ownedDragon.cleanliness));
         const card = document.createElement("div");
         card.className = "owned-dragon-card";
+        card.dataset.dragonId = ownedDragon.id;
         card.innerHTML = `
             <div class="owned-dragon-top">
                 <div class="owned-dragon-icon">${dragonArtwork(dragon)}</div>
