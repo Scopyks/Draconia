@@ -47,6 +47,14 @@ function affinityPanel(owned,dragon){
         <small>${recipe?`Plat préféré : ${recipe.icon} ${recipe.name}`:""}${recipe&&preference?" · ":""}${preference?`Soin préféré : ${preference.label}`:""}</small>
     </section>`;
 }
+function titleBadge(owned){
+    if(typeof window.getDragonTitleState!=="function")return "";
+    const state=window.getDragonTitleState(owned);
+    if(!state.title)return "";
+    return state.unlocked
+        ?`<div class="dragon-profile-title unlocked">✦ ${state.title}</div>`
+        :`<div class="dragon-profile-title locked">🔒 Titre au niveau ${state.unlockLevel}</div>`;
+}
 function restPanel(owned){
     const progress=typeof getDragonRestProgress==="function"?getDragonRestProgress(owned):0;
     const remaining=typeof getDragonRestRemaining==="function"?getDragonRestRemaining(owned):0;
@@ -90,7 +98,7 @@ function openDragonProfile(id){
     const mood=stateFor(owned),resting=typeof isDragonResting==="function"&&isDragonResting(owned),tired=owned.energy<25;
     const overlay=ensureOverlay();
     overlay.innerHTML=`<article class="dragon-profile-card">
-        <header><div><small>${dragon.rarity} • ${dragon.element}</small><h2>${dragon.name}</h2><span>${mood.icon} ${mood.label}</span></div><button class="dragon-profile-close" aria-label="Fermer" onclick="closeDragonProfile()">✕</button></header>
+        <header><div><small>${dragon.rarity} • ${dragon.element}</small><h2>${dragon.name}</h2>${titleBadge(owned)}<span>${mood.icon} ${mood.label}</span></div><button class="dragon-profile-close" aria-label="Fermer" onclick="closeDragonProfile()">✕</button></header>
         <div class="dragon-profile-dialogue"><p>${dialogue(dragon,mood,owned)}</p></div>
         <div class="dragon-profile-art">${dragonArtwork(dragon)}</div>
         <div class="dragon-profile-level"><span>Niveau ${owned.level}</span><span>${owned.xp} / 100 XP</span></div>
@@ -172,6 +180,7 @@ function styles(){
     .dragon-profile-card{width:min(100%,520px);max-height:calc(100vh - 36px);overflow:auto;padding:18px;border:1px solid #393d61;border-radius:26px;background:#17192c;color:#fff;box-shadow:0 24px 70px rgba(0,0,0,.5)}
     .dragon-profile-card header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
     .dragon-profile-card header small{color:#aaaed1}.dragon-profile-card h2{font-size:25px;margin:2px 0 5px}.dragon-profile-card header span{font-size:13px;color:#d7d8ed}
+    .dragon-profile-title,.dragon-unlocked-title{width:fit-content;margin:4px 0 7px;padding:5px 9px;border-radius:999px;font-size:11px!important;font-weight:900;line-height:1.25}.dragon-profile-title.unlocked,.dragon-unlocked-title{border:1px solid #d5a83b;background:linear-gradient(135deg,rgba(245,194,75,.2),rgba(139,92,246,.18));color:#ffe39a!important;box-shadow:0 0 14px rgba(245,194,75,.12)}.dragon-profile-title.locked{border:1px solid #3c4065;background:#22253d;color:#9296b5!important}.dragon-unlocked-title{margin:5px 0 6px!important}
     .dragon-profile-close{width:42px;height:42px;flex:0 0 auto;border:1px solid #3c4065;border-radius:50%;background:#242743;color:#fff;font-size:18px}
     .dragon-profile-dialogue{position:relative;margin:18px auto 8px;max-width:390px;padding:12px 16px;border:2px solid #44496f;border-radius:18px;background:#fff;color:#202136;text-align:center;font-weight:700;line-height:1.4}
     .dragon-profile-dialogue:after{content:"";position:absolute;left:50%;bottom:-9px;width:14px;height:14px;background:#fff;border-right:2px solid #44496f;border-bottom:2px solid #44496f;transform:translateX(-50%) rotate(45deg)}
