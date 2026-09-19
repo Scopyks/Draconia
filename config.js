@@ -10,7 +10,7 @@
 
         // À compléter avec les deux valeurs PUBLIQUES du projet Supabase.
         cloud: {
-            supabaseUrl: "",
+            supabaseUrl: "https://qaucukmxomlgumoryxxh.supabase.co",
             supabaseAnonKey: ""
         },
 
