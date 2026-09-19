@@ -13,11 +13,12 @@ function stateFor(owned){
     if(average>=60)return {icon:"🙂",label:"Bien",urgent:null,level:"good",values};
     return {icon:"😐",label:"Calme",urgent:null,level:"normal",values};
 }
-function dialogue(dragon,mood){
+function dialogue(dragon,mood,owned){
     if(mood.urgent==="hunger")return mood.level==="critical"?"J'ai vraiment très faim… Peux-tu me préparer mon plat préféré ?":"Mon ventre commence à gargouiller.";
     if(mood.urgent==="happiness")return mood.level==="critical"?"Je me sens seul… Reste un peu avec moi.":"J'aimerais beaucoup jouer avec toi.";
     if(mood.urgent==="energy")return mood.level==="critical"?"Je n'arrive plus à garder les yeux ouverts…":"Je crois qu'une petite sieste me ferait du bien.";
     if(mood.urgent==="cleanliness")return mood.level==="critical"?"Mes écailles me gênent… J'ai besoin d'un bon bain.":"Mes écailles auraient bien besoin d'être nettoyées.";
+    if(owned&&typeof window.getDragonAffinityDialogue==="function")return window.getDragonAffinityDialogue(owned);
     if(mood.level==="great")return "Je suis en pleine forme ! Qu'est-ce qu'on fait aujourd'hui ?";
     return "Je suis content de te voir. Passons un peu de temps ensemble !";
 }
@@ -33,6 +34,18 @@ function ensureOverlay(){
 }
 function stat(icon,label,value,kind){
     return `<div class="dragon-profile-stat" data-profile-stat="${kind}"><div><span>${icon} ${label}</span><strong>${value}%</strong></div><div class="dragon-profile-bar"><i class="${kind}" style="width:${value}%"></i></div></div>`;
+}
+function affinityPanel(owned,dragon){
+    if(typeof window.getDragonAffinityState!=="function")return "";
+    const state=window.getDragonAffinityState(owned);
+    const preference=typeof window.getDragonAffinityPreference==="function"?window.getDragonAffinityPreference(dragon.id):null;
+    const recipe=typeof recipes!=="undefined"?recipes.find(item=>item.element===dragon.element):null;
+    return `<section class="dragon-profile-affinity">
+        <div><span>💞 Affinité · Niveau ${state.level}</span><strong>${state.value} / 100</strong></div>
+        <div class="dragon-profile-affinity-bar"><i style="width:${state.value}%"></i></div>
+        <p><b>${state.label}</b>${state.nextAt?` · prochain palier à ${state.nextAt}`:" · niveau maximal"}</p>
+        <small>${recipe?`Plat préféré : ${recipe.icon} ${recipe.name}`:""}${recipe&&preference?" · ":""}${preference?`Soin préféré : ${preference.label}`:""}</small>
+    </section>`;
 }
 function restPanel(owned){
     const progress=typeof getDragonRestProgress==="function"?getDragonRestProgress(owned):0;
@@ -78,10 +91,11 @@ function openDragonProfile(id){
     const overlay=ensureOverlay();
     overlay.innerHTML=`<article class="dragon-profile-card">
         <header><div><small>${dragon.rarity} • ${dragon.element}</small><h2>${dragon.name}</h2><span>${mood.icon} ${mood.label}</span></div><button class="dragon-profile-close" aria-label="Fermer" onclick="closeDragonProfile()">✕</button></header>
-        <div class="dragon-profile-dialogue"><p>${dialogue(dragon,mood)}</p></div>
+        <div class="dragon-profile-dialogue"><p>${dialogue(dragon,mood,owned)}</p></div>
         <div class="dragon-profile-art">${dragonArtwork(dragon)}</div>
         <div class="dragon-profile-level"><span>Niveau ${owned.level}</span><span>${owned.xp} / 100 XP</span></div>
         <div class="dragon-profile-xp"><i style="width:${clamp(owned.xp)}%"></i></div>
+        ${affinityPanel(owned,dragon)}
         <div class="dragon-profile-stats">
             ${stat("🍖","Faim",mood.values.hunger,"hunger")}
             ${stat("❤️","Bonheur",mood.values.happiness,"happiness")}
@@ -164,6 +178,7 @@ function styles(){
     .dragon-profile-art{height:230px;display:flex;align-items:center;justify-content:center}.dragon-profile-art .dragon-art{width:100%;height:100%;object-fit:contain}
     .dragon-profile-level{display:flex;justify-content:space-between;font-size:13px;font-weight:800}.dragon-profile-xp,.dragon-profile-bar{height:10px;margin-top:7px;border-radius:999px;background:#292c49;overflow:hidden}
     .dragon-profile-xp i,.dragon-profile-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8b5cf6,#d946ef)}
+    .dragon-profile-affinity{margin:14px 0;padding:13px;border:1px solid #51375e;border-radius:16px;background:linear-gradient(135deg,#2a203a,#211e35)}.dragon-profile-affinity>div:first-child{display:flex;justify-content:space-between;gap:12px;font-size:14px;font-weight:900}.dragon-profile-affinity-bar{height:10px;margin:8px 0;border-radius:999px;background:#362b48;overflow:hidden}.dragon-profile-affinity-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ec4899,#f9a8d4);transition:width .25s ease}.dragon-profile-affinity p{margin:0 0 4px;color:#ffd1e7;font-size:13px}.dragon-profile-affinity small{color:#c9cbe3;font-size:12px;line-height:1.45}
     .dragon-profile-stats{display:grid;gap:11px;margin:18px 0}.dragon-profile-stat>div:first-child{display:flex;justify-content:space-between;font-size:13px}
     .dragon-profile-bar i.hunger{background:linear-gradient(90deg,#f97316,#fbbf24)}.dragon-profile-bar i.happiness{background:linear-gradient(90deg,#ec4899,#fb7185)}.dragon-profile-bar i.energy{background:linear-gradient(90deg,#eab308,#fde047)}.dragon-profile-bar i.cleanliness{background:linear-gradient(90deg,#3b82f6,#67e8f9)}
     .dragon-profile-rest{margin:0 0 14px;padding:13px;border:1px solid #454a71;border-radius:15px;background:#20233a}.dragon-profile-rest>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:14px}.dragon-profile-rest-bar{height:11px;overflow:hidden;border-radius:999px;background:#30344f}.dragon-profile-rest-fill{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7b86ff,#b58cff);transition:width .5s linear}
