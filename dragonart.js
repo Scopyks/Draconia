@@ -4,7 +4,7 @@ const flamioArtwork = Object.freeze({
     cracked: "assets/flamio-egg-cracked.webp",
     hatching: "assets/flamio-hatching.webp",
     dragon: "assets/flamio.webp",
-    level10: "assets/flamio-level-10-aura.png"
+    level10: "assets/flamio-level-10-aura.webp"
 });
 const natureArtwork = Object.freeze({
     egg: "assets/nature-egg.webp",
