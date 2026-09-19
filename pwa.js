@@ -9,7 +9,7 @@ navigator.serviceWorker.addEventListener("controllerchange",()=>{
 });
 window.addEventListener("load",async()=>{
     try{
-        const registration=await navigator.serviceWorker.register("./service-worker.js?v=5",{updateViaCache:"none"});
+        const registration=await navigator.serviceWorker.register("./service-worker.js?v=6",{updateViaCache:"none"});
         await registration.update();
         setInterval(()=>registration.update(),15*60*1000);
         document.addEventListener("visibilitychange",()=>{if(!document.hidden)registration.update();});
