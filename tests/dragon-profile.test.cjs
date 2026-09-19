@@ -18,5 +18,8 @@ assert(source.includes('getDragonRestProgress(owned)'),'progression du repos dan
 assert(source.includes('setInterval(updateProfileRestTimer,1000)'),'actualisation du repos chaque seconde');
 assert(source.includes('dragon-profile-affinity'),'barre d’affinité dans la fiche');
 assert(source.includes('getDragonAffinityPreference'),'préférences du dragon affichées');
+assert(source.includes('getDragonTitleState'),'titre relié à la fiche du dragon');
+assert(source.includes('dragon-profile-title unlocked'),'titre débloqué affiché dans la fiche');
 const careSource=fs.readFileSync('dragoncare.js','utf8');assert(careSource.includes('card.dataset.dragonId = ownedDragon.id'));
-console.log('Fiche dragon : humeurs, actions, ouverture tactile, repos et affinité OK');
+assert(careSource.includes('dragon-unlocked-title'),'titre débloqué affiché dans la collection');
+console.log('Fiche dragon : humeurs, actions, ouverture tactile, repos, affinité et titres OK');
