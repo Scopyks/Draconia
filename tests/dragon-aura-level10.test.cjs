@@ -2,7 +2,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const flamio={id:'dragon-feu',name:'Flamio',element:'Feu',icon:'🔥🐉'};
 const noctis={id:'dragon-ombre',name:'Noctis',element:'Ombre',icon:'🌑🐉'};
 const zephyr={id:'dragon-air',name:'Zéphyr',element:'Air',icon:'🌪️🐉'};
-const context={ownedDragons:[{id:'dragon-feu',level:9},{id:'dragon-ombre',level:9},{id:'dragon-air',level:9}]};
+const aquaria={id:'dragon-eau',name:'Aquaria',element:'Eau',icon:'🌊🐉'};
+const context={ownedDragons:[{id:'dragon-feu',level:9},{id:'dragon-ombre',level:9},{id:'dragon-air',level:9},{id:'dragon-eau',level:9}]};
 vm.createContext(context);vm.runInContext(fs.readFileSync('dragonart.js','utf8'),context);
 assert(context.dragonArtwork(flamio).includes('assets/flamio.webp'),'image normale de Flamio avant le niveau 10');
 context.ownedDragons[0].level=10;
@@ -16,4 +17,8 @@ assert(context.dragonArtwork(zephyr).includes('assets/air-dragon.webp'),'image n
 context.ownedDragons[2].level=10;
 assert(context.dragonArtwork(zephyr).includes('assets/zephyr-level-10-aura.webp'),'image avec aura de Zéphyr au niveau 10');
 assert(context.dragonArtwork(zephyr,'egg').includes('assets/air-egg.webp'),'l’œuf de Zéphyr reste inchangé');
-console.log('Auras Flamio, Noctis et Zéphyr : images normales niveaux 1-9 et variantes transparentes au niveau 10 OK');
+assert(context.dragonArtwork(aquaria).includes('assets/water-dragon.webp'),'image normale d’Aquaria avant le niveau 10');
+context.ownedDragons[3].level=10;
+assert(context.dragonArtwork(aquaria).includes('assets/aquaria-level-10-aura.webp'),'image avec aura d’Aquaria au niveau 10');
+assert(context.dragonArtwork(aquaria,'egg').includes('assets/water-egg.webp'),'l’œuf d’Aquaria reste inchangé');
+console.log('Auras Flamio, Noctis, Zéphyr et Aquaria : images normales niveaux 1-9 et variantes transparentes au niveau 10 OK');
