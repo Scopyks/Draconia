@@ -64,7 +64,8 @@ const iceArtwork = Object.freeze({
     egg: "assets/ice-egg.webp",
     cracked: "assets/ice-egg-cracked.webp",
     hatching: "assets/ice-hatching.webp",
-    dragon: "assets/ice-dragon.webp"
+    dragon: "assets/ice-dragon.webp",
+    level10: "assets/ice-level-10-aura.webp"
 });
 
 const dragonArtworks = Object.freeze({
