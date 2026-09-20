@@ -16,7 +16,8 @@ const lightningArtwork = Object.freeze({
     egg: "assets/lightning-egg.webp",
     cracked: "assets/lightning-egg-cracked.webp",
     hatching: "assets/lightning-hatching.webp",
-    dragon: "assets/lightning-dragon.webp"
+    dragon: "assets/lightning-dragon.webp",
+    level10: "assets/lightning-level-10-aura.webp"
 });
 const lightArtwork = Object.freeze({
     egg: "assets/light-egg.webp",
