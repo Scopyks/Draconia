@@ -28,7 +28,8 @@ const waterArtwork = Object.freeze({
     egg: "assets/water-egg.webp",
     cracked: "assets/water-egg-cracked.webp",
     hatching: "assets/water-hatching.webp",
-    dragon: "assets/water-dragon.webp"
+    dragon: "assets/water-dragon.webp",
+    level10: "assets/aquaria-level-10-aura.webp"
 });
 const earthArtwork = Object.freeze({
     egg: "assets/earth-egg.webp",
